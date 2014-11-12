@@ -6,4 +6,4 @@ from .models import Message
 class MessageAdmin(admin.ModelAdmin):
    list_display = ('author','text', 'timestamp')
 
-   admin.site.register(Message, MessageAdmin)
+admin.site.register(Message, MessageAdmin)
