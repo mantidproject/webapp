@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from rest_framework import routers
 from services.views import MessageViewSet
 
-router = routers.DefaultRouter()#trailing_slash=False)
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'message', MessageViewSet)
 
 urlpatterns = patterns('',
@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     url(r'^$', 'views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     # url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/favicon.ico'}),
-    url(r'^admin/$', include(admin.site.urls)),
-    url(r'^api/$',include(router.urls)),
-    url(r'^api-auth/$',include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/',include(router.urls)),
+    url(r'^api-auth/',include('rest_framework.urls', namespace='rest_framework')),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
