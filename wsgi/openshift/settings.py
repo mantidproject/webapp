@@ -34,16 +34,13 @@ SECRET_KEY = use_keys['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if ON_OPENSHIFT:
-    DEBUG = True
+    DEBUG = False
+    ALLOWED_HOSTS = ['*']
 else:
+    ALLOWED_HOSTS = []
     DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
-
-if DEBUG:
-     ALLOWED_HOSTS = []
-else:
-     ALLOWED_HOSTS = ['*']
 
 ROOT_URLCONF = 'urls'
 
@@ -53,6 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.sites',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
