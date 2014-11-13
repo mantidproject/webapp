@@ -13,6 +13,8 @@ from services.views import MessageViewSet
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'message', MessageViewSet)
 
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'views.home', name='home'),
@@ -21,4 +23,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/',include(router.urls)),
     url(r'^api-auth/',include('rest_framework.urls', namespace='rest_framework')),
-) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
+  + staticfiles_urlpatterns()
