@@ -128,3 +128,20 @@ Django project directory structure
      			README
 
 From HERE you can start with your own application.
+
+Running Django locally using virtualenv
+---------------------------------------
+
+**Note:** This is the abbreviated version of what is
+[described elsewhere](http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/).
+
+Start the virtual environment
+```
+$ source venv/bin/activate
+```
+Which can be turned off using a simple `deactivate`.
+
+Start the django server itself
+```
+$ wsgi/openshift/manage.py runserver
+```
