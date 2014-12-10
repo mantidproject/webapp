@@ -8,10 +8,11 @@ admin.autodiscover()
 
 from django.contrib.auth.models import User
 from rest_framework import routers
-from services.views import MessageViewSet
+from services.views import MessageViewSet, UsageViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'message', MessageViewSet)
+router.register(r'usage', UsageViewSet)
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
