@@ -135,7 +135,7 @@ Running Django locally using virtualenv
 **Note:** This is the abbreviated version of what is
 [described elsewhere](http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/).
 
-Start the virtual environment
+Start the [virtual environment](https://virtualenv.pypa.io/en/latest/index.html)
 ```
 $ source venv/bin/activate
 ```
