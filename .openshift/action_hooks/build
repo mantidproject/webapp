@@ -5,3 +5,7 @@
 # could be python, php, ruby, etc.
 
 # Activate VirtualEnv in order to use the correct libraries
+source $OPENSHIFT_HOMEDIR/python/virtenv/bin/activate
+
+echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py collectstatic --noinput'"
+python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py collectstatic --noinput
