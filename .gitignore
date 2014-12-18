@@ -11,3 +11,5 @@ venv/
 virtenv/
 dist/
 build/
+wsgi/static/admin/
+wsgi/static/rest_framework/
