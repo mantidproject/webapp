@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 import os
 
@@ -12,12 +12,14 @@ if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDIS
      packages.append('django-redis-cache')
      packages.append('hiredis')
 
-setup(name='YourAppName',
+setup(name='MantidReports',
       version='1.0',
-      description='OpenShift App',
+      description='RESTful services relatd to mantid',
       author='P.F.Peterson',
       author_email='petersonpr@ornl.gov',
-      url='https://pypi.python.org/pypi',
+      url='http://www.mantidproject.org',
       install_requires=packages,
+      packages=find_packages(),
+      include_package_data=True,
 )
 
