@@ -105,7 +105,8 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    ],
+    'PAGINATE_BY': 100
 }
 
 # Database
@@ -152,6 +153,10 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    # ("js", os.path.join(STATIC_ROOT,'js')),
+    # ("css", os.path.join(STATIC_ROOT,'css')),
+    # ("images", os.path.join(STATIC_ROOT,'images')),
+    # ("fonts", os.path.join(STATIC_ROOT,'fonts')),
 )
 
 # List of finder classes that know how to find static files in
