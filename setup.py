@@ -21,7 +21,7 @@ setup(name='MantidReports',
       install_requires=packages,
       packages=find_packages(),
       package_data={
-        'djangorestframework':['static/*']
+        '':['static/*']
       },
       include_package_data=True,
 )
