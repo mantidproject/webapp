@@ -28,7 +28,7 @@ else
     echo "saving migrations to persistent storage"
     echo "cp -r "$OPENSHIFT_REPO_DIR"wsgi/openshift/services/migrations ${OPENSHIFT_DATA_DIR}services/"
     cp -r "${OPENSHIFT_REPO_DIR}wsgi/openshift/services/migrations" "${OPENSHIFT_DATA_DIR}services/"
-fi 
+fi
 
 echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py collectstatic --noinput'"
 python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py collectstatic --noinput # -v0
