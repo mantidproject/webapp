@@ -16,8 +16,20 @@ else
     python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py syncdb --noinput
 fi
 
-echo "Executing 'python $OPENSHIFT_REPO_DIRwsgi/openshift/manage.py migrate --noinput'"
-python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py migrate --noinput
+echo "copying migrations to  app-root storage"
+echo "cp -r "${OPENSHIFT_DATA_DIR}services/migrations" ${OPENSHIFT_REPO_DIR}wsgi/openshift/services"
+cp -r "${OPENSHIFT_DATA_DIR}services/migrations" ${OPENSHIFT_REPO_DIR}wsgi/openshift/services
+ 
+echo "generating migration files 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py schemamigration services --auto'"
+python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py schemamigration services --auto
+ 
+echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py migrate services'"
+python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py migrate services
+ 
+ 
+echo "saving migrations to persistent storage"
+echo "cp -r "$OPENSHIFT_REPO_DIR"wsgi/openshift/services/migrations ${OPENSHIFT_DATA_DIR}services/"
+cp -r "${OPENSHIFT_REPO_DIR}wsgi/openshift/services/migrations" "${OPENSHIFT_DATA_DIR}services/"
 
 echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py collectstatic --noinput'"
 python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py collectstatic --noinput # -v0
