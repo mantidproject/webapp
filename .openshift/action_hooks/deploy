@@ -15,3 +15,6 @@ else
     echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py syncdb --noinput'"
     python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py syncdb --noinput
 fi
+
+echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py collectstatic --noinput'"
+python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py collectstatic --noinput
