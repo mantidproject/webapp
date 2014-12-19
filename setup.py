@@ -20,6 +20,9 @@ setup(name='MantidReports',
       url='http://www.mantidproject.org',
       install_requires=packages,
       packages=find_packages(),
+      package_data={
+        'djangorestframework':['static/*']
+      },
       include_package_data=True,
 )
 
