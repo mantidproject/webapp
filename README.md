@@ -141,7 +141,23 @@ $ source venv/bin/activate
 ```
 Which can be turned off using a simple `deactivate`.
 
+Setup the database and copy static. This should follow closely to `.openshift/action_hooks/deploy`
+```
+$ wsgi/openshift/manage.py collectstatic --noinput
+$ wsgi/openshift/manage.py syncdb --noinput
+```
+
 Start the django server itself
 ```
 $ wsgi/openshift/manage.py runserver
+```
+
+Adding new columns to tables
+----------------------------
+This is all done with South.
+
+```
+$ wsgi/openshift/manage.py schemamigration services --auto
+$ wsgi/openshift/manage.py syncdb
+$ wsgi/openshift/manage.py migrate services
 ```
