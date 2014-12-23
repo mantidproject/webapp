@@ -16,7 +16,9 @@ class UsageAdmin(admin.ModelAdmin):
                     'osVersion',
                     'ParaView',
                     'mantidVersion',
-                    'mantidSha1')
+                    'mantidSha1',
+                    'application',
+                    'component')
 
 admin.site.register(Message, MessageAdmin)
 admin.site.register(Usage, UsageAdmin)

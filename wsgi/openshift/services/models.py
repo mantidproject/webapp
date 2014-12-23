@@ -20,3 +20,5 @@ class Usage(models.Model):
     mantidVersion = models.CharField(max_length=32) # ex: "3.2.20141208.1820"
     mantidSha1 = models.CharField(max_length=40)    # sha1 ex: "e9423bdb34b07213a69caa90913e40307c17c6cc"
     osReadable = models.CharField(max_length=80, default="", blank=True)    # ex: "Fedora 20 (Heisenbug)"
+    application = models.CharField(max_length=80, default="", blank=True)
+    component = models.CharField(max_length=80, default="", blank=True)
