@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from .models import Message, Usage
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from .serializer import MessageSerializer, UsageSerializer
 
@@ -15,3 +15,8 @@ class UsageViewSet(viewsets.ModelViewSet):
   queryset = Usage.objects.all()
   serializer_class = UsageSerializer
   permission_classes = [AllowAny]
+  filter_fields = ('uid', 'host')
+
+  # by default show newest first
+  filter_backends = (filters.OrderingFilter,)
+  ordering=('-dateTime')
