@@ -12,6 +12,7 @@ class UsageAdmin(admin.ModelAdmin):
                     'dateTime',
                     'osName',
                     'osArch',
+                    'osReadable',
                     'osVersion',
                     'ParaView',
                     'mantidVersion',

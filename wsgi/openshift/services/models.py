@@ -19,3 +19,4 @@ class Usage(models.Model):
     ParaView = models.CharField(max_length=16)      # ex: "3.98.1"
     mantidVersion = models.CharField(max_length=32) # ex: "3.2.20141208.1820"
     mantidSha1 = models.CharField(max_length=40)    # sha1 ex: "e9423bdb34b07213a69caa90913e40307c17c6cc"
+    osReadable = models.CharField(max_length=80, default="", blank=True)    # ex: "Fedora 20 (Heisenbug)"
