@@ -131,15 +131,26 @@ From HERE you can start with your own application.
 
 Running Django locally using virtualenv
 ---------------------------------------
-
-**Note:** This is the abbreviated version of what is
+**Note:** This is the abbreviated/modified version of what is
 [described elsewhere](http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/).
 
-Start the [virtual environment](https://virtualenv.pypa.io/en/latest/index.html)
+First setup virtualenv
+```
+$ pip install virtualenv
+$ virtualenv --version
+12.0.4
+$ virtualenv `pwd`/venv
+```
+
+Start the [virtual environment](https://virtualenv.pypa.io/en/latest/index.html) and install
+[setuptools and pip](https://pip.pypa.io/en/latest/installing.html)
 ```
 $ source venv/bin/activate
+$ wget https://bootstrap.pypa.io/ez_setup.py -O - | python
+$ easy_install pip
 ```
-Which can be turned off using a simple `deactivate`.
+Then just install all of the requirements listed in `setup.py`. The virtual environment can be
+turned off using a simple `deactivate`.
 
 Setup the database and copy static. This should follow closely to `.openshift/action_hooks/deploy`
 ```
@@ -147,7 +158,14 @@ $ wsgi/openshift/manage.py collectstatic --noinput
 $ wsgi/openshift/manage.py syncdb --noinput
 ```
 
-Start the django server itself
+Setup south to do the right thing
+```
+$ ./wsgi/openshift/manage.py schemamigration services --initial
+$ ./wsgi/openshift/manage.py migrate services --fake
+$ ./wsgi/openshift/manage.py syncdb
+```
+
+Finally, start the django server itself
 ```
 $ wsgi/openshift/manage.py runserver
 ```
