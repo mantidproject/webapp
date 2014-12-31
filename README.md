@@ -179,3 +179,11 @@ $ wsgi/openshift/manage.py schemamigration services --auto
 $ wsgi/openshift/manage.py syncdb
 $ wsgi/openshift/manage.py migrate services
 ```
+
+Connecting to openshift
+-----------------------
+```
+rhc setup
+```
+
+Deploying new versions happens through `git push`
