@@ -6,6 +6,7 @@ import os
 packages = ['Django<=1.6',
     'static3', # serve static files in the server
     'djangorestframework==2.4.4',
+    'django-filter',
     'South']
 
 if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDISCLOUD_PASSWORD' in os.environ:
