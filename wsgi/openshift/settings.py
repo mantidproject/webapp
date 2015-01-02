@@ -146,8 +146,7 @@ STATIC_URL = '/static/'
 if 'OPENSHIFT_REPO_DIR' in os.environ:
     STATIC_ROOT = os.path.join(os.environ.get('OPENSHIFT_REPO_DIR'), 'wsgi', 'static')
 else:
-#STATIC_ROOT = os.path.join(PROJECT_ROOT, STATIC_URL.strip("/")) #NEWWAY
-    STATIC_ROOT = os.path.join(BASE_DIR, '..', 'static') #OLDWAY
+    STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, '..', STATIC_URL.strip("/")))
 
 # Additional locations of static files
 STATICFILES_DIRS = (
