@@ -22,7 +22,8 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
     # url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/favicon.ico'}),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/',include(router.urls)),
-    url(r'^api-auth/',include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/',include(router.urls)), # should be in services/urls.py
+    url(r'^api-auth/',include('rest_framework.urls', namespace='rest_framework')), # should be in services/urls.py
+    url(r'^report/', include('report.urls')),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
   + staticfiles_urlpatterns()
