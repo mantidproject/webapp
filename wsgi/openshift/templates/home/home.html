@@ -1,17 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" href="/static/favicon.ico" />
-</head>
-<body>
-<div class="box">
-<b>Congrats you have Django 1.6 running on OpenShift!<b>
-<br />
-let's <a href="/admin">admin </a>
-<br />
-Enjoy!!! 
-</div> <!--  box -->
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+
+<p> All you can do is look at the <a href="/api">api</a> or <a href="/admin">admin </a>
+
+{% endblock %}
