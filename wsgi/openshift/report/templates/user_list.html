@@ -57,7 +57,7 @@ function rowWriter(rowIndex, record, columns, cellWriter) {
 
 $(document).ready(function() {
   $.getJSON('/api/users', function(d) {
-    window.console.log(d);
+    //window.console.log(d);
     var startups = $('#user-list').dynatable({
       dataset: {
         records: d.results
