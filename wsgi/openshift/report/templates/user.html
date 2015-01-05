@@ -4,7 +4,7 @@
 {% block content %}
 
 <div class="breadcrumb">
-<p><a href="/report/">report</a> > <a href="/report/user/">users</a> > {{ uid }}</p>
+<p><a href="{% url "index" %}">report</a> > <a href="{% url "user-index" %}">users</a> > {{ uid }}</p>
 </div>
 
 <div class="block">
@@ -38,7 +38,7 @@ var language = getLanguage();
 
 function rowWriter(rowIndex, record, columns, cellWriter) {
     var row = '<tr>';
-    row += '<td><a href="/report/host/' + record.host +'">' + record.host.substring(0,10) + '</a></td>';
+    row += '<td>' + md5Link("{% url "host" %}", record.host) + '</td>';
     row += '<td><center>' + dateTimeToHtml5(record.dateTime, language) + '</center></td>';
     row += '<td><center>' + mantidVerType(record.mantidVersion) + '</center></td>';
     row += '<td><center>' + mantidVerShaLink(record.mantidVersion, record.mantidSha1) + '</center></td>';

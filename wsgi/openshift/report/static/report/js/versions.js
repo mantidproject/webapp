@@ -27,3 +27,7 @@ function mantidVerShaLink(version, sha1) {
     }
     return content  + "'>" + version + "</a>";
 }
+
+function md5Link(base, md5) {
+    return '<a href="' + base + md5 +'">' + md5.substring(0,10) + '</a>';
+}
