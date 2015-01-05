@@ -8,11 +8,12 @@ admin.autodiscover()
 
 from django.contrib.auth.models import User
 from rest_framework import routers
-from services.views import MessageViewSet, UsageViewSet
+from services.views import MessageViewSet, UsageViewSet, ListHosts
 
 router = routers.DefaultRouter(trailing_slash=False)
 #router.register(r'message', MessageViewSet)
 router.register(r'usage', UsageViewSet)
+#router.register(r'hosts', ListHosts) # doesn't work
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
@@ -23,6 +24,7 @@ urlpatterns = patterns('',
     # url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/favicon.ico'}),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/',include(router.urls)), # should be in services/urls.py
+    url(r'^api/hosts/$', ListHosts.as_view()), # should be in services/urls.py
     url(r'^api-auth/',include('rest_framework.urls', namespace='rest_framework')), # should be in services/urls.py
     url(r'^report/', include('report.urls')),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \

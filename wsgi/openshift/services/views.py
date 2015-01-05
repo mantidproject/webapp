@@ -2,10 +2,12 @@ from django.shortcuts import render
 
 # Create your views here.
 from .models import Message, Usage
-from rest_framework import viewsets, filters
+from rest_framework import response, views, viewsets, filters
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
-from .serializer import MessageSerializer, UsageSerializer
+from .serializer import MessageSerializer, UsageSerializer, HostListSerializer
 import django_filters
+from rest_framework import generics
 
 class MessageViewSet(viewsets.ModelViewSet):
   queryset = Message.objects.all()
@@ -42,3 +44,23 @@ class UsageViewSet(viewsets.ModelViewSet):
   permission_classes = [AllowAny]
   filter_class=UsageFilter
   filter_backends = (filters.OrderingFilter, filters.DjangoFilterBackend,)
+
+class ListHosts(generics.ListAPIView):
+  model = Usage
+  serializer_class = HostListSerializer
+  permission_classes = [IsAuthenticatedOrReadOnly]
+
+  def get_queryset(self):
+      # it would be great if our database supported this
+      #return Usage.objects.order_by('host').distinct("host")
+
+      # but it doesn't so do the work by hand
+      hosts = []
+      host_names = []
+      # only return the values that are actually used - sort by most recent first
+      for host in Usage.objects.order_by('-dateTime')\
+            .values('host', 'osReadable', 'osName', 'osArch', 'osVersion'):
+          if not host['host'] in host_names:
+              host_names.append(host['host'])
+              hosts.append(host)
+      return hosts

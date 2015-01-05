@@ -6,11 +6,12 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
     model = Message
     fields = ('author','text','timestamp',)
 
-class UsageSerializer(serializers.ModelSerializer):
+class UsageSerializer(serializers.HyperlinkedModelSerializer):
   # use everything, but the following are optional
   osReadable = serializers.CharField(required=False)
   application = serializers.CharField(required=False)
   component = serializers.CharField(required=False)
+  #uid = serializers.HyperlinkedIdentityField(view_name='UsageViewSet', format='html', lookup_field='Usage.uid')
 
   class Meta:
     model = Usage
@@ -45,3 +46,10 @@ class UsageSerializer(serializers.ModelSerializer):
     attrs = self.checkLength(attrs, source, 40, "sha1")
     attrs = self.checkHex(attrs, source, "sha1")
     return attrs
+
+class HostListSerializer(serializers.Serializer):
+    host = serializers.CharField()
+    osReadable = serializers.CharField()
+    osName = serializers.CharField()
+    osArch = serializers.CharField()
+    osVersion = serializers.CharField()
