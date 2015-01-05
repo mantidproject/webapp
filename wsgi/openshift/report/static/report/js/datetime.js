@@ -16,7 +16,7 @@ function dateTimeToHtml5(dateTime, language, options) {
         languge = getLanguage();
     }
     if (!options) {
-        options = {year:"numeric", month:"numeric", day:"numeric", hour12:"false"};
+        options = {year:"numeric", month:"2-digit", day:"2-digit", hour12:"false"};
     }
     var localized = new Date(dateTime);
     localized = localized.toLocaleTimeString(language, options);
