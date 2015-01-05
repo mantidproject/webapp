@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.template import RequestContext, loader
 
 # Create your views here.
 
@@ -13,16 +14,21 @@ def is_md5(value):
     return (len(value) == 0)
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the report index.")
+    return render(request, 'index.html')
 
 def host(request, md5):
+    if md5 is None:
+        return render(request, 'host_list.html')
     if is_md5(md5):
-        return HttpResponse("Hello, world. You're at the host report.")
+        context={'host':md5}
+        return render(request, 'host.html', context)
     else:
         return HttpResponseBadRequest("'%s' is not consistent with md5" % md5)
 
-def uid(request, md5):
-    if is_md5(md5):
+def user(request, md5):
+    if md5 is None:
         return HttpResponse("Hello, world. You're at the uid report.")
+    if is_md5(md5):
+        return HttpResponse("Hello, world. You're at the uid report for '%s'" % md5)
     else:
         return HttpResponseBadRequest("'%s' is not consistent with md5" % md5)

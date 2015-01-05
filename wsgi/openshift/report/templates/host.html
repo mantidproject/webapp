@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}host={{ host }}{% endblock %}
+
+{% block content %}
+
+<div class="breadcrumb">
+<p><a href="/report/">report</a> > <a href="/report/host/">hosts</a> > {{ host }}</p>
+</div>
+
+<div class="block">
+
+<table id="host-info"></table>
+
+
+<h2>Details of host {{host}}</h2>
+
+<table id="start-ups">
+  <thead>
+    <th>uid</th>
+    <th>dateTime</th>
+    <th>MantidVersion</th>
+    <th>ParaView</th>
+    <th>Application</th>
+    <th>Component</th>
+  </thead>
+  <tbody></tbody>
+</table>
+</div>
+
+{% endblock %}
+
+{% block post_main_script %}
+{% load staticfiles %}
+<script charset="utf-8" src="{% static "report/js/vendor/dynatable-0.3.1.js" %}"></script>
+
+<script type='text/javascript'>
+// configure how the table fills in
+$.dynatableSetup({
+  features: {
+    paginate: false,
+    sort: false,
+    pushState: true,
+    search: false,
+    recordCount: false,
+    perPageSelect: false
+  }
+});
+
+$(document).ready(function() {
+  $.getJSON('/api/usage?host={{ host }}', function(d) {
+    //window.console.log(d);
+    var startups = $('#start-ups').dynatable({
+      dataset: {
+        records: d.results
+      },
+      inputs: {
+        queries: $('#search-uid')
+      }
+    }).data('dynatable');
+
+    var first = d.results[0];
+    var content = ""
+    if (first["osReadable"]) {
+        content += "<thead><th span='2'>" + first["osReadable"] + "</th></thead>\n";
+    }
+    content += "<tr><td>name</td><td>" + first["osName"] + "</td></tr>\n";
+    content += "<tr><td>arch</td><td>" + first["osArch"] + "</td></tr>\n";
+    content += "<tr><td>version</td><td>" + first["osVersion"] + "</td></tr>\n";
+
+    $('#host-info').append(content);
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Hosts{% endblock %}
+
+{% block content %}
+
+<div class="breadcrumb">
+<p><a href="/report/">report</a> > <a href="/report/host/">hosts</a></p>
+</div>
+
+<div class="block">
+
+<h2>List of hosts</h2>
+
+<table id="host-list">
+  <thead>
+    <th>host</th>
+    <th data-dynatable-column="osReadable">readable</th>
+    <th data-dynatable-column="osArch">arch</th>
+    <th data-dynatable-column="osName">name</th>
+    <th data-dynatable-column="osVersion">version</th>
+  </thead>
+</table>
+
+</div>
+
+{% endblock %}
+
+{% block post_main_script %}
+{% load staticfiles %}
+<script charset="utf-8" src="{% static "report/js/vendor/dynatable-0.3.1.js" %}"></script>
+
+<script type='text/javascript'>
+// configure how the table fills in
+$.dynatableSetup({
+  features: {
+    paginate: false,
+    sort: true,
+    pushState: true,
+    search: false,
+    recordCount: false,
+    perPageSelect: false
+  }
+});
+
+function rowWriter(rowIndex, record, columns, cellWriter) {
+    var row = '<tr>';
+
+    row += '<td><a href="/report/host/' + record.host +'">' + record.host.substring(0,10) + '</a></td>';
+    row += '<td><center>' + record.osReadable + '</center></td>';
+    row += '<td><center>' + record.osArch + '</center></td>';
+    row += '<td><center>' + record.osName + '</center></td>';
+    row += '<td>' + record.osVersion + '</td>';
+
+    row += '</tr>';
+
+    return row;
+}
+
+
+$(document).ready(function() {
+  $.getJSON('/api/hosts', function(d) {
+    //window.console.log(d);
+    var startups = $('#host-list').dynatable({
+      dataset: {
+        records: d.results
+      },
+      writers: {
+        _rowWriter: rowWriter
+      },
+      // inputs: {
+      //   queries: $('#search-uid')
+      // }
+    }).data('dynatable');
+
+  });
+});
+</script>
+{% endblock %}
