@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
+    'report',
     'rest_framework',
     'services',
     'south', # pip install South
@@ -92,6 +93,7 @@ WSGI_APPLICATION = 'wsgi.application'
 
 TEMPLATE_DIRS = (
      os.path.join(BASE_DIR,'templates'),
+     os.path.join(BASE_DIR,'report/templates'),
 )
 
 # List of callables that know how to import templates from various sources.
@@ -153,8 +155,8 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    # ("js", os.path.join(STATIC_ROOT,'js')),
-    # ("css", os.path.join(STATIC_ROOT,'css')),
+    ("js", os.path.join(STATIC_ROOT,'js')),
+    ("css", os.path.join(STATIC_ROOT,'css')),
     # ("images", os.path.join(STATIC_ROOT,'images')),
     # ("fonts", os.path.join(STATIC_ROOT,'fonts')),
 )
