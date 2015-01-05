@@ -27,8 +27,9 @@ def host(request, md5):
 
 def user(request, md5):
     if md5 is None:
-        return HttpResponse("Hello, world. You're at the uid report.")
+        return render(request, 'user_list.html')
     if is_md5(md5):
-        return HttpResponse("Hello, world. You're at the uid report for '%s'" % md5)
+        context={'uid':md5}
+        return render(request, 'user.html', context)
     else:
         return HttpResponseBadRequest("'%s' is not consistent with md5" % md5)

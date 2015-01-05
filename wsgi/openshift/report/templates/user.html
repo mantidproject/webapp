@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}host={{ host }}{% endblock %}
+
+{% block content %}
+
+<div class="breadcrumb">
+<p><a href="/report/">report</a> > <a href="/report/user/">users</a> > {{ uid }}</p>
+</div>
+
+<div class="block">
+
+<h2>Details of user {{ uid }}</h2>
+
+<table id="start-ups">
+  <thead>
+    <th>host</th>
+    <th>dateTime</th>
+    <th>type</th>
+    <th data-dynatable-column="mantidVersion">version</th>
+    <th data-dynatable-column="ParaView">ParaView</th>
+    <th>application</th>
+    <th>component</th>
+  </thead>
+  <tbody></tbody>
+</table>
+</div>
+
+{% endblock %}
+
+{% block post_main_script %}
+{% load staticfiles %}
+<script charset="utf-8" src="{% static "report/js/vendor/dynatable-0.3.1.js" %}"></script>
+<script charset="utf-8" src="{% static "report/js/datetime.js" %}"></script>
+<script charset="utf-8" src="{% static "report/js/versions.js" %}"></script>
+
+<script type='text/javascript'>
+var language = getLanguage();
+
+function rowWriter(rowIndex, record, columns, cellWriter) {
+    var row = '<tr>';
+    row += '<td><a href="/report/host/' + record.host +'">' + record.host.substring(0,10) + '</a></td>';
+    row += '<td><center>' + dateTimeToHtml5(record.dateTime, language) + '</center></td>';
+    row += '<td><center>' + mantidVerType(record.mantidVersion) + '</center></td>';
+    row += '<td><center>' + mantidVerShaLink(record.mantidVersion, record.mantidSha1) + '</center></td>';
+    row += '<td><center>' + paraviewVerLink(record.ParaView) + '</center></td>';
+    row += '<td>' + record.application + '</td>';
+    row += '<td>' + record.component + '</td>';
+
+    row += '</tr>';
+
+    return row;
+}
+
+// configure how the table fills in
+$.dynatableSetup({
+  features: {
+    paginate: false,
+    sort: true,
+    pushState: true,
+    search: false,
+    recordCount: false,
+    perPageSelect: false
+  }
+});
+
+$(document).ready(function() {
+  $.getJSON('/api/usage?uid={{ uid }}', function(d) {
+    // window.console.log(d);
+    var startups = $('#start-ups').dynatable({
+      dataset: {
+        records: d.results
+      },
+      writers: {
+        _rowWriter: rowWriter
+      },
+      inputs: {
+        queries: $('#search-uid')
+      }
+    }).data('dynatable');
+
+  });
+});
+</script>
+{% endblock %}
