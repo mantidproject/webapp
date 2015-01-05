@@ -5,7 +5,7 @@ from .models import Message, Usage
 from rest_framework import response, views, viewsets, filters
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
-from .serializer import MessageSerializer, UsageSerializer, HostListSerializer
+from .serializer import MessageSerializer, UsageSerializer, HostListSerializer, UserListSerializer
 import django_filters
 from rest_framework import generics
 
@@ -64,3 +64,23 @@ class ListHosts(generics.ListAPIView):
               host_names.append(host['host'])
               hosts.append(host)
       return hosts
+
+class ListUsers(generics.ListAPIView):
+  model = Usage
+  serializer_class = UserListSerializer
+  permission_classes = [IsAuthenticatedOrReadOnly]
+
+  def get_queryset(self):
+      # it would be great if our database supported this
+      #return Usage.objects.order_by('uid').distinct("uid")
+
+      # but it doesn't so do the work by hand
+      uids = []
+      uid_names = []
+      # only return the values that are actually used - sort by most recent first
+      for uid in Usage.objects.order_by('-dateTime')\
+            .values('uid', 'dateTime'):
+          if not uid['uid'] in uid_names:
+              uid_names.append(uid['uid'])
+              uids.append(uid)
+      return uids

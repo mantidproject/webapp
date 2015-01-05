@@ -53,3 +53,7 @@ class HostListSerializer(serializers.Serializer):
     osName = serializers.CharField()
     osArch = serializers.CharField()
     osVersion = serializers.CharField()
+
+class UserListSerializer(serializers.Serializer):
+    uid = serializers.CharField()
+    dateTime = serializers.DateTimeField()
