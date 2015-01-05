@@ -61,7 +61,11 @@ $(document).ready(function() {
     var first = d.results[0];
     var content = ""
     if (first["osReadable"]) {
-        content += "<thead><th span='2'>" + first["osReadable"] + "</th></thead>\n";
+        content += "<thead><th colspan='2'>" + first["osReadable"] + "</th></thead>\n";
+    }
+    else
+    {
+        content += "<thead><th colspan='2'>&nbsp;</th></thead>\n";
     }
     content += "<tr><td>name</td><td>" + first["osName"] + "</td></tr>\n";
     content += "<tr><td>arch</td><td>" + first["osArch"] + "</td></tr>\n";
