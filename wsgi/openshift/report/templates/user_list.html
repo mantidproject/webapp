@@ -14,10 +14,7 @@
 <table id="user-list">
   <thead>
     <th data-dynatable-column="uid">user</th>
-    <th data-dynatable-column="osReadable">readable</th>
-    <th data-dynatable-column="osArch">arch</th>
-    <th data-dynatable-column="osName">name</th>
-    <th data-dynatable-column="osVersion">version</th>
+    <th data-dynatable-column="dateTime">last seen</th>
   </thead>
 </table>
 
@@ -28,8 +25,12 @@
 {% block post_main_script %}
 {% load staticfiles %}
 <script charset="utf-8" src="{% static "report/js/vendor/dynatable-0.3.1.js" %}"></script>
+<script charset="utf-8" src="{% static "report/js/datetime.js" %}"></script>
+<script charset="utf-8" src="{% static "report/js/versions.js" %}"></script>
 
 <script type='text/javascript'>
+var language = getLanguage();
+
 // configure how the table fills in
 $.dynatableSetup({
   features: {
@@ -46,10 +47,7 @@ function rowWriter(rowIndex, record, columns, cellWriter) {
     var row = '<tr>';
 
     row += '<td>' + md5Link("{% url "user" %}", record.uid) + '</td>';
-    row += '<td><center>' + record.osReadable + '</center></td>';
-    row += '<td><center>' + record.osArch + '</center></td>';
-    row += '<td><center>' + record.osName + '</center></td>';
-    row += '<td>' + record.osVersion + '</td>';
+    row += '<td><center>' + dateTimeToHtml5(record.dateTime, language) + '</center></td>';
 
     row += '</tr>';
 
