@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from .serializer import MessageSerializer, UsageSerializer, HostListSerializer, UserListSerializer
 import django_filters
 from rest_framework import generics
+import hashlib
 
 class MessageViewSet(viewsets.ModelViewSet):
   queryset = Message.objects.all()
@@ -28,14 +29,25 @@ class WithinDateFilter(django_filters.DateFilter):
             queryset = queryset.filter(**filter_lookups)
         return queryset
 
+class MD5Filter(django_filters.CharFilter):
+    def filter(self, queryset, value):
+        if value:
+            if len(value) != 32:
+                value = hashlib.md5(value).hexdigest()
+            filter_lookups = { self.name: value }
+            queryset = queryset.filter(**filter_lookups)
+        return queryset
+
 class UsageFilter(django_filters.FilterSet):
     date    = WithinDateFilter(name="dateTime")
     datemin = django_filters.DateFilter(name="dateTime", lookup_type='gte')
     datemax = django_filters.DateFilter(name="dateTime", lookup_type='lt')
+    uid = MD5Filter(name="uid")
+    host = MD5Filter(name="host")
 
     class Meta:
         model = Usage
-        fields = ['date', 'datemin','datemax', 'host', 'uid']
+        fields = ['date', 'datemin','datemax']
         order_by = ['-dateTime']
 
 class UsageViewSet(viewsets.ModelViewSet):
