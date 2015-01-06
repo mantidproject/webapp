@@ -61,9 +61,10 @@ function rowWriter(rowIndex, record, columns, cellWriter) {
 $(document).ready(function() {
   $.getJSON('/api/hosts', function(d) {
     //window.console.log(d);
+    if (d.results) { d = d.results; }
     var startups = $('#host-list').dynatable({
       dataset: {
-        records: d.results
+        records: d
       },
       writers: {
         _rowWriter: rowWriter
