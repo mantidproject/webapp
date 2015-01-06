@@ -81,7 +81,7 @@ $(document).ready(function() {
       }
     }).data('dynatable');
 
-    var first = d.results[0];
+    var first = d[0];
     var content = ""
     if (first["osReadable"]) {
         content += "<thead><th colspan='2'>" + first["osReadable"] + "</th></thead>\n";
