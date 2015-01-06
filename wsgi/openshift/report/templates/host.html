@@ -80,6 +80,10 @@ $(document).ready(function() {
         queries: $('#search-uid')
       }
     }).data('dynatable');
+    //match sorting to what is returned from the server
+    startups.sorts.clear();
+    startups.sorts.add('dateTime',-1);
+    startups.process();
 
     var first = d[0];
     var content = ""
