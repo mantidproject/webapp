@@ -6,29 +6,22 @@
 
 source $OPENSHIFT_HOMEDIR/python/virtenv/bin/activate
 
-# if [ ! -f $OPENSHIFT_DATA_DIR/db.sqlite3 ]
-# then
-#     echo "Copying $OPENSHIFT_REPO_DIR/wsgi/openshift/db.sqlite3 to $OPENSHIFT_DATA_DIR"
-#     cp "$OPENSHIFT_REPO_DIR"wsgi/openshift/db.sqlite3 $OPENSHIFT_DATA_DIR
-#     python "$OPENSHIFT_REPO_DIR".openshift/action_hooks/secure_db.py | tee ${OPENSHIFT_DATA_DIR}/CREDENTIALS
-# else
-#     echo "copying migrations to  app-root storage"
-#     echo "cp -r "${OPENSHIFT_DATA_DIR}services/migrations" ${OPENSHIFT_REPO_DIR}wsgi/openshift/services"
-#     cp -r "${OPENSHIFT_DATA_DIR}services/migrations" ${OPENSHIFT_REPO_DIR}wsgi/openshift/services
+echo "copying migrations to  app-root storage"
+echo "cp -r "${OPENSHIFT_DATA_DIR}services/migrations" ${OPENSHIFT_REPO_DIR}wsgi/openshift/services"
+cp -r "${OPENSHIFT_DATA_DIR}services/migrations" ${OPENSHIFT_REPO_DIR}wsgi/openshift/services
  
-#     echo "generating migration files 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py schemamigration services --auto'"
-#     python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py schemamigration services --auto
+echo "generating migration files 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py schemamigration services --auto'"
+python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py schemamigration services --auto
 
-#     echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py syncdb --noinput'"
-#     python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py syncdb --noinput
+echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py syncdb --noinput'"
+python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py syncdb --noinput
 
-#     echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py migrate services'"
-#     python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py migrate services
+echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py migrate services'"
+python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py migrate services
 
-#     echo "saving migrations to persistent storage"
-#     echo "cp -r "$OPENSHIFT_REPO_DIR"wsgi/openshift/services/migrations ${OPENSHIFT_DATA_DIR}services/"
-#     cp -r "${OPENSHIFT_REPO_DIR}wsgi/openshift/services/migrations" "${OPENSHIFT_DATA_DIR}services/"
-# fi
+echo "saving migrations to persistent storage"
+echo "cp -r "$OPENSHIFT_REPO_DIR"wsgi/openshift/services/migrations ${OPENSHIFT_DATA_DIR}services/"
+cp -r "${OPENSHIFT_REPO_DIR}wsgi/openshift/services/migrations" "${OPENSHIFT_DATA_DIR}services/"
 
 echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py collectstatic --noinput'"
 python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py collectstatic --noinput # -v0
