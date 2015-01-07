@@ -7,25 +7,15 @@ https://docs.djangoproject.com/en/1.6/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
-# Build paths inside the project like this: os.path.join(PROJECT_DIR, ...)
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import imp
 
 ON_OPENSHIFT = False
 if os.environ.has_key('OPENSHIFT_REPO_DIR'):
      ON_OPENSHIFT = True
-if os.environ.has_key('OPENSHIFT_APP_NAME'):
-    DB_NAME = os.environ['OPENSHIFT_APP_NAME']
-if os.environ.has_key('OPENSHIFT_DB_USERNAME'):
-    DB_USER = os.environ['OPENSHIFT_DB_USERNAME']
-if os.environ.has_key('OPENSHIFT_DB_PASSWORD'):
-    DB_PASSWD = os.environ['OPENSHIFT_DB_PASSWORD']
-if os.environ.has_key('OPENSHIFT_DB_HOST'):
-    DB_HOST = os.environ['OPENSHIFT_DB_HOST']
-if os.environ.has_key('OPENSHIFT_DB_PORT'):
-    DB_PORT = os.environ['OPENSHIFT_DB_PORT']
 
-PROJECT_DIR = os.path.dirname(os.path.realpath(__file__))
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -102,8 +92,8 @@ if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDIS
 WSGI_APPLICATION = 'wsgi.application'
 
 TEMPLATE_DIRS = (
-     os.path.join(PROJECT_DIR,'templates'),
-     os.path.join(PROJECT_DIR,'report/templates'),
+     os.path.join(BASE_DIR,'templates'),
+     os.path.join(BASE_DIR,'report/templates'),
 )
 
 # List of callables that know how to import templates from various sources.
@@ -119,7 +109,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
-    'PAGINATE_BY': 100,
+    # 'PAGINATE_BY': 100
 }
 
 # Database
@@ -127,19 +117,15 @@ REST_FRAMEWORK = {
 if ON_OPENSHIFT:
      DATABASES = {
          'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': DB_NAME,
-            'USER': DB_USER,
-            'PASSWORD': DB_PASSWD,
-            'HOST': DB_HOST,
-            'PORT': DB_PORT,
+             'ENGINE': 'django.db.backends.sqlite3',
+             'NAME': os.path.join(os.environ['OPENSHIFT_DATA_DIR'], 'db.sqlite3'),
          }
      }
 else:
      DATABASES = {
          'default': {
              'ENGINE': 'django.db.backends.sqlite3',
-             'NAME': os.path.join(PROJECT_DIR, 'db.sqlite3'),
+             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
          }
     }
 
@@ -162,7 +148,7 @@ STATIC_URL = '/static/'
 if 'OPENSHIFT_REPO_DIR' in os.environ:
     STATIC_ROOT = os.path.join(os.environ.get('OPENSHIFT_REPO_DIR'), 'wsgi', 'static')
 else:
-    STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, '..', STATIC_URL.strip("/")))
+    STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, '..', STATIC_URL.strip("/")))
 
 # Additional locations of static files
 STATICFILES_DIRS = (
