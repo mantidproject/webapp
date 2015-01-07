@@ -65,7 +65,7 @@ class ListHosts(generics.ListAPIView):
 
   def get_queryset(self):
       # sqllite does not supported this
-      if settings.ON_OPENSHIFT:
+      if False: #settings.ON_OPENSHIFT:
           return Usage.objects.order_by('host').distinct('host')
       else:
           # but it doesn't so do the work by hand
@@ -86,7 +86,7 @@ class ListUsers(generics.ListAPIView):
 
   def get_queryset(self):
       # sqllite does not supported this
-      if settings.ON_OPENSHIFT:
+      if False: #settings.ON_OPENSHIFT:
           return Usage.objects.order_by('host').distinct('host')
       else:
           # but it doesn't so do the work by hand
