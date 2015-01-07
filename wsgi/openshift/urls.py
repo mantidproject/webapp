@@ -24,8 +24,9 @@ urlpatterns = patterns('',
     # url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/favicon.ico'}),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/',include(router.urls)), # should be in services/urls.py
-    url(r'^api/hosts/$', ListHosts.as_view()), # should be in services/urls.py
-    url(r'^api/users/$', ListUsers.as_view()), # should be in services/urls.py
+    url(r'^api/host/$', ListHosts.as_view()), # should be in services/urls.py
+    url(r'^api/user/$', ListUsers.as_view()), # should be in services/urls.py
+    url(r'^api/stuff/$', 'listHosts'),
     url(r'^api-auth/',include('rest_framework.urls', namespace='rest_framework')), # should be in services/urls.py
     url(r'^report/', include('report.urls')),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
