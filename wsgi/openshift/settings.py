@@ -11,19 +11,18 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 import imp
 
+# introspect from openshift
 ON_OPENSHIFT = False
 if os.environ.get('OPENSHIFT_REPO_DIR', False):
      ON_OPENSHIFT = True
-if os.environ.get('OPENSHIFT_APP_NAME', False):
-    DB_NAME = os.environ['OPENSHIFT_APP_NAME']
 if os.environ.get('OPENSHIFT_MYSQL_DB_USERNAME', False):
     DB_USER = os.environ['OPENSHIFT_MYSQL_DB_USERNAME']
 if os.environ.get('OPENSHIFT_MYSQL_DB_PASSWORD', False):
     DB_PASSWD = os.environ['OPENSHIFT_MYSQL_DB_PASSWORD']
-if os.environ.get('OPENSHIFT_MYSQL_DB_HOST', False):
-    DB_HOST = os.environ['OPENSHIFT_MYSQL_DB_HOST']
-if os.environ.get('OPENSHIFT_MYSQL_DB_PORT', False):
-    DB_PORT = os.environ['OPENSHIFT_MYSQL_DB_PORT']
+# get these from openshift or use localhost versions
+DB_NAME = os.environ.get('OPENSHIFT_APP_NAME', "django")
+DB_HOST = os.environ.get('OPENSHIFT_MYSQL_DB_HOST', "127.0.0.1")
+DB_PORT = os.environ.get('OPENSHIFT_MYSQL_DB_PORT', "3306")
 
 PROJECT_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -124,7 +123,7 @@ REST_FRAMEWORK = {
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-if ON_OPENSHIFT:
+if ON_OPENSHIFT or (DB_USER and DB_PASSWD):
      DATABASES = {
          'default': {
             'ENGINE': 'django.db.backends.mysql',
