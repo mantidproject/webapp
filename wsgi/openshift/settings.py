@@ -15,10 +15,8 @@ import imp
 ON_OPENSHIFT = False
 if os.environ.get('OPENSHIFT_REPO_DIR', False):
      ON_OPENSHIFT = True
-if os.environ.get('OPENSHIFT_MYSQL_DB_USERNAME', False):
-    DB_USER = os.environ['OPENSHIFT_MYSQL_DB_USERNAME']
-if os.environ.get('OPENSHIFT_MYSQL_DB_PASSWORD', False):
-    DB_PASSWD = os.environ['OPENSHIFT_MYSQL_DB_PASSWORD']
+DB_USER = os.environ.get('OPENSHIFT_MYSQL_DB_USERNAME', None)
+DB_PASSWD = os.environ.get('OPENSHIFT_MYSQL_DB_PASSWORD', None)
 # get these from openshift or use localhost versions
 DB_NAME = os.environ.get('OPENSHIFT_APP_NAME', "django")
 DB_HOST = os.environ.get('OPENSHIFT_MYSQL_DB_HOST', "127.0.0.1")
