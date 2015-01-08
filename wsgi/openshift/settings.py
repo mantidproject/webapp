@@ -12,17 +12,17 @@ import os
 import imp
 
 ON_OPENSHIFT = False
-if os.environ.has_key('OPENSHIFT_REPO_DIR'):
+if os.environ.get('OPENSHIFT_REPO_DIR', False):
      ON_OPENSHIFT = True
-if os.environ.has_key('OPENSHIFT_APP_NAME'):
+if os.environ.get('OPENSHIFT_APP_NAME', False):
     DB_NAME = os.environ['OPENSHIFT_APP_NAME']
-if os.environ.has_key('OPENSHIFT_MYSQL_DB_USERNAME'):
+if os.environ.get('OPENSHIFT_MYSQL_DB_USERNAME', False):
     DB_USER = os.environ['OPENSHIFT_MYSQL_DB_USERNAME']
-if os.environ.has_key('OPENSHIFT_MYSQL_DB_PASSWORD'):
+if os.environ.get('OPENSHIFT_MYSQL_DB_PASSWORD', False):
     DB_PASSWD = os.environ['OPENSHIFT_MYSQL_DB_PASSWORD']
-if os.environ.has_key('OPENSHIFT_MYSQL_DB_HOST'):
+if os.environ.get('OPENSHIFT_MYSQL_DB_HOST', False):
     DB_HOST = os.environ['OPENSHIFT_MYSQL_DB_HOST']
-if os.environ.has_key('OPENSHIFT_MYSQL_DB_PORT'):
+if os.environ.get('OPENSHIFT_MYSQL_DB_PORT', False):
     DB_PORT = os.environ['OPENSHIFT_MYSQL_DB_PORT']
 
 PROJECT_DIR = os.path.dirname(os.path.realpath(__file__))
