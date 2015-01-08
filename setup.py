@@ -7,7 +7,7 @@ packages = ['Django<=1.7',
     'static3', # serve static files in the server
     'djangorestframework',
     'django-filter',
-    'markdown',
+    'Markdown',
     'MySQL-python',
     'South']
 
