@@ -3,11 +3,12 @@ from django.shortcuts import render
 # Create your views here.
 from .models import Message, Usage
 from rest_framework import response, views, viewsets, filters
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from .serializer import MessageSerializer, UsageSerializer, HostListSerializer, UserListSerializer
 import django_filters
 from rest_framework import generics
+from rest_framework.reverse import reverse
 import hashlib
 import settings
 
@@ -99,3 +100,12 @@ class ListUsers(generics.ListAPIView):
                   uid_names.append(uid['uid'])
                   uids.append(uid)
           return uids
+
+@api_view(('GET',))
+@permission_classes([IsAuthenticatedOrReadOnly])
+def api_root(request, format=None):
+    return response.Response({
+        'host': reverse('host-list', request=request, format=format),
+        'usage': reverse('usage-list', request=request, format=format),
+        'user': reverse('user-list', request=request, format=format)
+    })
