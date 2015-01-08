@@ -65,10 +65,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
+    'markdown',
     'report',
     'rest_framework',
     'services',
-    'south', # pip install South
 )
 
 MIDDLEWARE_CLASSES = (

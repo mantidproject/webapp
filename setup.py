@@ -3,10 +3,11 @@ from setuptools import setup, find_packages
 import os
 
 # Put here required packages
-packages = ['Django<=1.6',
+packages = ['Django<=1.7',
     'static3', # serve static files in the server
-    'djangorestframework==2.4.4',
+    'djangorestframework',
     'django-filter',
+    'markdown',
     'MySQL-python',
     'South']
 
