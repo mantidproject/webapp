@@ -57,7 +57,6 @@ class UsageViewSet(viewsets.ModelViewSet):
   serializer_class = UsageSerializer
   permission_classes = [AllowAny]
   filter_class=UsageFilter
-  filter_backends = (filters.OrderingFilter, filters.DjangoFilterBackend,)
 
 class ListHosts(generics.ListAPIView):
   model = Usage
