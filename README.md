@@ -62,10 +62,12 @@ Develop local rendering using remote database
 ---------------------------------------------
 ***This should not be done when developing the posting capabilities***
 
-This can be done using a simple port forwarding and configuring the mysql to point at that.
-First find out the username/password for the database from `rhc apps`. Then this should be
-set as the username/password for the database via the environment variables
-`OPENSHIFT_MYSQL_DB_USERNAME` and `OPENSHIFT_MYSQL_DB_PASSWORD`. I do this in a shell script
-so I don't have to track down the information every time. Then start the port forwarding
-by runing `rhc port-forward -a django`. Finally, start the server using the normal
-`manage.py runserver`. Don't worry about warnings considering the database migration.
+This can be done using a
+[simple port forwarding](https://blog.openshift.com/getting-started-with-port-forwarding-on-openshift/)
+and configuring the mysql to point at that. First find out the username/password for the 
+database from `rhc apps`. Then this should be set as the username/password for the database
+via the environment variables `OPENSHIFT_MYSQL_DB_USERNAME` and `OPENSHIFT_MYSQL_DB_PASSWORD`.
+I do this in a shell script so I don't have to track down the information every time. Then
+start the port forwarding by running `rhc port-forward -a django`. Finally, start the server
+using the normal `manage.py runserver`. Don't worry about warnings considering the database
+migration.
