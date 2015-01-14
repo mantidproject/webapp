@@ -43,13 +43,6 @@ class UsageSerializer(serializers.HyperlinkedModelSerializer):
     self.checkHex(value, "sha1")
     return value
 
-class HostListSerializer(serializers.Serializer):
-    host = serializers.CharField()
-    osReadable = serializers.CharField()
-    osName = serializers.CharField()
-    osArch = serializers.CharField()
-    osVersion = serializers.CharField()
-
 class UserListSerializer(serializers.Serializer):
     uid = serializers.CharField()
     dateTime = serializers.DateTimeField()

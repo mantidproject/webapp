@@ -13,6 +13,6 @@ router.register(r'usage', views.UsageViewSet)
 urlpatterns = patterns('',
     url(r'^$', views.api_root),
     url(r'^',include(router.urls)),
-    url(r'^host/$', views.ListHosts.as_view(), name='host-list'),
+    url(r'^host/$', views.host_list, name='host-list'),
     url(r'^user/$', views.ListUsers.as_view(), name='user-list'),
 )
