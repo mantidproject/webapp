@@ -53,6 +53,9 @@ class UsageFilter(django_filters.FilterSet):
         order_by = ['-dateTime']
 
 class UsageViewSet(viewsets.ModelViewSet):
+  """All usages registered in the system. Valid filter parameters are:
+    'host', 'uid', 'datemin', 'datemax', and 'date'.
+  """
   queryset = Usage.objects.all()
   serializer_class = UsageSerializer
   permission_classes = [AllowAny]
@@ -73,6 +76,7 @@ def filterByDate(queryset, request):
 @api_view(('GET',))
 @permission_classes([IsAuthenticatedOrReadOnly])
 def host_list(request, format=None):
+  """List of hosts. This can be filtered with 'datemin' and 'datemax' parameters"""
   queryset = Usage.objects.all()
   queryset = filterByDate(queryset, request)
 
@@ -90,7 +94,7 @@ def host_list(request, format=None):
 @api_view(('GET',))
 @permission_classes([IsAuthenticatedOrReadOnly])
 def user_list(request, format=None):
-    """List of users"""
+    """List of users. This can be filtered with 'datemin' and 'datemax' parameters"""
     queryset = Usage.objects.all()
     queryset = filterByDate(queryset, request)
 
@@ -111,4 +115,4 @@ def api_root(request, format=None):
         'host': reverse('host-list', request=request, format=format),
         'usage': reverse('usage-list', request=request, format=format),
         'user': reverse('user-list', request=request, format=format)
-    }, description="list of api endpoints")
+    })
