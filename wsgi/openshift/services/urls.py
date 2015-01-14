@@ -14,5 +14,5 @@ urlpatterns = patterns('',
     url(r'^$', views.api_root),
     url(r'^',include(router.urls)),
     url(r'^host/$', views.host_list, name='host-list'),
-    url(r'^user/$', views.ListUsers.as_view(), name='user-list'),
+    url(r'^user/$', views.user_list, name='user-list'),
 )

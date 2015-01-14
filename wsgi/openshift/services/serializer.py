@@ -42,7 +42,3 @@ class UsageSerializer(serializers.HyperlinkedModelSerializer):
     self.checkLength(value, 40, "sha1")
     self.checkHex(value, "sha1")
     return value
-
-class UserListSerializer(serializers.Serializer):
-    uid = serializers.CharField()
-    dateTime = serializers.DateTimeField()

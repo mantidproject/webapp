@@ -5,7 +5,7 @@ from .models import Message, Usage
 from rest_framework import response, views, viewsets, filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
-from .serializer import MessageSerializer, UsageSerializer, UserListSerializer
+from .serializer import MessageSerializer, UsageSerializer
 import django_filters
 from rest_framework import generics
 from rest_framework.reverse import reverse
@@ -58,42 +58,23 @@ class UsageViewSet(viewsets.ModelViewSet):
   permission_classes = [AllowAny]
   filter_class=UsageFilter
 
-class ListUsers(generics.ListAPIView):
-  model = Usage
-  serializer_class = UserListSerializer
-  permission_classes = [IsAuthenticatedOrReadOnly]
 
-  def get_queryset(self):
-      # sqllite does not supported this
-      if False: #settings.ON_OPENSHIFT:
-          return Usage.objects.order_by('host').distinct('host')
-      else:
-          # but it doesn't so do the work by hand
-          uids = []
-          uid_names = []
-          # only return the values that are actually used - sort by most recent first
-          for uid in Usage.objects.order_by('-dateTime')\
-                .values('uid', 'dateTime'):
-              if not uid['uid'] in uid_names:
-                  uid_names.append(uid['uid'])
-                  uids.append(uid)
-          return uids
-
-def filterByDate(queryset, datemin, datemax):
+def filterByDate(queryset, request):
+    datemin = request.query_params.get("datemin", None)
     if datemin:
         queryset = django_filters.DateFilter(name="dateTime", lookup_type='gte').filter(queryset, datemin)
+
+    datemax = request.query_params.get("datemax", None)
     if datemax:
         queryset = django_filters.DateFilter(name="dateTime", lookup_type='lt').filter(queryset, datemax)
+
     return queryset
 
 @api_view(('GET',))
 @permission_classes([IsAuthenticatedOrReadOnly])
 def host_list(request, format=None):
-  datemin = request.query_params.get("datemin", None)
-  datemax = request.query_params.get("datemax", None)
-
   queryset = Usage.objects.all()
-  queryset = filterByDate(queryset, datemin, datemax)
+  queryset = filterByDate(queryset, request)
 
   hosts = []
   host_names = []
@@ -108,9 +89,26 @@ def host_list(request, format=None):
 
 @api_view(('GET',))
 @permission_classes([IsAuthenticatedOrReadOnly])
+def user_list(request, format=None):
+    """List of users"""
+    queryset = Usage.objects.all()
+    queryset = filterByDate(queryset, request)
+
+    uids = []
+    uid_names = []
+    for uid in queryset.order_by("-dateTime")\
+          .values('uid', 'dateTime'):
+        if not uid['uid'] in uid_names:
+            uid_names.append(uid['uid'])
+            uids.append(uid)
+
+    return response.Response(uids)
+
+@api_view(('GET',))
+@permission_classes([IsAuthenticatedOrReadOnly])
 def api_root(request, format=None):
     return response.Response({
         'host': reverse('host-list', request=request, format=format),
         'usage': reverse('usage-list', request=request, format=format),
         'user': reverse('user-list', request=request, format=format)
-    })
+    }, description="list of api endpoints")
