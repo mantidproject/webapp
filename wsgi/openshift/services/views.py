@@ -74,7 +74,6 @@ def filterByDate(queryset, request):
     return queryset
 
 @api_view(('GET',))
-@permission_classes([IsAuthenticatedOrReadOnly])
 def host_list(request, format=None):
   """List of hosts. This can be filtered with 'datemin' and 'datemax' parameters"""
   queryset = Usage.objects.all()
@@ -92,7 +91,6 @@ def host_list(request, format=None):
   return response.Response(hosts)
 
 @api_view(('GET',))
-@permission_classes([IsAuthenticatedOrReadOnly])
 def user_list(request, format=None):
     """List of users. This can be filtered with 'datemin' and 'datemax' parameters"""
     queryset = Usage.objects.all()
@@ -109,7 +107,6 @@ def user_list(request, format=None):
     return response.Response(uids)
 
 @api_view(('GET',))
-@permission_classes([IsAuthenticatedOrReadOnly])
 def api_root(request, format=None):
     return response.Response({
         'host': reverse('host-list', request=request, format=format),
