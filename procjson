@@ -1,4 +1,6 @@
 #!/bin/bash
+URL="http://127.0.0.1:8000/api/usage"
+
 num_lines=$(wc -l ${1})
 num_lines=$(echo ${num_lines} | awk '{print $1}')
 
@@ -20,6 +22,6 @@ fi
 echo "sending documents"
 while read json; do
   echo "$json"
-  curl -H "Content-Type: application/json" http://127.0.0.1:8000/api/usage/ -d "$json"
+  curl -H "Content-Type: application/json" ${URL} -d "$json"
   echo
 done < ${1}
