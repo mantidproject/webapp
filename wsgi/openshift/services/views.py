@@ -9,8 +9,12 @@ from .serializer import MessageSerializer, UsageSerializer
 import django_filters
 from rest_framework import generics
 from rest_framework.reverse import reverse
+import datetime
 import hashlib
 import settings
+
+OS_NAMES = ['Linux', 'Windows NT', 'Darwin']
+UTC = datetime.tzinfo('UTC')
 
 class MessageViewSet(viewsets.ModelViewSet):
   queryset = Message.objects.all()
@@ -49,7 +53,7 @@ class UsageFilter(django_filters.FilterSet):
 
     class Meta:
         model = Usage
-        fields = ['date', 'datemin','datemax']
+        fields = ['date', 'datemin','datemax', 'osName']
         order_by = ['-dateTime']
 
 class UsageViewSet(viewsets.ModelViewSet):
@@ -62,16 +66,42 @@ class UsageViewSet(viewsets.ModelViewSet):
   filter_class=UsageFilter
 
 
-def filterByDate(queryset, request):
-    datemin = request.query_params.get("datemin", None)
+def filterByDate(queryset, request=None, datemin=None, datemax=None):
+    if request:
+      datemin = request.query_params.get("datemin", datemin)
+      datemax = request.query_params.get("datemax", datemax)
+
     if datemin:
         queryset = django_filters.DateFilter(name="dateTime", lookup_type='gte').filter(queryset, datemin)
 
-    datemax = request.query_params.get("datemax", None)
     if datemax:
         queryset = django_filters.DateFilter(name="dateTime", lookup_type='lt').filter(queryset, datemax)
 
     return queryset
+
+def getDateRange(queryset):
+    queryset = queryset.order_by("dateTime")
+    dates=[]
+    delta = datetime.timedelta(days=1)
+    item = queryset.first().dateTime.date()
+    end = queryset.last().dateTime.date()
+    while item <= end:
+        dates.append(item)
+        item += delta
+    return dates
+
+def prepResult(dates):
+    result = {'date':dates, 'total':[], 'other':[]}
+    for label in OS_NAMES:
+        result[label] = []
+    return result
+
+def convertResult(result):
+    mapping = {'Linux':'linux', 'Darwin':'mac', 'Windows NT':'windows'}
+    for key in mapping.keys():
+        if key in result:
+          result[mapping[key]] = result.pop(key)
+    return result
 
 @api_view(('GET',))
 def host_list(request, format=None):
@@ -106,10 +136,57 @@ def user_list(request, format=None):
 
     return response.Response(uids)
 
+def query_count(queryset, field):
+    if field:
+        return queryset.order_by(field).values(field).distinct().count()
+    else:
+        return queryset.count()
+
+def usage_by_field(request, format=None, field=None):
+    queryset = filterByDate(Usage.objects.all(), request)
+    dates = getDateRange(queryset)
+    result = prepResult(dates)
+
+    dateFilter = WithinDateFilter('dateTime')
+    for date in dates:
+        queryset_date = dateFilter.filter(queryset, date)
+        total = query_count(queryset_date, field)
+        cumulative = 0
+        for label in OS_NAMES:
+            count = query_count(queryset_date.filter(osName=label), field)
+            cumulative += count
+            result[label].append(count)
+        result['total'].append(total)
+        result['other'].append(max(0,total-cumulative)) # one user can be on multiple systems
+
+    result = convertResult(result)
+    return response.Response(result)
+
+@api_view(('GET',))
+def usage_by_hosts(request, format=None):
+    return usage_by_field(request, format, 'host')
+
+@api_view(('GET',))
+def usage_by_users(request, format=None):
+    return usage_by_field(request, format, 'uid')
+
+@api_view(('GET',))
+def usage_by_start(request, format=None):
+    return usage_by_field(request, format)
+
 @api_view(('GET',))
 def api_root(request, format=None):
     return response.Response({
-        'host': reverse('host-list', request=request, format=format),
+        'by':    reverse('by-root',    request=request, format=format),
+        'host':  reverse('host-list',  request=request, format=format),
         'usage': reverse('usage-list', request=request, format=format),
-        'user': reverse('user-list', request=request, format=format)
+        'user':  reverse('user-list',  request=request, format=format)
+    })
+
+@api_view(('GET',))
+def by_root(request, format=None):
+    return response.Response({
+        'host':reverse('by-hosts', request=request, format=format),
+        'user':reverse('by-users', request=request, format=format),
+        'start':reverse('by-starts', request=request, format=format),
     })
