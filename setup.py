@@ -8,8 +8,7 @@ packages = ['Django==1.7',
     'djangorestframework',
     'django-filter',
     'Markdown',
-    'MySQL-python',
-    'South']
+    'MySQL-python']
 
 if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDISCLOUD_PASSWORD' in os.environ:
      packages.append('django-redis-cache')
