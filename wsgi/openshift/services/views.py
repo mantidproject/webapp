@@ -68,8 +68,8 @@ class UsageViewSet(viewsets.ModelViewSet):
 
 def filterByDate(queryset, request=None, datemin=None, datemax=None):
     if request:
-        datemax = request.GET("datemax", datemax)
-        datemax = request.GET("datemax", datemax)
+        datemax = request.GET.get("datemax", datemax)
+        datemax = request.GET.get("datemax", datemax)
         # datemax = request.data.get("datemax", datemax)
         # datemax = request.data.get("datemax", datemax)
 
