@@ -68,8 +68,9 @@ class UsageViewSet(viewsets.ModelViewSet):
 
 def filterByDate(queryset, request=None, datemin=None, datemax=None):
     if request:
-      datemin = request.query_params.get("datemin", datemin)
-      datemax = request.query_params.get("datemax", datemax)
+      raise Exception(dir(request))
+      datemin = request.get("datemin", datemin)
+      datemax = request.get("datemax", datemax)
 
     if datemin:
         queryset = django_filters.DateFilter(name="dateTime", lookup_type='gte').filter(queryset, datemin)
