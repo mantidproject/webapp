@@ -4,9 +4,112 @@
 
 {% block content %}
 
+<style>
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.x.axis path {
+  display: none;
+}
+.line {
+  fill: none;
+  stroke-width: 2px;
+}
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+.tooltip {
+    pointer-events:none; /*let mouse events pass through*/
+    opacity:0.7;
+    transition: opacity 0.3s;
+}
+div.tooltip {
+    position: absolute;
+    text-align:left;
+}
+</style>
+
+ <div id="startups-graph"></div>
+
 <h2>Available Reports:</h2>
 <ul>
     <li><a href="{% url "host" %}">hosts</a></li>
     <li><a href="{% url "user" %}">users</a></li>
 </ul>
+{% endblock %}
+
+{% block post_main_script %}
+{% load staticfiles %}
+<script charset="utf-8" src="{% static "report/js/vendor/d3-3.5.3.min-js" %}"></script>
+
+<script type='text/javascript'>
+var div_width = parseInt(d3.select("#startups-graph").style("width"))
+var margin = {top: 10, right: 10, bottom: 30, left: 60},
+    width = div_width - margin.left - margin.right,
+    height = (div_width * 4 / 7) - margin.top - margin.bottom;
+
+var parseDate=d3.time.format("%Y-%m-%d").parse;
+
+var x = d3.time.scale()
+          .range([0, width]);
+
+var y = d3.scale.linear()
+          .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+              .scale(x)
+              .orient("bottom");
+
+var yAxis = d3.svg.axis()
+              .scale(y)
+              .orient("left");
+
+var line = d3.svg.line()
+    .interpolate("basis")
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.total); });
+
+
+$(document).ready(function() {
+  $.getJSON('/api/by/start/', function(d) {
+    // window.console.log(d);
+    d.date = d.date.map(function(item) {
+        return parseDate(item);
+    });
+
+    var svg = d3.select("#startups-graph").append("svg:svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("svg:g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    x.domain([d.date[0], d.date[d.date.length-1]]);
+    svg.append("g")
+       .attr("class", "x axis")
+       .attr("transform", "translate(0," + height + ")")
+       .call(xAxis);
+
+    y.domain([0, 100]); // max should be calculated
+    svg.append("g")
+       .attr("class", "y axis")
+       .call(yAxis)
+       .append("text")
+       .attr("transform", "rotate(-90)")
+       .attr("y", 6)
+       .attr("dy", ".71em")
+       .style("text-anchor", "end");
+
+    
+
+    // svg.append("path")
+       // .attr("class", "line")
+       // .attr("d", function(d) { window.console.log(d);return line(d); })
+       // .style("stroke", "black");
+  });
+});
+</script>
 {% endblock %}
