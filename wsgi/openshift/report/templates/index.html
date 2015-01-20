@@ -38,6 +38,7 @@ div.tooltip {
 }
 </style>
 
+<h2>Total start-ups per day</h2>
  <div id="startups-graph"></div>
 
 <h2>Available Reports:</h2>
@@ -80,8 +81,18 @@ var line = d3.svg.line()
 
 var color = d3.scale.category10();
 
+var startpoint = new Date();
+startpoint.setDate(startpoint.getDate() - 14);
+startpoint = (startpoint.getFullYear()) + '-'
+           + (startpoint.getMonth() + 1) + '-'
+           + (startpoint.getDate());
+
+var endpoint = '/api/by/start/?datemin='+startpoint;
+window.console.log(endpoint);
+
+
 $(document).ready(function() {
-  $.getJSON('/api/by/start/', function(data) {
+  $.getJSON(endpoint, function(data) {
     // window.console.log(data);
     data.forEach(function(d) {
       d.date = parseDate(d.date);
