@@ -38,17 +38,54 @@ div.tooltip {
 }
 </style>
 
-<h2>Total start-ups per day</h2>
- <div id="startups-graph"></div>
+<div id="option">
+Startups by
+<select id="report_type">
+  <option value="start">number</option>
+  <option value="host">host</option>
+  <option value="user">user</option>
+</select>
+from
+<input id="date_start"
+       type="date" />
+to
+<input id="date_stop"
+       type="date" />
+<input id="updateButton"
+                 type="button"
+                value="update"
+                onclick="updateData()" />
+</div>
 
-<h2>Available Reports:</h2>
-<ul>
-    <li><a href="{% url "host" %}">hosts</a></li>
-    <li><a href="{% url "user" %}">users</a></li>
-</ul>
+
+
+<div id="startups-graph"></div>
+
+<p><b>Other Reports:</b>
+    <a href="{% url "host" %}">list of hosts</a>
+    and <a href="{% url "user" %}">list of users</a>
+</p>
 {% endblock %}
 
 {% block post_main_script %}
+<script type="text/javascript">
+function getFormattedDate(date) {
+  var year = date.getFullYear();
+  var month = (1 + date.getMonth()).toString();
+  month = month.length > 1 ? month : '0' + month;
+  var day = date.getDate().toString();
+  day = day.length > 1 ? day : '0' + day;
+  return year + '-' + month + '-' + day;
+}
+
+var enddate = getFormattedDate(new Date());
+$("#date_stop").attr('value', enddate);
+
+var startdate = new Date();
+startdate.setDate(startdate.getDate() - 30);
+$("#date_start").attr('value', getFormattedDate(startdate));
+</script>
+
 {% load staticfiles %}
 <script charset="utf-8" src="{% static "report/js/vendor/d3-3.5.3.min-js" %}"></script>
 
@@ -81,18 +118,16 @@ var line = d3.svg.line()
 
 var color = d3.scale.category10();
 
-var startpoint = new Date();
-startpoint.setDate(startpoint.getDate() - 14);
-startpoint = (startpoint.getFullYear()) + '-'
-           + (startpoint.getMonth() + 1) + '-'
-           + (startpoint.getDate());
-
-var endpoint = '/api/by/start/?datemin='+startpoint;
-window.console.log(endpoint);
-
+function getEndpoint() {
+  var endpoint = '/api/by/' + $("#report_type").val() + '/'
+               + '?datemin=' + $("#date_start").val();
+  // endpoint += '&datemax=' + $("#date_stop").val();
+  window.console.log(endpoint);
+  return endpoint;
+}
 
 $(document).ready(function() {
-  $.getJSON(endpoint, function(data) {
+  $.getJSON(getEndpoint(), function(data) {
     // window.console.log(data);
     data.forEach(function(d) {
       d.date = parseDate(d.date);
