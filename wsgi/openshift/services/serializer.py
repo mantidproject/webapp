@@ -27,18 +27,18 @@ class UsageSerializer(serializers.HyperlinkedModelSerializer):
     if len(value) > 0:
       raise serializers.ValidationError("'%s' is not consistent with %s" % (attrs[source], label))
 
-  def validate_uid(self, value):
-    """uid should be an md5"""
-    self.checkLength(value, 32, "md5")
-    return value
+  # def validate_uid(self, value):
+  #   """uid should be an md5"""
+  #   self.checkLength(value, 32, "md5")
+  #   return value
 
-  def validate_host(self, value):
-    """host should be an md5"""
-    self.checkLength(value, 32, "md5")
-    return value
+  # def validate_host(self, value):
+  #   """host should be an md5"""
+  #   self.checkLength(value, 32, "md5")
+  #   return value
 
-  def validate_mantidSha1(self, value):
-    """mantidSha1 should be an sha1"""
-    self.checkLength(value, 40, "sha1")
-    self.checkHex(value, "sha1")
-    return value
+  # def validate_mantidSha1(self, value):
+  #   """mantidSha1 should be an sha1"""
+  #   self.checkLength(value, 40, "sha1")
+  #   self.checkHex(value, "sha1")
+  #   return value
