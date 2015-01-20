@@ -5,7 +5,7 @@ from services import views
 from rest_framework import routers
 from services import views
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 #router.register(r'message', MessageViewSet)
 router.register(r'usage', views.UsageViewSet)
 #router.register(r'hosts', ListHosts) # doesn't work
