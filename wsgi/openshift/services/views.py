@@ -162,7 +162,16 @@ def usage_by_field(request, format=None, field=None):
         result['other'].append(max(0,total-cumulative)) # one user can be on multiple systems
 
     result = convertResult(result)
-    return response.Response(result)
+
+    # make the result look like a d3.csv load
+    finalResult = []
+    for i in xrange(len(result['date'])):
+        line = {}
+        for key in result.keys():
+            line[key] = result[key][i]
+        finalResult.append(line)
+
+    return response.Response(finalResult)
 
 @api_view(('GET',))
 def usage_by_hosts(request, format=None):

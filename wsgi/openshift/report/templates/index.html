@@ -31,6 +31,11 @@ div.tooltip {
     position: absolute;
     text-align:left;
 }
+.legend {
+    font-size: 16px;
+    font-weight: bold;
+    text-anchor: middle;
+}
 </style>
 
  <div id="startups-graph"></div>
@@ -48,8 +53,8 @@ div.tooltip {
 
 <script type='text/javascript'>
 var div_width = parseInt(d3.select("#startups-graph").style("width"))
-var margin = {top: 10, right: 10, bottom: 30, left: 60},
-    width = div_width - margin.left - margin.right,
+var margin = {top: 30, right: 20, bottom: 70, left: 60},
+    width = div_width - 100 - margin.left - margin.right,
     height = (div_width * 4 / 7) - margin.top - margin.bottom;
 
 var parseDate=d3.time.format("%Y-%m-%d").parse;
@@ -71,14 +76,25 @@ var yAxis = d3.svg.axis()
 var line = d3.svg.line()
     .interpolate("basis")
     .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.total); });
+    .y(function(d) { return y(d.count); });
 
+var color = d3.scale.category10();
 
 $(document).ready(function() {
-  $.getJSON('/api/by/start/', function(d) {
-    // window.console.log(d);
-    d.date = d.date.map(function(item) {
-        return parseDate(item);
+  $.getJSON('/api/by/start/', function(data) {
+    // window.console.log(data);
+    data.forEach(function(d) {
+      d.date = parseDate(d.date);
+    });
+
+    color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
+    var systems = color.domain().map(function(name) {
+      return {
+        name: name,
+        values: data.map(function(d) {
+          return {date: d.date, count: +d[name]};
+        })
+      };
     });
 
     var svg = d3.select("#startups-graph").append("svg:svg")
@@ -87,13 +103,15 @@ $(document).ready(function() {
                 .append("svg:g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    x.domain([d.date[0], d.date[d.date.length-1]]);
+    x.domain(d3.extent(data, function(d) { return d.date; }));
     svg.append("g")
        .attr("class", "x axis")
        .attr("transform", "translate(0," + height + ")")
        .call(xAxis);
-
-    y.domain([0, 100]); // max should be calculated
+    y.domain([
+      d3.min(systems, function(c) { return d3.min(c.values, function(v) { return v.count; }); }),
+      d3.max(systems, function(c) { return d3.max(c.values, function(v) { return v.count; }); })
+    ]);
     svg.append("g")
        .attr("class", "y axis")
        .call(yAxis)
@@ -103,12 +121,44 @@ $(document).ready(function() {
        .attr("dy", ".71em")
        .style("text-anchor", "end");
 
-    
+    var system = svg.selectAll('.system')
+                    .data(systems)
+                    .enter().append('g')
+                    .attr('class','system');
 
-    // svg.append("path")
-       // .attr("class", "line")
-       // .attr("d", function(d) { window.console.log(d);return line(d); })
-       // .style("stroke", "black");
+    legendSpace = width/systems.length; // spacing for legend
+
+    // Loop through each symbol / key
+    systems.forEach(function(d,i) {
+
+        svg.append("path")
+            .attr("class", "line")
+            .style("stroke", function() { // Add the colours dynamically
+                return d.color = color(d.name); })
+            .attr("id", 'tag'+d.name.replace(/\s+/g, '')) // assign ID
+            .attr("d", line(d.values));
+
+        // Add the Legend
+        svg.append("text")
+            .attr("x", (legendSpace/2)+i*legendSpace) // spacing
+            .attr("y", height + (margin.bottom/2)+ 5)
+            .attr("class", "legend")    // style the legend
+            .style("fill", function() { // dynamic colours
+                return d.color = color(d.name); })
+            .on("click", function(){
+                // Determine if current line is visible 
+                var active   = d.active ? false : true,
+                newOpacity = active ? 0 : 1;
+                // Hide or show the elements based on the ID
+                d3.select("#tag"+d.name.replace(/\s+/g, ''))
+                    .transition().duration(100)
+                    .style("opacity", newOpacity);
+                // Update whether or not the elements are active
+                d.active = active;
+                })
+            .text(d.name); 
+
+    });
   });
 });
 </script>
