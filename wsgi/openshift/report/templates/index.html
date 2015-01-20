@@ -118,6 +118,42 @@ var line = d3.svg.line()
 
 var color = d3.scale.category10();
 
+function updateData() {
+  $.getJSON(getEndpoint(), function(data) {
+    // window.console.log(data);
+    data.forEach(function(d) {
+      d.date = parseDate(d.date);
+    });
+    var systems = color.domain().map(function(name) {
+      return {
+        name: name,
+        values: data.map(function(d) {
+          return {date: d.date, count: +d[name]};
+        })
+      };
+    });
+    x.domain(d3.extent(data, function(d) { return d.date; }));
+    y.domain([
+      d3.min(systems, function(c) { return d3.min(c.values, function(v) { return v.count; }); }),
+      d3.max(systems, function(c) { return d3.max(c.values, function(v) { return v.count; }); })
+    ]);
+
+    var svg_transition = d3.select("body").transition();
+
+    systems.forEach(function(d,i) {
+        d3.select("#tag"+d.name.replace(/\s+/g, ''))
+          .attr("d", line(d.values));
+    });
+
+    svg_transition.select(".x.axis") // change the x axis
+                  .duration(750)
+                  .call(xAxis);
+    svg_transition.select(".y.axis") // change the y axis
+                  .duration(750)
+                  .call(yAxis);
+  });
+}
+
 function getEndpoint() {
   var endpoint = '/api/by/' + $("#report_type").val() + '/'
                + '?datemin=' + $("#date_start").val();
