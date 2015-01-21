@@ -79,14 +79,26 @@ def filterByDate(queryset, request=None, datemin=None, datemax=None):
     if datemax:
         queryset = django_filters.DateFilter(name="dateTime", lookup_type='lt').filter(queryset, datemax)
 
-    return queryset
+    return (queryset, datemin, datemax)
 
-def getDateRange(queryset):
+def parseDate(date):
+    date = date.split('-')
+    date = [int(i) for i in date]
+    date = datetime.date(*date)
+    return date
+
+def getDateRange(queryset, datemin=None, datemax=None):
     queryset = queryset.order_by("dateTime")
     dates=[]
     delta = datetime.timedelta(days=1)
-    item = queryset.first().dateTime.date()
-    end = queryset.last().dateTime.date()
+    if datemin:
+        item = parseDate(datemin)
+    else:
+        item = queryset.first().dateTime.date()
+    if datemax:
+        end = parseDate(datemax)
+    else:
+        end = queryset.last().dateTime.date()
     while item <= end:
         dates.append(item)
         item += delta
@@ -109,7 +121,7 @@ def convertResult(result):
 def host_list(request, format=None):
   """List of hosts. This can be filtered with 'datemin' and 'datemax' parameters"""
   queryset = Usage.objects.all()
-  queryset = filterByDate(queryset, request)
+  (queryset, datemin, datemax) = filterByDate(queryset, request)
 
   hosts = []
   host_names = []
@@ -126,7 +138,7 @@ def host_list(request, format=None):
 def user_list(request, format=None):
     """List of users. This can be filtered with 'datemin' and 'datemax' parameters"""
     queryset = Usage.objects.all()
-    queryset = filterByDate(queryset, request)
+    (queryset, datemin, datemax) = filterByDate(queryset, request)
 
     uids = []
     uid_names = []
@@ -145,8 +157,8 @@ def query_count(queryset, field):
         return queryset.count()
 
 def usage_by_field(request, format=None, field=None):
-    queryset = filterByDate(Usage.objects.all(), request)
-    dates = getDateRange(queryset)
+    (queryset, datemin, datemax) = filterByDate(Usage.objects.all(), request)
+    dates = getDateRange(queryset, datemin, datemax)
     result = prepResult(dates)
 
     dateFilter = WithinDateFilter('dateTime')

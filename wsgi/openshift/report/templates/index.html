@@ -160,8 +160,8 @@ function updateData() {
 
 function getEndpoint() {
   var endpoint = '/api/by/' + $("#report_type").val() + '/'
-               + '?datemin=' + $("#date_start").val();
-  // endpoint += '&datemax=' + $("#date_stop").val();
+               + '?datemin=' + $("#date_start").val()
+               + '&datemax=' + $("#date_stop").val();
   window.console.log(endpoint);
   return endpoint;
 }
