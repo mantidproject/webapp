@@ -61,10 +61,14 @@ to
 
 <div id="startups-graph"></div>
 
-<p><b>Other Reports:</b>
+<p>Other Reports:
     <a href="{% url "host" %}">list of hosts</a>
     and <a href="{% url "user" %}">list of users</a>
 </p>
+
+<p>You can also go to
+<a href='/api'>api</a>, <a href="/admin">admin</a>,
+or <a href="/phpmyadmin">sql admin</a></p>
 {% endblock %}
 
 {% block post_main_script %}
