@@ -59,7 +59,7 @@ function rowWriter(rowIndex, record, columns, cellWriter) {
 
 
 $(document).ready(function() {
-  $.getJSON('/api/host/', function(d) {
+  $.getJSON('/api/host', function(d) {
     //window.console.log(d);
     if (d.results) { d = d.results; }
     var startups = $('#host-list').dynatable({
