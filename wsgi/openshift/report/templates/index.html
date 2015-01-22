@@ -36,6 +36,14 @@ div.tooltip {
     font-weight: bold;
     text-anchor: middle;
 }
+.focus circle {
+  fill: none;
+  stroke: black;
+}
+.focus text {
+  text-anchor: middle;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
 </style>
 
 <div id="option">
@@ -116,9 +124,35 @@ var yAxis = d3.svg.axis()
               .orient("left");
 
 var line = d3.svg.line()
-    .interpolate("step-after")
+    .interpolate("step")
     .x(function(d) { return x(d.date); })
     .y(function(d) { return y(d.count); });
+
+var bisectDate = d3.bisector(function(d) { return d.date; }).left;
+
+function closestY(d, y0) {
+  var val = d.total;
+
+  if ((Object.keys) && (d.total !== 0)) {
+    var min_dis = d.total*d.total;
+    Object.keys(d).forEach(function(q){
+      if ((d[q]-y0)*(d[q]-y0) < min_dis) {
+        val = d[q];
+        min_dis = (d[q]-y0)*(d[q]-y0);
+      }
+    });
+  }
+
+  var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+
+  return {
+        label: val + ' on ' + monthNames[d.date.getMonth()]
+                   + ' ' + d.date.getDate().toString(),
+        y: val
+  }
+
+}
 
 var color = d3.scale.category10();
 
@@ -207,6 +241,16 @@ $(document).ready(function() {
        .attr("dy", ".71em")
        .style("text-anchor", "end");
 
+    var focus = svg.append("g")
+                   .attr("transform", "translate(-100,-100)")
+                   .attr("class", "focus");
+
+    focus.append("circle")
+         .attr("r", 3.5);
+    focus.append("text")
+         .attr("x", 9)
+         .attr("y", -10);
+
     var system = svg.selectAll('.system')
                     .data(systems)
                     .enter().append('g')
@@ -245,6 +289,28 @@ $(document).ready(function() {
             .text(d.name); 
 
     });
+
+    svg.append("rect")
+       .attr("class", "overlay")
+       .attr("width", width)
+       .attr("height", height)
+       .on("mouseover", function() { focus.style("display", null); })
+       .on("mouseout", function() { focus.style("display", "none"); })
+       .on("mousemove", mousemove);
+
+    function mousemove() {
+      var x0 = x.invert(d3.mouse(this)[0]),
+           i = bisectDate(data, x0, 1),
+          d0 = data[i - 1],
+          d1 = data[i],
+           d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+
+      var y0 = y.invert(d3.mouse(this)[1]),
+         res = closestY(d, y0);
+
+      focus.attr("transform", "translate(" + x(d.date) + "," + y(res.y) + ")");
+      focus.select("text").text(res.label);
+    }
   });
 });
 </script>
