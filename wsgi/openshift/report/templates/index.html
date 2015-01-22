@@ -124,7 +124,7 @@ var yAxis = d3.svg.axis()
               .orient("left");
 
 var line = d3.svg.line()
-    .interpolate("step")
+    // .interpolate("step")
     .x(function(d) { return x(d.date); })
     .y(function(d) { return y(d.count); });
 
