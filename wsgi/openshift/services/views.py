@@ -218,29 +218,43 @@ def by_root(request, format=None):
 
 class FeatureViewSet(viewsets.ModelViewSet):
     """
-    A viewset that provides the standard actions
+    A viewset that provides the standard actions,
+    apart from create which has been extended to support a multi record format.
     """
     queryset = FeatureUsage.objects.all()
     serializer_class = FeatureSerializer
     permission_classes = [AllowAny]
 
+    # overridden create method, allows for normal rest signle record,
+    # or a multi record json format, e.g.
+    # {"features":[
+    #   {"count":1,"internal":false,"name":"Load.v1","type":"Algorithm"},
+    #   {"count":1,"internal":true,"name":"LoadInstrument.v1","type":"Algorithm"},
+    #   {"count":1,"internal":true,"name":"LoadMuonLog.v1","type":"Algorithm"},
+    #   {"count":1,"internal":true,"name":"LoadMuonNexus.v1","type":"Algorithm"}],
+    # "mantidVersion":"3.5"}
     def create(self,request):
         if request.method == 'POST':
             print "Request",request.body
             post_data = json.loads(request.body)
             version = post_data["mantidVersion"]
-            for feature in post_data["features"]:
-                count = feature["count"]
-                internal = feature["internal"]
-                type = feature["type"]
-                name = feature["name"]
-                obj, created = FeatureUsage.objects.get_or_create(name=name, type=type,
-                                                                  internal=internal,
-                                                                  mantidVersion=version,
-                                                                  defaults={'count':0})
-                obj.count += count
-                obj.save()
-
+            if "features" in post_data.keys():
+                for feature in post_data["features"]:
+                    self.SaveFeatureUsage(feature, version)
+            else:
+                self.SaveFeatureUsage(post_data, version)
             return HttpResponse("Success.")
         else:
             return HttpResponse("Please supply feature usage data as POST.")
+
+    def SaveFeatureUsage(self, feature, version):
+        count = feature["count"]
+        internal = feature["internal"]
+        type = feature["type"]
+        name = feature["name"]
+        obj, created = FeatureUsage.objects.get_or_create(name=name, type=type,
+                                                          internal=internal,
+                                                          mantidVersion=version,
+                                                          defaults={'count': 0})
+        obj.count += count
+        obj.save()
