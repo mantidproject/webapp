@@ -8,6 +8,7 @@ from services import views
 router = routers.DefaultRouter(trailing_slash=False)
 #router.register(r'message', MessageViewSet)
 router.register(r'usage', views.UsageViewSet)
+router.register(r'feature', views.FeatureViewSet)
 #router.register(r'hosts', ListHosts) # doesn't work
 
 urlpatterns = patterns('',
@@ -19,4 +20,5 @@ urlpatterns = patterns('',
     url(r'^by/user', views.usage_by_users,  name='by-users'),
     url(r'^host$', views.host_list, name='host-list'),
     url(r'^user$', views.user_list, name='user-list'),
+   # url(r'feature', views.feature_usage, name='feature_usage'),
 )

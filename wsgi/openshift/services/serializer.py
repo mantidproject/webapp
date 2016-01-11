@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Message, Usage
+from .models import Message, Usage, FeatureUsage
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
   class Meta:
@@ -15,6 +15,11 @@ class UsageSerializer(serializers.HyperlinkedModelSerializer):
 
   class Meta:
     model = Usage
+
+class FeatureSerializer(serializers.HyperlinkedModelSerializer):
+
+  class Meta:
+    model = FeatureUsage
 
   def checkLength(self, value, length, label):
     if (len(value) != length):
@@ -42,3 +47,4 @@ class UsageSerializer(serializers.HyperlinkedModelSerializer):
   #   self.checkLength(value, 40, "sha1")
   #   self.checkHex(value, "sha1")
   #   return value
+

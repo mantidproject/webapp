@@ -1,14 +1,16 @@
 from django.shortcuts import render
 
 # Create your views here.
-from .models import Message, Usage
+from .models import Message, Usage, FeatureUsage
 from rest_framework import response, views, viewsets, filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
-from .serializer import MessageSerializer, UsageSerializer
+from .serializer import MessageSerializer, UsageSerializer, FeatureSerializer
 import django_filters
 from rest_framework import generics
 from rest_framework.reverse import reverse
+from django.http import HttpResponse
+import json
 import datetime
 import hashlib
 import settings
@@ -213,3 +215,32 @@ def by_root(request, format=None):
         'user':reverse('by-users', request=request, format=format),
         'start':reverse('by-starts', request=request, format=format),
     })
+
+class FeatureViewSet(viewsets.ModelViewSet):
+    """
+    A viewset that provides the standard actions
+    """
+    queryset = FeatureUsage.objects.all()
+    serializer_class = FeatureSerializer
+    permission_classes = [AllowAny]
+
+    def create(self,request):
+        if request.method == 'POST':
+            print "Request",request.body
+            post_data = json.loads(request.body)
+            version = post_data["mantidVersion"]
+            for feature in post_data["features"]:
+                count = feature["count"]
+                internal = feature["internal"]
+                type = feature["type"]
+                name = feature["name"]
+                obj, created = FeatureUsage.objects.get_or_create(name=name, type=type,
+                                                                  internal=internal,
+                                                                  mantidVersion=version,
+                                                                  defaults={'count':0})
+                obj.count += count
+                obj.save()
+
+            return HttpResponse("Success.")
+        else:
+            return HttpResponse("Please supply feature usage data as POST.")
