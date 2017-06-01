@@ -9,7 +9,7 @@ Running Django locally using virtualenv
 **Note:** This is the abbreviated/modified version of what is
 [described elsewhere](http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/).
 
-First setup virtualenv
+First setup virtualenv. This should be done in your source tree.
 ```
 $ pip install virtualenv
 $ virtualenv --version
@@ -22,23 +22,30 @@ Start the [virtual environment](https://virtualenv.pypa.io/en/latest/index.html)
 ```
 $ source venv/bin/activate
 $ wget https://bootstrap.pypa.io/ez_setup.py -O - | python
-$ easy_install pip
 ```
-Then just install all of the requirements listed in the setup file. Run the command `python setup.py install`. The virtual environment can be
-turned off using a simple `deactivate`.
+Before running the install script, you need to have `mysql_config`
+installed. On fedora 25 it is contained in a package called
+`community-mysql-devel`. For mac run `brew install mysql`. Then just
+install all of the requirements listed in the setup file. Run the
+command
+```
+python setup.py install
+```
+The virtual environment can be turned off using a simple `deactivate`.
 
-Setup the database and copy static. This should follow closely to `.openshift/action_hooks/deploy`
+Setup the database and copy static. This should follow closely to [`.openshift/action_hooks/deploy`](https://github.com/mantidproject/webapp/blob/master/.openshift/action_hooks/deploy)
 ```
 $ wsgi/openshift/manage.py collectstatic --noinput
 $ wsgi/openshift/manage.py syncdb --noinput
 ```
 
-Setup south to do the right thing
+Setup built-in db migrations to do the right thing(tm)
 ```
-$ ./wsgi/openshift/manage.py schemamigration services --initial
+$ ./wsgi/openshift/manage.py makemigrations services
 $ ./wsgi/openshift/manage.py migrate services --fake
 $ ./wsgi/openshift/manage.py syncdb
 ```
+When asked for about creating an admin account, just say "no."
 
 Finally, start the django server itself
 ```
@@ -64,7 +71,7 @@ Develop local rendering using remote database
 
 This can be done using a
 [simple port forwarding](https://blog.openshift.com/getting-started-with-port-forwarding-on-openshift/)
-and configuring the mysql to point at that. First find out the username/password for the 
+and configuring the mysql to point at that. First find out the username/password for the
 database from `rhc apps`. Then this should be set as the username/password for the database
 via the environment variables `OPENSHIFT_MYSQL_DB_USERNAME` and `OPENSHIFT_MYSQL_DB_PASSWORD`.
 I do this in a shell script so I don't have to track down the information every time. Then
