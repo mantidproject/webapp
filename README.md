@@ -24,7 +24,7 @@ $ source venv/bin/activate
 $ wget https://bootstrap.pypa.io/ez_setup.py -O - | python
 $ easy_install pip
 ```
-Then just install all of the requirements listed in `setup.py`. The virtual environment can be
+Then just install all of the requirements listed in the setup file. Run the command `python setup.py install`. The virtual environment can be
 turned off using a simple `deactivate`.
 
 Setup the database and copy static. This should follow closely to `.openshift/action_hooks/deploy`
