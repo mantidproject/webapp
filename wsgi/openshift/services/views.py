@@ -205,7 +205,8 @@ def api_root(request, format=None):
         'by':    reverse('by-root',    request=request, format=format),
         'host':  reverse('host-list',  request=request, format=format),
         'usage': reverse('usage-list', request=request, format=format),
-        'user':  reverse('user-list',  request=request, format=format)
+        'user':  reverse('user-list',  request=request, format=format),
+        'feature':  reverse('featureusage-list',  request=request, format=format)
     })
 
 @api_view(('GET',))
