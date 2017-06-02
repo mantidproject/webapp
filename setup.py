@@ -5,8 +5,8 @@ import os
 # Put here required packages
 packages = ['Django==1.8',
     'static3', # serve static files in the server
-    'djangorestframework',
-    'django-filter',
+    'djangorestframework==2.4.8',
+    'django-filter==0.9.2',
     'Markdown',
     'MySQL-python']
 
