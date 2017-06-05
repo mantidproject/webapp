@@ -8,6 +8,7 @@
 .project
 .pydevproject
 setuptools-*.zip
+.vscode/
 venv/
 virtenv/
 dist/
