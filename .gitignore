@@ -3,6 +3,7 @@
 *.bak
 *.orig
 *~
+*.DS_Store*
 *.log
 *.egg-info
 .project
