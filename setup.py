@@ -6,7 +6,7 @@ import os
 packages = ['Django==1.8',
     'static3', # serve static files in the server
     'djangorestframework==2.4.8',
-    'django-filter>=0.9.2',
+    'django-filter>=0.9.2,<=0.14',
     'Markdown',
     'MySQL-python']
 
