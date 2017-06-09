@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 import argparse
-import requests
 import json
-
+from posixpath import join as urljoin
+import requests
 
 def receive_json(source, page_num):
     if args.verbose:
         print "Pulling data from " + source
     r = requests.get(source, params={'page': str(page_num), 'format': 'json'})
-    if r.status_code == 200:
+    if r.status_code == requests.codes.OK:
         if args.verbose:
             print "Received", r.content.__sizeof__(), "bytes from source."
         return r.content
@@ -17,19 +17,18 @@ def receive_json(source, page_num):
         pass
         #error out
 
+
 def post_json(data, destination):
     r = requests.post(destination, headers={
                       "Content-Type": "application/json"}, data=data)
-    errors = 0
-    if r.status_code == 201:
+    if r.status_code == requests.codes.CREATED:
         # if args.verbose:
         #    print "OK. Returned an HTTP 201 for Created."
-        pass
+        return 0
     else:
         # if args.verbose:
         #    print "Error. Response:", r.status_code
-        errors += 1
-    return errors
+        return 1
 
 
 def iterate_and_post(jsonData, apiSource):
@@ -55,26 +54,31 @@ def iterate_and_post(jsonData, apiSource):
             print "Attempted", i, "JSON posts, resulted with", errors, "errors."
     return errors
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--count", type=int, default=1, 
-                    help="number of pages to copy data from (defaults to 1)")
+    parser.add_argument("-c", "--count", type=int, default=1,
+                    help="number of pages to copy data from (defaults=1)")
     parser.add_argument("-v", "--verbose", action="store_true",
                     help="increase output")
-    parser.add_argument("source", type=str, nargs='?', 
-                    default="http://reports.mantidproject.org/api/usage",
+    API_TYPES = ['usage','feature']
+    parser.add_argument('-t', '--type', choices=API_TYPES, nargs='?',
+                        default=API_TYPES[0],
+                        help='Select which type to ingest (default=%s)' % API_TYPES[0])
+    parser.add_argument("source", type=str, nargs='?',
+                    default="http://reports.mantidproject.org/api/",
                     help="source URL of api from which to extract (GET) JSON")
-    parser.add_argument("destination", type=str, nargs='?', 
-                    default="http://localhost:8000/api/usage",
-                    help="destination URL for insertion (PUSH) of JSON data")
+    parser.add_argument("destination", type=str, nargs='?',
+                    default="http://localhost:8000/api/",
+                    help="destination URL for insertion (POST) of JSON data")
     args = parser.parse_args()
     errors = 0
-    get_url = args.source
-    post_url = args.destination
-    if args.count > 0:
-        page_count = args.count
-    else:
-        page_count = 1
+    get_url = urljoin(args.source, args.type)
+    post_url = urljoin(args.destination, args.type)
+    page_count = args.count
+
+    print get_url, post_url
+
     for page in range(1, page_count + 1):
         if args.verbose:
             print
