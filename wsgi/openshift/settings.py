@@ -47,8 +47,6 @@ else:
     ALLOWED_HOSTS = []
     DEBUG = True
 
-TEMPLATE_DEBUG = DEBUG
-
 ROOT_URLCONF = 'urls'
 
 # Application definition
@@ -69,6 +67,8 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # added for Django 1.10 compliance
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -98,17 +98,28 @@ if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDIS
 
 WSGI_APPLICATION = 'wsgi.application'
 
-TEMPLATE_DIRS = (
-     os.path.join(PROJECT_DIR,'templates'),
-     os.path.join(PROJECT_DIR,'report/templates'),
-)
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    'django.template.loaders.eggs.Loader',
-)
+TEMPLATES = [
+    {
+        #'DEBUG':DEBUG,
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            '/home/ugr/GitHub/webapp/wsgi/openshift/report/templates/',
+            os.path.join(PROJECT_DIR,'templates'),
+            os.path.join(PROJECT_DIR,'report/templates')
+                ],
+        'APP_DIRS': True,
+        #'LOADERS': [
+        #    'django.template.loaders.filesystem.Loader',
+        #    'django.template.loaders.app_directories.Loader',
+        #    'django.template.loaders.eggs.Loader',
+        #],
+        'OPTIONS': {
+            'context_processors': [
+                "django.contrib.auth.context_processors.auth",
+            ]
+        },
+    },
+]
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,

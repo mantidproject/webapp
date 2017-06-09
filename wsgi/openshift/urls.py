@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -10,7 +10,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 import report
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Examples:
     # url(r'^blog/', include('blog.urls')),
     # url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/favicon.ico'}),
@@ -20,5 +20,4 @@ urlpatterns = patterns('',
     url(r'^$', report.views.index, name='index'),
     url(r'^host/(?P<md5>\w+)?$', report.views.host, name='host'),
     url(r'^user/(?P<md5>\w+)?$', report.views.user, name='user'),
-) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
-  + staticfiles_urlpatterns()
+]# + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
