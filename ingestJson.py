@@ -58,7 +58,7 @@ def iterate_and_post(jsonData, apiSource):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--count", type=int, default=1, destination='page_count',
+    parser.add_argument("-c", "--count", type=int, default=1, dest='page_count',
                         help="number of pages to copy data from (defaults=1)")
     parser.add_argument("-v", "--verbose", action="store_true",
                         help="increase output")
