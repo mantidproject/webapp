@@ -9,10 +9,13 @@ def receive_json(source, page_num):
     if args.verbose:
         print "Pulling data from " + source
     r = requests.get(source, params={'page': str(page_num), 'format': 'json'})
-    if args.verbose:
-        print "Received", r.content.__sizeof__(), "bytes from source."
-    return r.content
-
+    if r.status_code == 200:
+        if args.verbose:
+            print "Received", r.content.__sizeof__(), "bytes from source."
+        return r.content
+    else:
+        pass
+        #error out
 
 def post_json(data, destination):
     r = requests.post(destination, headers={
@@ -29,7 +32,7 @@ def post_json(data, destination):
     return errors
 
 
-def iterate_and_post(jsonData, destination):
+def iterate_and_post(jsonData, apiSource):
     try:
         true_json = json.loads(jsonData)
     except:
@@ -37,12 +40,12 @@ def iterate_and_post(jsonData, destination):
         print "Have you tried removing slashes from the end of the URL?"
         return 1
     if args.verbose:
-        print "Posting objects to", destination
+        print "Posting objects to", apiSource
     i = 0
     errors = 0
     for element in true_json["results"]:  # iterates over inner objects
         # json.dumps removes unicode
-        errors += post_json(json.dumps(element), destination)
+        errors += post_json(json.dumps(element), apiSource)
         i += 1
     if errors == 0:
         if args.verbose:
@@ -52,23 +55,23 @@ def iterate_and_post(jsonData, destination):
             print "Attempted", i, "JSON posts, resulted with", errors, "errors."
     return errors
 
-
-parser = argparse.ArgumentParser()
-parser.add_argument("-v", "--verbose", action="store_true",
-                    help="increase output")
-parser.add_argument("source", type=str,
-                    help="source URL of api from which to extract (GET) JSON")
-parser.add_argument("destination", type=str,
-                    help="destination URL for insertion (PUSH) of JSON data")
-parser.add_argument("-c", "--count", type=int, default=1,
-                    help="number of pages to copy data from (defaults to 1)")
-args = parser.parse_args()
-
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--count", type=int, default=1, 
+                    help="number of pages to copy data from (defaults to 1)")
+    parser.add_argument("-v", "--verbose", action="store_true",
+                    help="increase output")
+    parser.add_argument("source", type=str, nargs='?', 
+                    default="http://reports.mantidproject.org/api/usage",
+                    help="source URL of api from which to extract (GET) JSON")
+    parser.add_argument("destination", type=str, nargs='?', 
+                    default="http://localhost:8000/api/usage",
+                    help="destination URL for insertion (PUSH) of JSON data")
+    args = parser.parse_args()
     errors = 0
     get_url = args.source
     post_url = args.destination
-    if args.count >> 0:
+    if args.count > 0:
         page_count = args.count
     else:
         page_count = 1
