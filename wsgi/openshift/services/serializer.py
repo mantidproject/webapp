@@ -15,11 +15,15 @@ class UsageSerializer(serializers.HyperlinkedModelSerializer):
 
   class Meta:
     model = Usage
+    #fields = ['osReadable', 'application', 'component', 'url', 'host', 
+    # 'datetime', 'osName', 'osVersion', 'ParaView', 'mantidVersion', 
+    # 'mantidSha1']
 
 class FeatureSerializer(serializers.HyperlinkedModelSerializer):
 
   class Meta:
     model = FeatureUsage
+    fields = ['url', 'type', 'name', 'internal', 'count', 'mantidVersion']
 
   def checkLength(self, value, length, label):
     if (len(value) != length):
