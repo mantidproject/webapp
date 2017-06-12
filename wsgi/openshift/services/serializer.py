@@ -15,6 +15,7 @@ class UsageSerializer(serializers.HyperlinkedModelSerializer):
 
   class Meta:
     model = Usage
+    fields = '__all__'
     #fields = ['osReadable', 'application', 'component', 'url', 'host', 
     # 'datetime', 'osName', 'osVersion', 'ParaView', 'mantidVersion', 
     # 'mantidSha1']

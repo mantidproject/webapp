@@ -48,14 +48,15 @@ class MD5Filter(django_filters.CharFilter):
 
 class UsageFilter(django_filters.FilterSet):
     date    = WithinDateFilter(name="dateTime")
-    datemin = django_filters.DateFilter(name="dateTime", lookup_type='gte')
-    datemax = django_filters.DateFilter(name="dateTime", lookup_type='lt')
+    datemin = django_filters.DateFilter(name="dateTime", lookup_expr='gte')
+    datemax = django_filters.DateFilter(name="dateTime", lookup_expr='lt')
     uid = MD5Filter(name="uid")
     host = MD5Filter(name="host")
 
     class Meta:
         model = Usage
-        fields = ['date', 'datemin','datemax', 'osName']
+        #fields = ['date', 'datemin','datemax', 'osName']
+        fields = '__all__'
         order_by = ['-dateTime']
 
 class UsageViewSet(viewsets.ModelViewSet):
@@ -76,10 +77,10 @@ def filterByDate(queryset, request=None, datemin=None, datemax=None):
         # datemax = request.data.get("datemax", datemax)
 
     if datemin:
-        queryset = django_filters.DateFilter(name="dateTime", lookup_type='gte').filter(queryset, datemin)
+        queryset = django_filters.DateFilter(name="dateTime", lookup_expr='gte').filter(queryset, datemin)
 
     if datemax:
-        queryset = django_filters.DateFilter(name="dateTime", lookup_type='lt').filter(queryset, datemax)
+        queryset = django_filters.DateFilter(name="dateTime", lookup_expr='lt').filter(queryset, datemax)
 
     return (queryset, datemin, datemax)
 
