@@ -8,9 +8,9 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
 
 class UsageSerializer(serializers.HyperlinkedModelSerializer):
   # use everything, but the following are optional
-  osReadable = serializers.CharField(required=False)
-  application = serializers.CharField(required=False)
-  component = serializers.CharField(required=False)
+  osReadable = serializers.CharField(required=False, allow_blank=True)
+  application = serializers.CharField(required=False, allow_blank=True)
+  component = serializers.CharField(required=False, allow_blank=True)
   #uid = serializers.HyperlinkedIdentityField(view_name='UsageViewSet', format='html', lookup_field='Usage.uid')
 
   class Meta:
