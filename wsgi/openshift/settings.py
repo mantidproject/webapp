@@ -131,7 +131,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
         'rest_framework.filters.DjangoFilterBackend'
     ],
-    'PAGINATE_BY': 100,
+    'PAGE_SIZE': 100,
 }
 
 # Database
