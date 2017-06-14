@@ -245,7 +245,7 @@ class FeatureViewSet(viewsets.ModelViewSet):
                     self.SaveFeatureUsage(feature, version)
             else:
                 self.SaveFeatureUsage(post_data, version)
-            return HttpResponse("Success.")
+            return HttpResponse(status=201)
         else:
             return HttpResponse("Please supply feature usage data as POST.")
 
