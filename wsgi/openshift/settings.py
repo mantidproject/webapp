@@ -14,7 +14,7 @@ import imp
 # introspect from openshift
 ON_OPENSHIFT = False
 if os.environ.get('OPENSHIFT_REPO_DIR', False):
-     ON_OPENSHIFT = True
+    ON_OPENSHIFT = True
 DB_USER = os.environ.get('OPENSHIFT_MYSQL_DB_USERNAME', None)
 DB_PASSWD = os.environ.get('OPENSHIFT_MYSQL_DB_PASSWORD', None)
 # get these from openshift or use localhost versions
@@ -30,12 +30,13 @@ PROJECT_DIR = os.path.dirname(os.path.realpath(__file__))
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'ascq#%bii8(tld52#(^*ht@pzq%=nyb7fdv+@ok$u^iwb@2hwh'
 
-default_keys = { 'SECRET_KEY': 'vm4rl5*ymb@2&d_(gc$gb-^twq9w(u69hi--%$5xrh!xk(t%hw' }
+default_keys = {
+    'SECRET_KEY': 'vm4rl5*ymb@2&d_(gc$gb-^twq9w(u69hi--%$5xrh!xk(t%hw'}
 use_keys = default_keys
 if ON_OPENSHIFT:
-     imp.find_module('openshiftlibs')
-     import openshiftlibs
-     use_keys = openshiftlibs.openshift_secure(default_keys)
+    imp.find_module('openshiftlibs')
+    import openshiftlibs
+    use_keys = openshiftlibs.openshift_secure(default_keys)
 
 SECRET_KEY = use_keys['SECRET_KEY']
 
@@ -83,17 +84,19 @@ if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDIS
     redis_port = os.environ['REDISCLOUD_PORT']
     redis_password = os.environ['REDISCLOUD_PASSWORD']
     CACHES = {
-        'default' : {
-            'BACKEND' : 'redis_cache.RedisCache',
-            'LOCATION' : '%s:%d'%(redis_server,int(redis_port)),
-            'OPTIONS' : {
-                'DB':0,
-                'PARSER_CLASS' : 'redis.connection.HiredisParser',
-                'PASSWORD' : redis_password,
+        'default': {
+            'BACKEND': 'redis_cache.RedisCache',
+            'LOCATION': '%s:%d' % (redis_server, int(redis_port)),
+            'OPTIONS': {
+                'DB': 0,
+                'PARSER_CLASS': 'redis.connection.HiredisParser',
+                'PASSWORD': redis_password,
             }
         }
     }
-    MIDDLEWARE_CLASSES = ('django.middleware.cache.UpdateCacheMiddleware',) + MIDDLEWARE_CLASSES + ('django.middleware.cache.FetchFromCacheMiddleware',)
+    MIDDLEWARE_CLASSES = ('django.middleware.cache.UpdateCacheMiddleware',) + \
+        MIDDLEWARE_CLASSES + \
+        ('django.middleware.cache.FetchFromCacheMiddleware',)
 
 
 WSGI_APPLICATION = 'wsgi.application'
@@ -104,9 +107,9 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             '/home/ugr/GitHub/webapp/wsgi/openshift/report/templates/',
-            os.path.join(PROJECT_DIR,'templates'),
-            os.path.join(PROJECT_DIR,'report/templates')
-                ],
+            os.path.join(PROJECT_DIR, 'templates'),
+            os.path.join(PROJECT_DIR, 'report/templates')
+        ],
         'APP_DIRS': True,
         #'LOADERS': [
         #    'django.template.loaders.filesystem.Loader',
@@ -137,22 +140,22 @@ REST_FRAMEWORK = {
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 if ON_OPENSHIFT or (DB_USER and DB_PASSWD):
-     DATABASES = {
-         'default': {
+    DATABASES = {
+        'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': DB_NAME,
             'USER': DB_USER,
             'PASSWORD': DB_PASSWD,
             'HOST': DB_HOST,
             'PORT': DB_PORT,
-         }
-     }
+        }
+    }
 else:
-     DATABASES = {
-         'default': {
-             'ENGINE': 'django.db.backends.sqlite3',
-             'NAME': os.path.join(PROJECT_DIR, 'db.sqlite3'),
-         }
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(PROJECT_DIR, 'db.sqlite3'),
+        }
     }
 
 # Internationalization
@@ -172,17 +175,19 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_URL = '/static/'
 if 'OPENSHIFT_REPO_DIR' in os.environ:
-    STATIC_ROOT = os.path.join(os.environ.get('OPENSHIFT_REPO_DIR'), 'wsgi', 'static')
+    STATIC_ROOT = os.path.join(os.environ.get(
+        'OPENSHIFT_REPO_DIR'), 'wsgi', 'static')
 else:
-    STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, '..', STATIC_URL.strip("/")))
+    STATIC_ROOT = os.path.abspath(os.path.join(
+        PROJECT_DIR, '..', STATIC_URL.strip("/")))
 
 # Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    ("js", os.path.join(STATIC_ROOT,'js')),
-    ("css", os.path.join(STATIC_ROOT,'css')),
+    ("js", os.path.join(STATIC_ROOT, 'js')),
+    ("css", os.path.join(STATIC_ROOT, 'css')),
     # ("images", os.path.join(STATIC_ROOT,'images')),
     # ("fonts", os.path.join(STATIC_ROOT,'fonts')),
 )

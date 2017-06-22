@@ -16,8 +16,9 @@ urlpatterns = [
     # url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/favicon.ico'}),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include('services.urls')),
-    url(r'^api-auth/',include('rest_framework.urls', namespace='rest_framework')), # should be in services/urls.py
+    # should be in services/urls.py
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^$', report.views.index, name='index'),
     url(r'^host/(?P<md5>\w+)?$', report.views.host, name='host'),
     url(r'^user/(?P<md5>\w+)?$', report.views.user, name='user'),
-]# + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

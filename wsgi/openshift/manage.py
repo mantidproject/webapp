@@ -5,7 +5,7 @@ import sys
 if __name__ == "__main__":
     # Add the root to the path to support local testing with
     # runserver / WSGI_APPLICATION
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..','..'))
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 

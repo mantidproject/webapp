@@ -3,8 +3,10 @@ from django.contrib import admin
 # Register your models here.
 from .models import Message, Usage, FeatureUsage
 
+
 class MessageAdmin(admin.ModelAdmin):
-   list_display = ('author','text', 'timestamp')
+    list_display = ('author', 'text', 'timestamp')
+
 
 class UsageAdmin(admin.ModelAdmin):
     list_display = ('uid',
@@ -20,12 +22,14 @@ class UsageAdmin(admin.ModelAdmin):
                     'application',
                     'component')
 
+
 class FeatureUsageAdmin(admin.ModelAdmin):
     list_display = ('type',
                     'name',
                     'internal',
                     'count',
                     'mantidVersion')
+
 
 admin.site.register(Message, MessageAdmin)
 admin.site.register(Usage, UsageAdmin)
