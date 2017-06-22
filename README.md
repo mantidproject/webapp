@@ -60,7 +60,7 @@ $ sudo gem install rhc
 ```
 Then you can configure it for connecting to the app
 ```
-rhc setup
+$ rhc setup
 ```
 
 Deploying new versions happens through `git push`
@@ -71,10 +71,16 @@ Develop local rendering using remote database
 
 This can be done using a
 [simple port forwarding](https://blog.openshift.com/getting-started-with-port-forwarding-on-openshift/)
-and configuring the mysql to point at that. First find out the username/password for the
-database from `rhc apps`. Then this should be set as the username/password for the database
-via the environment variables `OPENSHIFT_MYSQL_DB_USERNAME` and `OPENSHIFT_MYSQL_DB_PASSWORD`.
-I do this in a shell script so I don't have to track down the information every time. Then
-start the port forwarding by running `rhc port-forward -a django`. Finally, start the server
-using the normal `manage.py runserver`. Don't worry about warnings considering the database
-migration.
+and configuring the mysql to point at that. First find out the
+username/password for the database from `rhc apps`. Then start the
+port forwarding of just the `mysql` connection
+```
+$ rhc port-forward -a django -s mysql
+```
+In a separate terminal start the webapp using
+```
+$ OPENSHIFT_MYSQL_DB_USERNAME=xxxxxxxx OPENSHIFT_MYSQL_DB_PASSWORD=xxxxxxxx wsgi/openshift/manage.py runserver
+```
+The username/password need to be injected via environment variables
+otherwise the webapp will use the local (on disk) database. Don't
+worry about warnings considering the database migration.
