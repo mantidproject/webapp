@@ -2,6 +2,21 @@ from django.db import models
 
 # Create your models here.
 
+class UsageLocation(models.Model):
+    ip = models.CharField(max_length=32, unique=True)
+    city = models.CharField(max_length=32)
+    region = models.CharField(max_length=32)
+    country = models.CharField(max_length=32)
+    latitude = models.CharField(max_length=32)
+    longitude = models.CharField(max_length=32)
+
+    def __unicode__(self):
+        return "IP: "+ self.ip + " City/Region/Country: " + self.city + "/" \
+        + self.region + "/" + self.country
+
+    def create(self):
+        pass
+    # overwrite to check for existing IP before inserting in DB
 
 class Message(models.Model):
     author = models.CharField(max_length=20)
@@ -32,6 +47,7 @@ class Usage(models.Model):
     osReadable = models.CharField(max_length=80, default="", blank=True)
     application = models.CharField(max_length=80, default="", blank=True)
     component = models.CharField(max_length=80, default="", blank=True)
+    #ip = models.ForeignObject(UsageLocation, from_fields=["ip"], to_fields=["ip"], default="", blank=True)
 
 
 class FeatureUsage(models.Model):

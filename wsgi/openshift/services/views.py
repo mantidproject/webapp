@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from .models import Message, Usage, FeatureUsage
+from .models import Message, Usage, FeatureUsage, UsageLocation
 from rest_framework import response, views, viewsets, filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
@@ -14,9 +14,35 @@ import json
 import datetime
 import hashlib
 import settings
+import requests
+import json
 
 OS_NAMES = ['Linux', 'Windows NT', 'Darwin']
 UTC = datetime.tzinfo('UTC')
+
+def getIpAddress(request):
+     #return request.META['REMOTE_ADDR']
+     return "130.246.132.177"
+
+def test(request):
+    ipAddress = getIpAddress(request)
+    jsonData = requests.get("http://ipinfo.io/%s/json/" % ipAddress).content
+    apiReturn = json.loads(jsonData)
+    longitude = apiReturn["loc"][0:7]
+    latitude = apiReturn["loc"][8:]
+    ipAddr = apiReturn["ip"]
+    city = apiReturn["city"]
+    region = apiReturn["region"]
+    country = apiReturn["country"]
+    # instead of returning DB data to view, add client's data TO the DB.
+    ipHash = hashlib.md5(ipAddr).hexdigest()
+    entry = UsageLocation(ip=ipHash, city=city, region=region,
+                         country=country, longitude=longitude, latitude=latitude)
+    #entry.save()
+    context = {'lon': longitude, 'lat': latitude, "ip": ipAddr, "city": city,
+               "region": region, "country": country, 'entry': entry, }
+    return render(request, 'test.html', context)
+
 
 class MessageViewSet(viewsets.ModelViewSet):
   queryset = Message.objects.all()
