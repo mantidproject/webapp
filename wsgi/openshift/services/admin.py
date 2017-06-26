@@ -39,6 +39,6 @@ class FeatureUsageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Message, MessageAdmin)
-admin.site.register(UsageLocation, UsageLocationAdmin) 
+admin.site.register(UsageLocation, UsageLocationAdmin)
 admin.site.register(Usage, UsageAdmin)
 admin.site.register(FeatureUsage, FeatureUsageAdmin)
