@@ -13,6 +13,7 @@ class UsageSerializer(serializers.HyperlinkedModelSerializer):
     osReadable = serializers.CharField(required=False, allow_blank=True)
     application = serializers.CharField(required=False, allow_blank=True)
     component = serializers.CharField(required=False, allow_blank=True)
+    ip = serializers.CharField(required=False, allow_blank=True)
     #uid = serializers.HyperlinkedIdentityField(view_name='UsageViewSet', format='html', lookup_field='Usage.uid')
 
     class Meta:
@@ -20,7 +21,7 @@ class UsageSerializer(serializers.HyperlinkedModelSerializer):
         #fields = '__all__'
         fields = ['osReadable', 'application', 'component', 'url', 'uid', 'host',
                   'dateTime', 'osName', 'osArch', 'osVersion', 'ParaView',
-                  'mantidVersion', 'mantidSha1']
+                  'mantidVersion', 'mantidSha1', 'ip']
 
 
 class FeatureSerializer(serializers.HyperlinkedModelSerializer):

@@ -47,7 +47,7 @@ class Usage(models.Model):
     osReadable = models.CharField(max_length=80, default="", blank=True)
     application = models.CharField(max_length=80, default="", blank=True)
     component = models.CharField(max_length=80, default="", blank=True)
-    #ip = models.ForeignObject(UsageLocation, from_fields=["ip"], to_fields=["ip"], default="", blank=True)
+    ip = models.CharField(max_length=32, default="", blank=True)
 
 
 class FeatureUsage(models.Model):
