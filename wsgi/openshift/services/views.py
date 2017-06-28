@@ -21,8 +21,12 @@ OS_NAMES = ['Linux', 'Windows NT', 'Darwin']
 UTC = datetime.tzinfo('UTC')
 
 def LocationCreate(ipAddress):
-    if ipAddress == "127.0.0.1": # for testing purposes, block localhost since
-        ipAddress = "130.246.132.177" # ipinfo.io doesn't accept it properly.
+    if ipAddress == "127.0.0.1": 
+        ipAddress = "130.246.132.176" 
+    """ ipinfo's API has a bad JSON format for 127.0.0.1 requests.
+        This changes the loopback IP to a random address for testing.
+        UsageLocation should have IP as a unique field. Change the IP
+        or you won't be able to add the test value more than once. """
     jsonData = requests.get("http://ipinfo.io/%s/json/" % ipAddress).content
     apiReturn = json.loads(jsonData)
     longitude = apiReturn["loc"][0:7]
