@@ -20,7 +20,8 @@ class UsageAdmin(admin.ModelAdmin):
                     'mantidVersion',
                     'mantidSha1',
                     'application',
-                    'component')
+                    'component',
+                    'ip')
 
 class UsageLocationAdmin(admin.ModelAdmin):
     list_display = ('ip',
