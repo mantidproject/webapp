@@ -104,10 +104,10 @@ class UsageViewSet(viewsets.ModelViewSet):
             try:
                 LocationCreate(HttpIP)
             except:
-                pass #oh no! probably a unique id problem.
+                pass # Either a bad request, or the IP has been submitted before
             finally:
-                if "results" in post_data.keys():
-                    for usage in post_data["results"]:
+                if "usages" in post_data.keys():
+                    for usage in post_data["usages"]:
                         self.SaveUsage(usage, HttpIP)
                 else:
                     self.SaveUsage(post_data, HttpIP)
