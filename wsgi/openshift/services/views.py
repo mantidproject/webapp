@@ -20,14 +20,9 @@ import json
 OS_NAMES = ['Linux', 'Windows NT', 'Darwin']
 UTC = datetime.tzinfo('UTC')
 
-
-def getIpAddress(request):
-    # return request.META['REMOTE_ADDR']
-    return "130.246.132.177"
-
-
-def test(request):
-    ipAddress = getIpAddress(request)
+def LocationCreate(ipAddress):
+    if ipAddress == "127.0.0.1": # for testing purposes, block localhost since
+        ipAddress = "130.246.132.177" # ipinfo.io doesn't accept it properly.
     jsonData = requests.get("http://ipinfo.io/%s/json/" % ipAddress).content
     apiReturn = json.loads(jsonData)
     longitude = apiReturn["loc"][0:7]
@@ -36,15 +31,10 @@ def test(request):
     city = apiReturn["city"]
     region = apiReturn["region"]
     country = apiReturn["country"]
-    # instead of returning DB data to view, add client's data TO the DB.
     ipHash = hashlib.md5(ipAddr).hexdigest()
     entry = UsageLocation(ip=ipHash, city=city, region=region,
                           country=country, longitude=longitude, latitude=latitude)
-    # entry.save()
-    context = {'lon': longitude, 'lat': latitude, "ip": ipAddr, "city": city,
-               "region": region, "country": country, 'entry': entry, }
-    return render(request, 'test.html', context)
-
+    entry.save()
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
@@ -107,12 +97,17 @@ class UsageViewSet(viewsets.ModelViewSet):
             print "Request", request.body
             post_data = json.loads(request.body)
             HttpIP = request.META['REMOTE_ADDR']
-            if "results" in post_data.keys():
-                for usage in post_data["results"]:
-                    self.SaveUsage(usage, HttpIP)
-            else:
-                self.SaveUsage(post_data, HttpIP)
-            return HttpResponse(status=201)
+            try:
+                LocationCreate(HttpIP)
+            except:
+                pass #oh no! probably a unique id problem.
+            finally:
+                if "results" in post_data.keys():
+                    for usage in post_data["results"]:
+                        self.SaveUsage(usage, HttpIP)
+                else:
+                    self.SaveUsage(post_data, HttpIP)
+                return HttpResponse(status=201)
         else:
             return HttpResponse("Please supply feature usage data as POST.")
 
