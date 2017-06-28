@@ -18,6 +18,5 @@ urlpatterns = [
     url(r'^by/user', views.usage_by_users,  name='by-users'),
     url(r'^host$', views.host_list, name='host-list'),
     url(r'^user$', views.user_list, name='user-list'),
-    url(r'^test$', views.test, name='test'),
     # url(r'feature', views.feature_usage, name='feature_usage'),
 ]
