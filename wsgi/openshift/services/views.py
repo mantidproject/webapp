@@ -20,9 +20,11 @@ import json
 OS_NAMES = ['Linux', 'Windows NT', 'Darwin']
 UTC = datetime.tzinfo('UTC')
 
+
 def getIpAddress(request):
-     #return request.META['REMOTE_ADDR']
-     return "130.246.132.177"
+    # return request.META['REMOTE_ADDR']
+    return "130.246.132.177"
+
 
 def test(request):
     ipAddress = getIpAddress(request)
@@ -37,17 +39,18 @@ def test(request):
     # instead of returning DB data to view, add client's data TO the DB.
     ipHash = hashlib.md5(ipAddr).hexdigest()
     entry = UsageLocation(ip=ipHash, city=city, region=region,
-                         country=country, longitude=longitude, latitude=latitude)
-    #entry.save()
+                          country=country, longitude=longitude, latitude=latitude)
+    # entry.save()
     context = {'lon': longitude, 'lat': latitude, "ip": ipAddr, "city": city,
                "region": region, "country": country, 'entry': entry, }
     return render(request, 'test.html', context)
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-  queryset = Message.objects.all()
-  serializer_class = MessageSerializer
-  permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
 
 class WithinDateFilter(django_filters.DateFilter):
     def filter(self, queryset, value):
@@ -63,21 +66,24 @@ class WithinDateFilter(django_filters.DateFilter):
             queryset = queryset.filter(**filter_lookups)
         return queryset
 
+
 class MD5Filter(django_filters.CharFilter):
     def filter(self, queryset, value):
         if value:
             if len(value) != 32:
                 value = hashlib.md5(value).hexdigest()
-            filter_lookups = { self.name: value }
+            filter_lookups = {self.name: value}
             queryset = queryset.filter(**filter_lookups)
         return queryset
 
+
 class UsageFilter(django_filters.FilterSet):
-    date    = WithinDateFilter(name="dateTime")
+    date = WithinDateFilter(name="dateTime")
     datemin = django_filters.DateFilter(name="dateTime", lookup_expr='gte')
     datemax = django_filters.DateFilter(name="dateTime", lookup_expr='lt')
     uid = MD5Filter(name="uid")
     host = MD5Filter(name="host")
+    ip = MD5Filter(name="ip")
 
     class Meta:
         model = Usage
@@ -85,14 +91,61 @@ class UsageFilter(django_filters.FilterSet):
         fields = '__all__'
         order_by = ['-dateTime']
 
+
 class UsageViewSet(viewsets.ModelViewSet):
-  """All usages registered in the system. Valid filter parameters are:
+    """All usages registered in the system. Valid filter parameters are:
     'host', 'uid', 'datemin', 'datemax', and 'date'.
-  """
-  queryset = Usage.objects.all()
-  serializer_class = UsageSerializer
-  permission_classes = [AllowAny]
-  filter_class=UsageFilter
+    """
+    queryset = Usage.objects.all()
+    serializer_class = UsageSerializer
+    permission_classes = [AllowAny]
+    filter_class = UsageFilter
+
+    def create(self, request):
+        HttpIP = request.META['REMOTE_ADDR']
+        if request.method == 'POST':
+            print "Request", request.body
+            post_data = json.loads(request.body)
+            HttpIP = request.META['REMOTE_ADDR']
+            if "results" in post_data.keys():
+                for usage in post_data["results"]:
+                    self.SaveUsage(usage, HttpIP)
+            else:
+                self.SaveUsage(post_data, HttpIP)
+            return HttpResponse(status=201)
+        else:
+            return HttpResponse("Please supply feature usage data as POST.")
+
+    def SaveUsage(self, usage, HttpIP):
+        ip = hashlib.md5(HttpIP).hexdigest()
+        #count = usage["count"]
+        osReadable = usage["osReadable"]
+        application = usage["application"]
+        component = usage["component"]
+        uid = usage["uid"]
+        host = usage["host"]
+        dateTime = usage["dateTime"]
+        osName = usage["osName"]
+        osArch = usage["osArch"]
+        osVersion = usage["osVersion"]
+        ParaView = usage["ParaView"]
+        mantidVersion = usage["mantidVersion"]
+        mantidSha1 = usage["mantidSha1"]
+        obj, created = Usage.objects.get_or_create(osReadable=osReadable,
+                                                   application=application,
+                                                   component=component,
+                                                   uid=uid, host=host,
+                                                   dateTime=dateTime,
+                                                   osName=osName,
+                                                   osArch=osArch,
+                                                   osVersion=osVersion,
+                                                   ParaView=ParaView,
+                                                   mantidVersion=mantidVersion,
+                                                   mantidSha1=mantidSha1,
+                                                   ip=ip)
+                                                   #defaults={'count': 0})
+        #obj.count += count
+        obj.save()
 
 
 def filterByDate(queryset, request=None, datemin=None, datemax=None):
@@ -103,12 +156,15 @@ def filterByDate(queryset, request=None, datemin=None, datemax=None):
         # datemax = request.data.get("datemax", datemax)
 
     if datemin:
-        queryset = django_filters.DateFilter(name="dateTime", lookup_expr='gte').filter(queryset, datemin)
+        queryset = django_filters.DateFilter(
+            name="dateTime", lookup_expr='gte').filter(queryset, datemin)
 
     if datemax:
-        queryset = django_filters.DateFilter(name="dateTime", lookup_expr='lt').filter(queryset, datemax)
+        queryset = django_filters.DateFilter(
+            name="dateTime", lookup_expr='lt').filter(queryset, datemax)
 
     return (queryset, datemin, datemax)
+
 
 def parseDate(date):
     date = date.split('-')
@@ -116,9 +172,10 @@ def parseDate(date):
     date = datetime.date(*date)
     return date
 
+
 def getDateRange(queryset, datemin=None, datemax=None):
     queryset = queryset.order_by("dateTime")
-    dates=[]
+    dates = []
     delta = datetime.timedelta(days=1)
     if datemin:
         item = parseDate(datemin)
@@ -133,35 +190,39 @@ def getDateRange(queryset, datemin=None, datemax=None):
         item += delta
     return dates
 
+
 def prepResult(dates):
-    result = {'date':dates, 'total':[], 'other':[]}
+    result = {'date': dates, 'total': [], 'other': []}
     for label in OS_NAMES:
         result[label] = []
     return result
 
+
 def convertResult(result):
-    mapping = {'Linux':'linux', 'Darwin':'mac', 'Windows NT':'windows'}
+    mapping = {'Linux': 'linux', 'Darwin': 'mac', 'Windows NT': 'windows'}
     for key in mapping.keys():
         if key in result:
-          result[mapping[key]] = result.pop(key)
+            result[mapping[key]] = result.pop(key)
     return result
+
 
 @api_view(('GET',))
 def host_list(request, format=None):
-  """List of hosts. This can be filtered with 'datemin' and 'datemax' parameters"""
-  queryset = Usage.objects.all()
-  (queryset, datemin, datemax) = filterByDate(queryset, request)
+    """List of hosts. This can be filtered with 'datemin' and 'datemax' parameters"""
+    queryset = Usage.objects.all()
+    (queryset, datemin, datemax) = filterByDate(queryset, request)
 
-  hosts = []
-  host_names = []
-  # only return the values that are actually used - sort by most recent first
-  for host in queryset.order_by("-dateTime")\
-         .values('host', 'osReadable', 'osName', 'osArch', 'osVersion', 'dateTime'):
-      if not host['host'] in host_names:
-          host_names.append(host['host'])
-          hosts.append(host)
+    hosts = []
+    host_names = []
+    # only return the values that are actually used - sort by most recent first
+    for host in queryset.order_by("-dateTime")\
+            .values('host', 'osReadable', 'osName', 'osArch', 'osVersion', 'dateTime'):
+        if not host['host'] in host_names:
+            host_names.append(host['host'])
+            hosts.append(host)
 
-  return response.Response(hosts)
+    return response.Response(hosts)
+
 
 @api_view(('GET',))
 def user_list(request, format=None):
@@ -172,18 +233,20 @@ def user_list(request, format=None):
     uids = []
     uid_names = []
     for uid in queryset.order_by("-dateTime")\
-          .values('uid', 'dateTime'):
+            .values('uid', 'dateTime'):
         if not uid['uid'] in uid_names:
             uid_names.append(uid['uid'])
             uids.append(uid)
 
     return response.Response(uids)
 
+
 def query_count(queryset, field):
     if field:
         return queryset.order_by(field).values(field).distinct().count()
     else:
         return queryset.count()
+
 
 def usage_by_field(request, format=None, field=None):
     (queryset, datemin, datemax) = filterByDate(Usage.objects.all(), request)
@@ -200,7 +263,8 @@ def usage_by_field(request, format=None, field=None):
             cumulative += count
             result[label].append(count)
         result['total'].append(total)
-        result['other'].append(max(0,total-cumulative)) # one user can be on multiple systems
+        # one user can be on multiple systems
+        result['other'].append(max(0, total - cumulative))
 
     result = convertResult(result)
 
@@ -214,17 +278,21 @@ def usage_by_field(request, format=None, field=None):
 
     return response.Response(finalResult)
 
+
 @api_view(('GET',))
 def usage_by_hosts(request, format=None):
     return usage_by_field(request, format, 'host')
+
 
 @api_view(('GET',))
 def usage_by_users(request, format=None):
     return usage_by_field(request, format, 'uid')
 
+
 @api_view(('GET',))
 def usage_by_start(request, format=None):
     return usage_by_field(request, format)
+
 
 @api_view(('GET',))
 def api_root(request, format=None):
@@ -236,13 +304,15 @@ def api_root(request, format=None):
         'feature':  reverse('featureusage-list',  request=request, format=format)
     })
 
+
 @api_view(('GET',))
 def by_root(request, format=None):
     return response.Response({
-        'host':reverse('by-hosts', request=request, format=format),
-        'user':reverse('by-users', request=request, format=format),
-        'start':reverse('by-starts', request=request, format=format),
+        'host': reverse('by-hosts', request=request, format=format),
+        'user': reverse('by-users', request=request, format=format),
+        'start': reverse('by-starts', request=request, format=format),
     })
+
 
 class FeatureViewSet(viewsets.ModelViewSet):
     """
@@ -261,9 +331,9 @@ class FeatureViewSet(viewsets.ModelViewSet):
     #   {"count":1,"internal":true,"name":"LoadMuonLog.v1","type":"Algorithm"},
     #   {"count":1,"internal":true,"name":"LoadMuonNexus.v1","type":"Algorithm"}],
     # "mantidVersion":"3.5"}
-    def create(self,request):
+    def create(self, request):
         if request.method == 'POST':
-            print "Request",request.body
+            print "Request", request.body
             post_data = json.loads(request.body)
             version = post_data["mantidVersion"]
             if "features" in post_data.keys():
