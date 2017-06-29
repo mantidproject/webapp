@@ -1,8 +1,10 @@
 from django.db import models
+import json
+import requests
 
 # Create your models here.
 
-class UsageLocation(models.Model):
+class Location(models.Model):
     ip = models.CharField(max_length=32, unique=True)
     city = models.CharField(max_length=32)
     region = models.CharField(max_length=32)
@@ -14,9 +16,25 @@ class UsageLocation(models.Model):
         return "IP: "+ self.ip + " City/Region/Country: " + self.city + "/" \
         + self.region + "/" + self.country
 
-    def create(self):
-        pass
-    # overwrite to check for existing IP before inserting in DB
+    def create(self, ip):
+        if ip == "127.0.0.1":
+            ip = "130.246.132.176"
+            """ ipinfo's API has a bad JSON format for 127.0.0.1 requests.
+            This changes the loopback IP to a random address for testing.
+            UsageLocation should have IP as a unique field. Change the IP
+            or you won't be able to add the test value more than once. """
+        jsonData = requests.get("http://ipinfo.io/%s/json/" % ip).content
+        apiReturn = json.loads(jsonData)
+        longitude = apiReturn["loc"][0:7]
+        latitude = apiReturn["loc"][8:]
+        city = apiReturn["city"]
+        region = apiReturn["region"]
+        country = apiReturn["country"]
+        ipHash = hashlib.md5(ip).hexdigest()
+        # change this thing here
+        entry = Location(ip=ipHash, city=city, region=region,
+                        country=country, longitude=longitude, latitude=latitude)
+        entry.save()
 
 class Message(models.Model):
     author = models.CharField(max_length=20)

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Message, Usage, FeatureUsage, UsageLocation
+from .models import Message, Usage, FeatureUsage, Location
 
 
 class MessageAdmin(admin.ModelAdmin):
@@ -23,7 +23,7 @@ class UsageAdmin(admin.ModelAdmin):
                     'component',
                     'ip')
 
-class UsageLocationAdmin(admin.ModelAdmin):
+class LocationAdmin(admin.ModelAdmin):
     list_display = ('ip',
                     'city',
                     'region',
@@ -40,6 +40,6 @@ class FeatureUsageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Message, MessageAdmin)
-admin.site.register(UsageLocation, UsageLocationAdmin)
+admin.site.register(Location, LocationAdmin)
 admin.site.register(Usage, UsageAdmin)
 admin.site.register(FeatureUsage, FeatureUsageAdmin)

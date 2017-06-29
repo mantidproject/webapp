@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from .models import Message, Usage, FeatureUsage, UsageLocation
+from .models import Message, Usage, FeatureUsage, Location
 from rest_framework import response, views, viewsets, filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
@@ -14,31 +14,23 @@ import json
 import datetime
 import hashlib
 import settings
-import requests
 import json
 
 OS_NAMES = ['Linux', 'Windows NT', 'Darwin']
 UTC = datetime.tzinfo('UTC')
 
-def LocationCreate(ipAddress):
-    if ipAddress == "127.0.0.1": 
-        ipAddress = "130.246.132.176" 
+def createLocation(ipAddress):
+    if ipAddress == "127.0.0.1":
+        ipAddress = "130.246.132.176"
     """ ipinfo's API has a bad JSON format for 127.0.0.1 requests.
         This changes the loopback IP to a random address for testing.
-        UsageLocation should have IP as a unique field. Change the IP
+        Location should have IP as a unique field. Change the IP
         or you won't be able to add the test value more than once. """
-    jsonData = requests.get("http://ipinfo.io/%s/json/" % ipAddress).content
-    apiReturn = json.loads(jsonData)
-    longitude = apiReturn["loc"][0:7]
-    latitude = apiReturn["loc"][8:]
-    ipAddr = apiReturn["ip"]
-    city = apiReturn["city"]
-    region = apiReturn["region"]
-    country = apiReturn["country"]
-    ipHash = hashlib.md5(ipAddr).hexdigest()
-    entry = UsageLocation(ip=ipHash, city=city, region=region,
-                          country=country, longitude=longitude, latitude=latitude)
-    entry.save()
+    ipHash = hashlib.md5(ipAddress).hexdigest()
+    if len(Location.objects.all().filter(ip=ipHash)) == 0:
+        entry = Location(ip=ipHash)
+        entry.save()
+    return ipHash
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
@@ -96,27 +88,23 @@ class UsageViewSet(viewsets.ModelViewSet):
     filter_class = UsageFilter
 
     def create(self, request):
-        HttpIP = request.META['REMOTE_ADDR']
         if request.method == 'POST':
             print "Request", request.body
             post_data = json.loads(request.body)
             HttpIP = request.META['REMOTE_ADDR']
-            try:
-                LocationCreate(HttpIP)
-            except:
-                pass # Either a bad request, or the IP has been submitted before
-            finally:
-                if "usages" in post_data.keys():
-                    for usage in post_data["usages"]:
-                        self.SaveUsage(usage, HttpIP)
-                else:
-                    self.SaveUsage(post_data, HttpIP)
-                return HttpResponse(status=201)
+            ipHash = createLocation(HttpIP)
+
+            if "usages" in post_data.keys():
+                for usage in post_data["usages"]:
+                    self.SaveUsage(usage, ipHash)
+            else:
+                self.SaveUsage(post_data, ipHash)
+            return HttpResponse(status=201)
         else:
             return HttpResponse("Please supply feature usage data as POST.")
 
-    def SaveUsage(self, usage, HttpIP):
-        ip = hashlib.md5(HttpIP).hexdigest()
+    def SaveUsage(self, usage, ipHash):
+        ip = ipHash
         #count = usage["count"]
         osReadable = usage["osReadable"]
         application = usage["application"]
