@@ -1,6 +1,7 @@
 from django.db import models
 import json
 import requests
+import hashlib
 
 # Create your models here.
 
@@ -35,7 +36,6 @@ class Location(models.Model):
         entry = Location(ip=ipHash, city=city, region=region,
                         country=country, longitude=longitude, latitude=latitude)
         entry.save()
-
 class Message(models.Model):
     author = models.CharField(max_length=20)
     text = models.CharField(max_length=140)

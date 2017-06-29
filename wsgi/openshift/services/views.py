@@ -28,8 +28,10 @@ def createLocation(ipAddress):
         or you won't be able to add the test value more than once. """
     ipHash = hashlib.md5(ipAddress).hexdigest()
     if len(Location.objects.all().filter(ip=ipHash)) == 0:
-        entry = Location(ip=ipHash)
-        entry.save()
+        ''' check for the HASHED ip in the database. If it isn't present,
+            create a new entry with the NON-HASHED ip as an argument. '''
+        entity = Location()
+        entity.create(ip=ipAddress)
     return ipHash
 
 class MessageViewSet(viewsets.ModelViewSet):
