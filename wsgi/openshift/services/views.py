@@ -98,14 +98,14 @@ class UsageViewSet(viewsets.ModelViewSet):
 
             if "usages" in post_data.keys():
                 for usage in post_data["usages"]:
-                    self.SaveUsage(usage, ipHash)
+                    self.saveUsage(usage, ipHash)
             else:
-                self.SaveUsage(post_data, ipHash)
+                self.saveUsage(post_data, ipHash)
             return HttpResponse(status=201)
         else:
             return HttpResponse("Please supply feature usage data as POST.")
 
-    def SaveUsage(self, usage, ipHash):
+    def saveUsage(self, usage, ipHash):
         ip = ipHash
         #count = usage["count"]
         osReadable = usage["osReadable"]
@@ -327,14 +327,14 @@ class FeatureViewSet(viewsets.ModelViewSet):
             version = post_data["mantidVersion"]
             if "features" in post_data.keys():
                 for feature in post_data["features"]:
-                    self.SaveFeatureUsage(feature, version)
+                    self.saveFeatureUsage(feature, version)
             else:
-                self.SaveFeatureUsage(post_data, version)
+                self.saveFeatureUsage(post_data, version)
             return HttpResponse(status=201)
         else:
             return HttpResponse("Please supply feature usage data as POST.")
 
-    def SaveFeatureUsage(self, feature, version):
+    def saveFeatureUsage(self, feature, version):
         count = feature["count"]
         internal = feature["internal"]
         type = feature["type"]
