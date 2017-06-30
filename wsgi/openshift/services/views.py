@@ -237,7 +237,7 @@ class FeatureViewSet(viewsets.ModelViewSet):
     # "mantidVersion":"3.5"}
     def create(self,request):
         if request.method == 'POST':
-            print "Request",request.body
+            # print "Request",request.body
             post_data = json.loads(request.body)
             version = post_data["mantidVersion"]
             if "features" in post_data.keys():
