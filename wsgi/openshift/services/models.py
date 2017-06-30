@@ -18,12 +18,6 @@ class Location(models.Model):
         + self.region + "/" + self.country
 
     def create(self, ip):
-        if ip == "127.0.0.1":
-            ip = "130.246.132.176"
-            """ ipinfo's API has a bad JSON format for 127.0.0.1 requests.
-            This changes the loopback IP to a random address for testing.
-            UsageLocation should have IP as a unique field. Change the IP
-            or you won't be able to add the test value more than once. """
         jsonData = requests.get("http://ipinfo.io/%s/json/" % ip).content
         apiReturn = json.loads(jsonData)
         longitude = apiReturn["loc"][0:7]
