@@ -5,7 +5,7 @@ from .models import Message, Usage, FeatureUsage, Location
 from rest_framework import response, views, viewsets, filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
-from .serializer import MessageSerializer, UsageSerializer, FeatureSerializer
+from .serializer import MessageSerializer, UsageSerializer, FeatureSerializer, LocationSerializer
 import django_filters
 from rest_framework import generics
 from rest_framework.reverse import reverse
@@ -33,6 +33,11 @@ def createLocation(ipAddress):
         entity = Location()
         entity.create(ip=ipAddress)
     return ipHash
+
+class LocationViewSet(viewsets.ModelViewSet):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
@@ -290,7 +295,8 @@ def api_root(request, format=None):
         'host':  reverse('host-list',  request=request, format=format),
         'usage': reverse('usage-list', request=request, format=format),
         'user':  reverse('user-list',  request=request, format=format),
-        'feature':  reverse('featureusage-list',  request=request, format=format)
+        'feature':  reverse('featureusage-list',  request=request, format=format),
+        'location':  reverse('location-list',  request=request, format=format)
     })
 
 

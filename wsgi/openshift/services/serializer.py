@@ -1,6 +1,10 @@
 from rest_framework import serializers
-from .models import Message, Usage, FeatureUsage
+from .models import Message, Usage, FeatureUsage, Location
 
+class LocationSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Location
+        fields = ('ip', 'url', 'city', 'region', 'country', 'longitude', 'latitude')
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

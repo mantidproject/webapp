@@ -7,6 +7,7 @@ router = routers.DefaultRouter(trailing_slash=False)
 #router.register(r'message', MessageViewSet)
 router.register(r'usage', views.UsageViewSet)
 router.register(r'feature', views.FeatureViewSet)
+router.register(r'location', views.LocationViewSet)
 # router.register(r'hosts', ListHosts) # doesn't work
 
 urlpatterns = [
