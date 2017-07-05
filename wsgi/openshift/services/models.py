@@ -20,8 +20,7 @@ class Location(models.Model):
     def create(self, ip):
         jsonData = requests.get("http://ipinfo.io/%s/json/" % ip).content
         apiReturn = json.loads(jsonData)
-        longitude = apiReturn["loc"][0:7]
-        latitude = apiReturn["loc"][8:]
+        longitude, latitude = apiReturn['loc'].strip().split(',')
         city = apiReturn["city"]
         region = apiReturn["region"]
         country = apiReturn["country"]
