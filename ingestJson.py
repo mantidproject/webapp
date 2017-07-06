@@ -52,26 +52,33 @@ def iterate_and_post(jsonData, apiSource):
             print "Posted", i, "JSON objects to destination."
     else:
         if args.verbose:
-            print "Attempted", i, "JSON posts, resulted with", errors, "errors."
+            print "Attempted", i, "JSON posts, resulted with", \
+                errors, "errors."
     return errors
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--count", type=int, default=1, dest='page_count',
+    parser.add_argument("-c", "--count", type=int, default=1,
+                        dest='page_count',
                         help="number of pages to copy data from (defaults=1)")
     parser.add_argument("-v", "--verbose", action="store_true",
                         help="increase output")
     API_TYPES = ['usage', 'feature']
     parser.add_argument('-t', '--type', choices=API_TYPES, nargs='?',
                         default=API_TYPES[0],
-                        help='Select which type to ingest (default=%s)' % API_TYPES[0])
+                        help='Select which type to ingest '
+                        '(default=%s)' % API_TYPES[0])
+    FROM_DEFAULT = "http://reports.mantidproject.org/api/"
     parser.add_argument("source", type=str, nargs='?',
-                        default="http://reports.mantidproject.org/api/",
-                        help="source URL of api from which to extract (GET) JSON")
+                        default=FROM_DEFAULT,
+                        help="source URL of api from which to extract (GET)"
+                        " JSON (default=%s)" % FROM_DEFAULT)
+    TO_DEFAULT = "http://localhost:8000/api/"
     parser.add_argument("destination", type=str, nargs='?',
-                        default="http://localhost:8000/api/",
-                        help="destination URL for insertion (POST) of JSON data")
+                        default=TO_DEFAULT,
+                        help="destination URL for insertion (POST) of JSON "
+                        "data (default=%s)" % TO_DEFAULT)
     args = parser.parse_args()
     errors = 0
     get_url = urljoin(args.source, args.type)
