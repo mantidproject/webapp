@@ -28,11 +28,7 @@ def createLocation(ipAddress):
         Location should have IP as a unique field. Change the IP
         or you won't be able to add the test value more than once. """
     ipHash = hashlib.md5(ipAddress).hexdigest()
-    if len(Location.objects.all().filter(ip=ipHash)) == 0:
-        ''' check for the HASHED ip in the database. If it isn't present,
-            create a new entry with the NON-HASHED ip as an argument. '''
-        entity = Location()
-        entity.create(ip=ipAddress)
+    obj, created = Location.objects.get_or_create(ip=ipHash)
     return ipHash
 
 class LocationViewSet(viewsets.ModelViewSet):
