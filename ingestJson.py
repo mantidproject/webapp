@@ -78,7 +78,7 @@ if __name__ == "__main__":
     post_url = urljoin(args.destination, args.type)
     page_count = args.page_count
 
-    print get_url, post_url
+    print 'copying data from', get_url, 'to', post_url
 
     for page in range(1, page_count + 1):
         if args.verbose:
