@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Message, Usage, FeatureUsage, Location
+from .models import Message, Usage, FeatureUsage
 
 
 class MessageAdmin(admin.ModelAdmin):
@@ -20,16 +20,8 @@ class UsageAdmin(admin.ModelAdmin):
                     'mantidVersion',
                     'mantidSha1',
                     'application',
-                    'component',
-                    'ip')
+                    'component')
 
-class LocationAdmin(admin.ModelAdmin):
-    list_display = ('ip',
-                    'city',
-                    'region',
-                    'country',
-                    'latitude',
-                    'longitude')
 
 class FeatureUsageAdmin(admin.ModelAdmin):
     list_display = ('type',
@@ -40,6 +32,5 @@ class FeatureUsageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Message, MessageAdmin)
-admin.site.register(Location, LocationAdmin)
 admin.site.register(Usage, UsageAdmin)
 admin.site.register(FeatureUsage, FeatureUsageAdmin)

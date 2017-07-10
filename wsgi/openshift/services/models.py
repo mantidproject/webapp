@@ -1,34 +1,8 @@
 from django.db import models
-import json
-import requests
-import hashlib
 
 # Create your models here.
 
-class Location(models.Model):
-    ip = models.CharField(max_length=32, unique=True)
-    city = models.CharField(max_length=32)
-    region = models.CharField(max_length=32)
-    country = models.CharField(max_length=32)
-    latitude = models.CharField(max_length=32)
-    longitude = models.CharField(max_length=32)
 
-    def __unicode__(self):
-        return "IP: "+ self.ip + " City/Region/Country: " + self.city + "/" \
-        + self.region + "/" + self.country
-
-    def create(self, ip):
-        jsonData = requests.get("http://ipinfo.io/%s/json/" % ip).content
-        apiReturn = json.loads(jsonData)
-        longitude, latitude = apiReturn['loc'].strip().split(',')
-        city = apiReturn["city"]
-        region = apiReturn["region"]
-        country = apiReturn["country"]
-        ipHash = hashlib.md5(ip).hexdigest()
-        # change this thing here
-        entry = Location(ip=ipHash, city=city, region=region,
-                        country=country, longitude=longitude, latitude=latitude)
-        entry.save()
 class Message(models.Model):
     author = models.CharField(max_length=20)
     text = models.CharField(max_length=140)
@@ -58,7 +32,6 @@ class Usage(models.Model):
     osReadable = models.CharField(max_length=80, default="", blank=True)
     application = models.CharField(max_length=80, default="", blank=True)
     component = models.CharField(max_length=80, default="", blank=True)
-    ip = models.CharField(max_length=32, default="", blank=True)
 
 
 class FeatureUsage(models.Model):
