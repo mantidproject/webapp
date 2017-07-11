@@ -10,7 +10,7 @@ echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py makemigrati
 python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py makemigrations services --noinput
 
 echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py migrate services'"
-python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py migrate services --noinput
+python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py migrate --noinput
 
 echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py collectstatic --noinput'"
 python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py collectstatic --noinput # -v0
