@@ -6,11 +6,11 @@
 
 source $OPENSHIFT_HOMEDIR/python/virtenv/bin/activate
 
-echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py makemigrations services'"
-python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py makemigrations services prep_locations --noinput
+echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py makemigrations'"
+python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py makemigrations services auth --noinput
 
 echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py migrate services'"
-python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py migrate --noinput
+python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py migrate --run-syncdb --noinput
 
 echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py collectstatic --noinput'"
 python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py collectstatic --noinput # -v0
