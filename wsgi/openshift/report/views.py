@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import RequestContext, loader
+import plotly 
+
+plotly.tools.set_credentials_file(username='DemoAccount', api_key='lr1c37zw81')
 
 # Create your views here.
 
@@ -23,3 +26,6 @@ def user(request, md5):
     else:
         context = {'uid': md5}
         return render(request, 'user.html', context)
+
+def plotly(request, md5):
+    return render(request, 'plotly.html')

@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^$', report.views.index, name='index'),
     url(r'^host/(?P<md5>\w+)?$', report.views.host, name='host'),
     url(r'^user/(?P<md5>\w+)?$', report.views.user, name='user'),
+    url(r'^plotly/(?P<md5>\w+)?$', report.views.plotly, name='plotly'),
 ]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
