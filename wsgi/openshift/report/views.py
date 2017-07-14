@@ -1,9 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import RequestContext, loader
-import plotly 
-
-plotly.tools.set_credentials_file(username='DemoAccount', api_key='lr1c37zw81')
+import plots as lel
 
 # Create your views here.
 
@@ -27,5 +25,8 @@ def user(request, md5):
         context = {'uid': md5}
         return render(request, 'user.html', context)
 
-def plotly(request, md5):
-    return render(request, 'plotly.html')
+def plots(request, md5):
+    div = lel.aFunc()
+    print div
+    context = { "div":div }
+    return render(request, 'plots.html', context=context)
