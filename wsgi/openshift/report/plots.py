@@ -114,10 +114,15 @@ def map():
             geo = 'geo2'
         )
     ]
+    #
+    # LAYOUT SETTINGS HERE
+    #
     layout = go.Layout(
         title = 'Ebola cases reported by month in West Africa 2014<br> \
     Source: <a href="https://data.hdx.rwlabs.org/dataset/rowca-ebola-cases">\
     HDX</a>',
+        width=1000,
+        height=700,
         geo = dict(
             resolution = 50,
             scope = 'africa',
