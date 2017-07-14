@@ -5,7 +5,7 @@ import plotly.offline as py
 import plotly.graph_objs as go
 import pandas as pd
 
-def graph1():
+def main():
     years=["2015", "2016", "2017"]
     """
     DataSet = {
@@ -16,10 +16,10 @@ def graph1():
     } 
     """
     datasetNames=['Windows', 'Mac', 'RedHat', 'Ubuntu', 'Total']
-    Windows=[20, 14, 23]
-    Mac=[12, 18, 29]
-    RedHat=[18, 35, 12]
-    Ubuntu=[16, 30, 15]
+    Windows=    [20, 14, 23]
+    Mac=        [12, 18, 29]
+    RedHat=     [18, 35, 12]
+    Ubuntu=     [16, 30, 15]
     Total=[]
 
     for i in range(len(Windows)):
@@ -30,7 +30,7 @@ def graph1():
         y=Total,
         name="Total",
         marker=dict(
-            color='rgb(150,220,150)',
+            color='rgb(200,200,200)',
             #color='rgb(150,50,250)',
         ),
     )
@@ -72,14 +72,14 @@ def graph1():
     data = [TotalTrace, WindowsTrace, MacTrace, RedHatTrace, UbuntuTrace]
     layout = go.Layout(
         barmode='group',
-        width=1000,
+        width=700,
         height=700,
         margin=go.Margin(
             l=50,
-            r=50,
+            r=0,
             b=100,
             t=100,
-            pad=4
+            pad=1
         ),
     )
     fig = go.Figure(data=data, layout=layout)
@@ -177,3 +177,23 @@ def map():
     fig = go.Figure(layout=layout, data=cases+inset)
     div = py.plot( fig, validate=False, output_type='div')
     return div
+
+def pi():
+
+    labels = ['Windows','Mac','Red Hat','Ubuntu']
+    values = [4500,2500,1053,500]
+    colors = ['rgb(70,70,220)', 'rgb(190,200,250)', 'rgb(200,80,80)', 'rgb(250,160,100)']
+    layout = go.Layout(
+        width = 500,
+        height = 500,
+        margin=go.Margin(
+            l=0,
+            r=50,
+            b=100,
+            t=100,
+            pad=1
+        ),
+    )
+    trace = go.Pie(labels=labels, values=values, marker=dict(colors=colors))
+    fig = go.Figure(data=[trace], layout=layout)
+    return py.plot(fig, output_type='div')
