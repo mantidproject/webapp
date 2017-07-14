@@ -110,26 +110,6 @@ def map():
         df[ df['Month'] == 9 ]['Country']
     cases[0]['mode'] = 'markers+text'
     cases[0]['textposition'] = 'bottom center'
-    inset = [
-        go.Choropleth(
-            locationmode = 'country names',
-            locations = df[ df['Month'] == 9 ]['Country'],
-            z = df[ df['Month'] == 9 ]['Value'],
-            text = df[ df['Month'] == 9 ]['Country'],
-            colorscale = [[0,'rgb(0, 0, 0)'],[1,'rgb(0, 0, 0)']],
-            autocolorscale = False,
-            showscale = False,
-            geo = 'geo2'
-        ),
-        go.Scattergeo(
-            lon = [21.0936],
-            lat = [7.1881],
-            text = ['Africa'],
-            mode = 'text',
-            showlegend = False,
-            geo = 'geo2'
-        )
-    ]
     #
     # LAYOUT SETTINGS HERE
     #
@@ -137,11 +117,11 @@ def map():
         title = 'Data showing increased instance over time<br>',
     #Source: <a href="https://data.hdx.rwlabs.org/dataset/rowca-ebola-cases">\
     #HDX</a>',
-        width=1000,
-        height=700,
+        width=1100,
+        height=600,
         geo = dict(
-            resolution = 50,
-            scope = 'africa',
+            resolution = 5,
+            scope = 'world',
             showframe = False,
             showcoastlines = True,
             showland = True,
@@ -151,30 +131,25 @@ def map():
             projection = dict(
                 type = 'Mercator'
             ),
-            lonaxis = dict( range= [ -15.0, -5.0 ] ),
-            lataxis = dict( range= [ 0.0, 12.0 ] ),
+            lonaxis = dict( range= [ -150.0, 150.0 ] ),
+            lataxis = dict( range= [ -100.0, 100.0 ] ),
             domain = dict(
                 x = [ 0, 1 ],
                 y = [ 0, 1 ]
             )
         ),
-        geo2 = dict(
-            scope = 'africa',
-            showframe = False,
-            showland = True,
-            landcolor = "rgb(229, 229, 229)",
-            showcountries = False,
-            domain = dict(
-                x = [ 0, 0.6 ],
-                y = [ 0, 0.6 ]
-            ),
-            bgcolor = 'rgba(255, 255, 255, 0.0)',
+        margin=go.Margin(
+            l=0,
+            r=50,
+            b=100,
+            t=30,
+            pad=1
         ),
         legend = dict(
             traceorder = 'reversed'
         )
     )
-    fig = go.Figure(layout=layout, data=cases+inset)
+    fig = go.Figure(layout=layout, data=cases) #cases+inset
     div = py.plot( fig, validate=False, output_type='div')
     return div
 
@@ -190,7 +165,7 @@ def pi():
             l=0,
             r=50,
             b=100,
-            t=100,
+            t=10,
             pad=1
         ),
     )
