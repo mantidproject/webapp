@@ -11,6 +11,7 @@ packages = ['Django==1.11.2',
             'MySQL-python',
             'requests',
             'plotly',
+            'pandas',
             ]
 
 if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDISCLOUD_PASSWORD' in os.environ:
