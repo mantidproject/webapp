@@ -53,7 +53,18 @@ def aFunc():
         name="Ubuntu"
         )
     data = [TotalTrace, WindowsTrace, MacTrace, RedHatTrace, UbuntuTrace]
-    layout = go.Layout(barmode='group')
+    layout = go.Layout(
+        barmode='group',
+        width=1000,
+        height=700,
+        margin=go.Margin(
+            l=50,
+            r=50,
+            b=100,
+            t=100,
+            pad=4
+        ),
+    )
     fig = go.Figure(data=data, layout=layout)
     div = py.plot(fig, output_type='div', show_link=False)
     return div
