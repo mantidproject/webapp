@@ -26,33 +26,49 @@ def graph1():
         Total.append(Windows[i] + Mac[i] + RedHat[i] + Ubuntu[i])
 
     TotalTrace = go.Bar(
-       x=years,
+        x=years,
         y=Total,
-       name="Total"
+        name="Total",
+        marker=dict(
+            color='rgb(150,220,150)',
+            #color='rgb(150,50,250)',
+        ),
     )
 
     WindowsTrace = go.Bar(
         x=years,
         y=Windows,
-        name="Windows"
+        name="Windows",
+        marker=dict(
+            color='rgb(70,70,220)',
+        ),
     )
     MacTrace = go.Bar(
         x=years,
         y=Mac,
-        name="Mac"
+        name="Mac",
+        marker=dict(
+            color='rgb(190,200,250)',
+        ),
     )
 
     RedHatTrace = go.Bar(
         x=years,
         y=RedHat,
-        name="Red Hat"
+        name="Red Hat",
+        marker=dict(
+            color='rgb(200,80,80)',
+        ),
     )
 
     UbuntuTrace = go.Bar(
         x=years,
         y=Ubuntu,
-        name="Ubuntu"
-        )
+        name="Ubuntu",
+        marker=dict(
+            color='rgb(250,160,100)',
+        ),
+    )
     data = [TotalTrace, WindowsTrace, MacTrace, RedHatTrace, UbuntuTrace]
     layout = go.Layout(
         barmode='group',
@@ -118,9 +134,9 @@ def map():
     # LAYOUT SETTINGS HERE
     #
     layout = go.Layout(
-        title = 'Ebola cases reported by month in West Africa 2014<br> \
-    Source: <a href="https://data.hdx.rwlabs.org/dataset/rowca-ebola-cases">\
-    HDX</a>',
+        title = 'Data showing increased instance over time<br>',
+    #Source: <a href="https://data.hdx.rwlabs.org/dataset/rowca-ebola-cases">\
+    #HDX</a>',
         width=1000,
         height=700,
         geo = dict(
