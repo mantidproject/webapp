@@ -10,12 +10,12 @@ year_2017_data = {"Windows": 32, "Mac": 45, "RHEL": 80, "Ubuntu": 72, "Other": 2
 # Let's just work with this as a given. 
 
 # Colors
-TotalColor = 'rgb(200,200,200)'
-WinColor = 'rgb(70,70,220)'
-MacColor = 'rgb(190,200,250)'
-RHELColor = 'rgb(200,80,80)'
-UbuntuColor = 'rgb(250,160,100)'
-OtherColor = 'rgb(130,130,150)'
+TOTAL_COLOR = 'rgb(200,200,200)'
+WIN_COLOR = 'rgb(70,70,220)'
+MAC_COLOR = 'rgb(190,200,250)'
+RHEL_COLOR = 'rgb(200,80,80)'
+UBUNTU_COLOR = 'rgb(250,160,100)'
+OTHER_COLOR = 'rgb(130,130,150)'
 
 def main():
     years = ["2016", "2017"]
@@ -35,7 +35,7 @@ def main():
         y=Total,
         name="Total",
         marker=dict(
-            color=TotalColor,
+            color=TOTAL_COLOR,
             #color='rgb(150,50,250)',
         ),
     )
@@ -45,7 +45,7 @@ def main():
         y=Windows,
         name="Windows",
         marker=dict(
-            color=WinColor,
+            color=WIN_COLOR,
         ),
     )
     MacTrace = go.Bar(
@@ -53,7 +53,7 @@ def main():
         y=Mac,
         name="Mac",
         marker=dict(
-            color=MacColor,
+            color=MAC_COLOR,
         ),
     )
 
@@ -62,7 +62,7 @@ def main():
         y=RHEL,
         name="Red Hat",
         marker=dict(
-            color=RHELColor,
+            color=RHEL_COLOR,
         ),
     )
 
@@ -71,7 +71,7 @@ def main():
         y=Ubuntu,
         name="Ubuntu",
         marker=dict(
-            color=UbuntuColor,
+            color=UBUNTU_COLOR,
         ),
     )
 
@@ -80,7 +80,7 @@ def main():
         y=Other,
         name="Other",
         marker=dict(
-            color=OtherColor,
+            color=OTHER_COLOR,
         ),
     )
 
@@ -275,7 +275,7 @@ def pi():
             year_2017_data['RHEL'], year_2017_data['Ubuntu'],
             year_2017_data['Other']
             ]
-    colors = [WinColor, MacColor, RHELColor, UbuntuColor, OtherColor]
+    colors = [WIN_COLOR, MAC_COLOR, RHEL_COLOR, UBUNTU_COLOR, OTHER_COLOR]
     layout = go.Layout(
         width = 500,
         height = 500,
