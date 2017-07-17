@@ -172,6 +172,22 @@ Sierra Leone,12,14,8.46,-11.78,
         'Lon':3.0,
         'Value':730
         },
+        {
+        'Country':"Australia",
+        'Month':7,
+        'Year':14,
+        'Lat':-25.0,
+        'Lon':140.0,
+        'Value':300
+        },
+        {
+        'Country':"Australia",
+        'Month':9,
+        'Year':14,
+        'Lat':-25.0,
+        'Lon':140.0,
+        'Value':891
+        },
      ], ignore_index=True)
     df.head()
     cases = []
