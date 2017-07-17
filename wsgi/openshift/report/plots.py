@@ -9,6 +9,14 @@ year_2016_data = {"Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 1
 year_2017_data = {"Windows": 32, "Mac": 45, "RHEL": 80, "Ubuntu": 72, "Other": 20}
 # Let's just work with this as a given. 
 
+# Colors
+TotalColor = 'rgb(200,200,200)'
+WinColor = 'rgb(70,70,220)'
+MacColor = 'rgb(190,200,250)'
+RHELColor = 'rgb(200,80,80)'
+UbuntuColor = 'rgb(250,160,100)'
+OtherColor = 'rgb(130,130,150)'
+
 def main():
     years = ["2016", "2017"]
     Windows = [year_2016_data["Windows"], year_2017_data["Windows"]]
@@ -27,7 +35,7 @@ def main():
         y=Total,
         name="Total",
         marker=dict(
-            color='rgb(200,200,200)',
+            color=TotalColor,
             #color='rgb(150,50,250)',
         ),
     )
@@ -37,7 +45,7 @@ def main():
         y=Windows,
         name="Windows",
         marker=dict(
-            color='rgb(70,70,220)',
+            color=WinColor,
         ),
     )
     MacTrace = go.Bar(
@@ -45,7 +53,7 @@ def main():
         y=Mac,
         name="Mac",
         marker=dict(
-            color='rgb(190,200,250)',
+            color=MacColor,
         ),
     )
 
@@ -54,7 +62,7 @@ def main():
         y=RHEL,
         name="Red Hat",
         marker=dict(
-            color='rgb(200,80,80)',
+            color=RHELColor,
         ),
     )
 
@@ -63,7 +71,7 @@ def main():
         y=Ubuntu,
         name="Ubuntu",
         marker=dict(
-            color='rgb(250,160,100)',
+            color=UbuntuColor,
         ),
     )
 
@@ -72,7 +80,7 @@ def main():
         y=Other,
         name="Other",
         marker=dict(
-            color='rgb(130,130,150)',
+            color=OtherColor,
         ),
     )
 
@@ -267,7 +275,7 @@ def pi():
             year_2017_data['RHEL'], year_2017_data['Ubuntu'],
             year_2017_data['Other']
             ]
-    colors = ['rgb(70,70,220)', 'rgb(190,200,250)', 'rgb(200,80,80)', 'rgb(250,160,100)', 'rgb(130,130,150)']
+    colors = [WinColor, MacColor, RHELColor, UbuntuColor, OtherColor]
     layout = go.Layout(
         width = 500,
         height = 500,
