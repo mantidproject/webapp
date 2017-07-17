@@ -5,6 +5,9 @@ import plotly.offline as py
 import plotly.graph_objs as go
 import pandas as pd
 
+year_2017_data = {"Windows": 32, "Mac": 45, "RHEL": 80, "Ubuntu": 72, "Other": 20}
+# Let's just work with this as a given. 
+
 def main():
     years=["2015", "2016", "2017"]
     """
@@ -254,9 +257,13 @@ def map():
     return div
 
 def pi():
-    labels = ['Windows','Mac','Red Hat','Ubuntu']
-    values = [4500,2500,1053,500]
-    colors = ['rgb(70,70,220)', 'rgb(190,200,250)', 'rgb(200,80,80)', 'rgb(250,160,100)']
+    labels=['Windows','Mac','Red Hat','Ubuntu', 'Other']
+    values=[
+            year_2017_data['Windows'], year_2017_data['Mac'],
+            year_2017_data['RHEL'], year_2017_data['Ubuntu'],
+            year_2017_data['Other']
+            ]
+    colors = ['rgb(70,70,220)', 'rgb(190,200,250)', 'rgb(200,80,80)', 'rgb(250,160,100)', 'rgb(110,112,100)']
     layout = go.Layout(
         width = 500,
         height = 500,
