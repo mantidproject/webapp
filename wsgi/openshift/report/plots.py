@@ -10,7 +10,7 @@ year_2017_data = {"Windows": 32, "Mac": 45, "RHEL": 80, "Ubuntu": 72, "Other": 2
 # Let's just work with this as a given. 
 
 def main():
-    years = ["2015", "2016", "2017"]
+    years = ["2016", "2017"]
     Windows = [year_2016_data["Windows"], year_2017_data["Windows"]]
     Mac = [year_2016_data["Mac"], year_2017_data["Mac"]]
     RHEL = [year_2016_data["RHEL"], year_2017_data["RHEL"]]
