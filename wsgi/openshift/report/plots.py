@@ -90,38 +90,38 @@ def main():
 def map():
     ds = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/2014_ebola.csv')
     """
-Country,Month,Year,Lat,Lon,Value
-Guinea, 3, 14, 9.95, -9.7, 122
-Guinea,4,14,9.95,-9.7,224
-Guinea,5,14,9.95,-9.7,291
-Guinea,6,14,9.95,-9.7,413
-Guinea,7,14,9.95,-9.7,460
-Guinea,8,14,9.95,-9.7,771
-Guinea,9,14,9.95,-9.7,1022
-Guinea,10,14,9.95,-9.7,
-Guinea,11,14,9.95,-9.7,
-Guinea,12,14,9.95,-9.7,
-Liberia,4,14,6.43,-9.43,35
-Liberia,5,14,6.43,-9.43,13
-Liberia,6,14,6.43,-9.43,107
-Liberia,7,14,6.43,-9.43,329
-Liberia,8,14,6.43,-9.43,1395
-Liberia,9,14,6.43,-9.43,3362
-Liberia,10,14,6.43,-9.43,
-Liberia,11,14,6.43,-9.43,
-Liberia,12,14,6.43,-9.43,
-Mali,10,14,17.57,-4,1
-Mali,11,14,17.57,-4,8
-Senegal,8,14,14.5,-14.45,1
-Senegal,9,14,14.5,-14.45,3
-Sierra Leone,5,14,8.46,-11.78,50
-Sierra Leone,6,14,8.46,-11.78,239
-Sierra Leone,7,14,8.46,-11.78,533
-Sierra Leone,8,14,8.46,-11.78,1216
-Sierra Leone,9,14,8.46,-11.78,1940
-Sierra Leone,10,14,8.46,-11.78,
-Sierra Leone,11,14,8.46,-11.78,
-Sierra Leone,12,14,8.46,-11.78,
+    Country,Month,Year,Lat,Lon,Value
+    Guinea, 3, 14, 9.95, -9.7, 122
+    Guinea,4,14,9.95,-9.7,224
+    Guinea,5,14,9.95,-9.7,291
+    Guinea,6,14,9.95,-9.7,413
+    Guinea,7,14,9.95,-9.7,460
+    Guinea,8,14,9.95,-9.7,771
+    Guinea,9,14,9.95,-9.7,1022
+    Guinea,10,14,9.95,-9.7,
+    Guinea,11,14,9.95,-9.7,
+    Guinea,12,14,9.95,-9.7,
+    Liberia,4,14,6.43,-9.43,35
+    Liberia,5,14,6.43,-9.43,13
+    Liberia,6,14,6.43,-9.43,107
+    Liberia,7,14,6.43,-9.43,329
+    Liberia,8,14,6.43,-9.43,1395
+    Liberia,9,14,6.43,-9.43,3362
+    Liberia,10,14,6.43,-9.43,
+    Liberia,11,14,6.43,-9.43,
+    Liberia,12,14,6.43,-9.43,
+    Mali,10,14,17.57,-4,1
+    Mali,11,14,17.57,-4,8
+    Senegal,8,14,14.5,-14.45,1
+    Senegal,9,14,14.5,-14.45,3
+    Sierra Leone,5,14,8.46,-11.78,50
+    Sierra Leone,6,14,8.46,-11.78,239
+    Sierra Leone,7,14,8.46,-11.78,533
+    Sierra Leone,8,14,8.46,-11.78,1216
+    Sierra Leone,9,14,8.46,-11.78,1940
+    Sierra Leone,10,14,8.46,-11.78,
+    Sierra Leone,11,14,8.46,-11.78,
+    Sierra Leone,12,14,8.46,-11.78,
     """
     df = ds.append([
         {
@@ -191,7 +191,7 @@ Sierra Leone,12,14,8.46,-11.78,
      ], ignore_index=True)
     df.head()
     cases = []
-    colors = ['rgb(239,243,255)','rgb(189,215,231)','rgb(107,174,214)','rgb(33,113,181)']
+    colors = ['#DDBBBB', '#EE0000', '#CC2222', '#FF3333']#['rgb(239,243,255)','rgb(189,215,231)','rgb(107,174,214)','rgb(33,113,181)']
     months = {6:'June',7:'July',8:'Aug',9:'Sept'}
     for i in range(6,10)[::-1]:
         cases.append(go.Scattergeo(
@@ -254,7 +254,6 @@ Sierra Leone,12,14,8.46,-11.78,
     return div
 
 def pi():
-
     labels = ['Windows','Mac','Red Hat','Ubuntu']
     values = [4500,2500,1053,500]
     colors = ['rgb(70,70,220)', 'rgb(190,200,250)', 'rgb(200,80,80)', 'rgb(250,160,100)']
