@@ -72,7 +72,7 @@ def main():
         y=Other,
         name="Other",
         marker=dict(
-            color='rgb(250,100,100)',
+            color='rgb(130,130,150)',
         ),
     )
 
@@ -267,7 +267,7 @@ def pi():
             year_2017_data['RHEL'], year_2017_data['Ubuntu'],
             year_2017_data['Other']
             ]
-    colors = ['rgb(70,70,220)', 'rgb(190,200,250)', 'rgb(200,80,80)', 'rgb(250,160,100)', 'rgb(110,112,100)']
+    colors = ['rgb(70,70,220)', 'rgb(190,200,250)', 'rgb(200,80,80)', 'rgb(250,160,100)', 'rgb(130,130,150)']
     layout = go.Layout(
         width = 500,
         height = 500,
@@ -279,6 +279,6 @@ def pi():
             pad=1
         ),
     )
-    trace = go.Pie(labels=labels, values=values, marker=dict(colors=colors))
+    trace = go.Pie(labels=labels, values=values, marker=dict(colors=colors), direction="counter-clockwise")
     fig = go.Figure(data=[trace], layout=layout)
     return py.plot(fig, output_type='div')
