@@ -5,6 +5,7 @@ import plotly.offline as py
 import plotly.graph_objs as go
 import pandas as pd
 
+OS_LIST=["Windows", "Mac", "RHEL", "Ubuntu", "Other"]
 year_2016_data = {"Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10}
 year_2017_data = {"Windows": 32, "Mac": 45, "RHEL": 80, "Ubuntu": 72, "Other": 20}
 # Let's just work with this as a given. 
@@ -24,11 +25,11 @@ def main():
     RHEL = [year_2016_data["RHEL"], year_2017_data["RHEL"]]
     Ubuntu = [year_2016_data["Ubuntu"], year_2017_data["Ubuntu"]]
     Other = [year_2016_data["Other"], year_2017_data["Other"]]
-    Total = {"2016":0,"2017":0}
+    Total = [0,0]
 
-    for OS_count in year_2017_data:
-        Total["2016"]+=year_2016_data[OS_count]
-        Total["2017"]+=year_2017_data[OS_count]
+    for OS_count in OS_LIST:
+        Total[0]+=year_2016_data[OS_count]
+        Total[1]+=year_2017_data[OS_count]
 
     TotalTrace = go.Bar(
         x=years,
@@ -84,7 +85,7 @@ def main():
         ),
     )
 
-    data = [WindowsTrace, MacTrace, RedHatTrace, UbuntuTrace, OtherTrace] #Fix TotalTrace
+    data = [TotalTrace, WindowsTrace, MacTrace, RedHatTrace, UbuntuTrace, OtherTrace] #Fix TotalTrace
     layout = go.Layout(
         barmode='group',
         width=700,
