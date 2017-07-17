@@ -5,28 +5,22 @@ import plotly.offline as py
 import plotly.graph_objs as go
 import pandas as pd
 
+year_2016_data = {"Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10}
 year_2017_data = {"Windows": 32, "Mac": 45, "RHEL": 80, "Ubuntu": 72, "Other": 20}
 # Let's just work with this as a given. 
 
 def main():
-    years=["2015", "2016", "2017"]
-    """
-    DataSet = {
-        'Windows':  [20, 14, 23], 
-        'Mac':      [12, 18, 29], 
-        'Linux':    [18, 35, 12], 
-        'Total':    []
-    } 
-    """
-    datasetNames=['Windows', 'Mac', 'RedHat', 'Ubuntu', 'Total']
-    Windows=    [20, 14, 23]
-    Mac=        [12, 18, 29]
-    RedHat=     [18, 35, 12]
-    Ubuntu=     [16, 30, 15]
-    Total=[]
+    years = ["2015", "2016", "2017"]
+    Windows = [year_2016_data["Windows"], year_2017_data["Windows"]]
+    Mac = [year_2016_data["Mac"], year_2017_data["Mac"]]
+    RHEL = [year_2016_data["RHEL"], year_2017_data["RHEL"]]
+    Ubuntu = [year_2016_data["Ubuntu"], year_2017_data["Ubuntu"]]
+    Other = [year_2016_data["Other"], year_2017_data["Other"]]
+    Total = {"2016":0,"2017":0}
 
-    for i in range(len(Windows)):
-        Total.append(Windows[i] + Mac[i] + RedHat[i] + Ubuntu[i])
+    for OS_count in year_2017_data:
+        Total["2016"]+=year_2016_data[OS_count]
+        Total["2017"]+=year_2017_data[OS_count]
 
     TotalTrace = go.Bar(
         x=years,
@@ -57,7 +51,7 @@ def main():
 
     RedHatTrace = go.Bar(
         x=years,
-        y=RedHat,
+        y=RHEL,
         name="Red Hat",
         marker=dict(
             color='rgb(200,80,80)',
@@ -72,7 +66,17 @@ def main():
             color='rgb(250,160,100)',
         ),
     )
-    data = [TotalTrace, WindowsTrace, MacTrace, RedHatTrace, UbuntuTrace]
+
+    OtherTrace = go.Bar(
+        x=years,
+        y=Other,
+        name="Other",
+        marker=dict(
+            color='rgb(250,100,100)',
+        ),
+    )
+
+    data = [WindowsTrace, MacTrace, RedHatTrace, UbuntuTrace, OtherTrace] #Fix TotalTrace
     layout = go.Layout(
         barmode='group',
         width=700,
