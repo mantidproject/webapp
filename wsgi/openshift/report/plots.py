@@ -273,7 +273,6 @@ def mapGraph():
         width=1100,
         height=600,
         geo=dict(
-            resolution=5,  # <- detail vs performance here. play with this.
             scope='world',
             showframe=True,
             showcoastlines=True,
