@@ -18,7 +18,7 @@ RHEL_COLOR = 'rgb(200,80,80)'
 UBUNTU_COLOR = 'rgb(250,160,100)'
 OTHER_COLOR = 'rgb(130,130,150)'
 
-def main():
+def bar():
     years = ["2016", "2017"]
     Windows = [year_2016_data["Windows"], year_2017_data["Windows"]]
     Mac = [year_2016_data["Mac"], year_2017_data["Mac"]]
@@ -85,7 +85,7 @@ def main():
         ),
     )
 
-    data = [TotalTrace, WindowsTrace, MacTrace, RedHatTrace, UbuntuTrace, OtherTrace] #Fix TotalTrace
+    data = [TotalTrace, WindowsTrace, MacTrace, RedHatTrace, UbuntuTrace, OtherTrace] 
     layout = go.Layout(
         barmode='group',
         width=700,
