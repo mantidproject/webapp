@@ -5,10 +5,17 @@ import plotly.offline as py
 import plotly.graph_objs as go
 import pandas as pd
 
-OS_LIST=["Windows", "Mac", "RHEL", "Ubuntu", "Other"]
-year_2016_data = {"Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10}
-year_2017_data = {"Windows": 32, "Mac": 45, "RHEL": 80, "Ubuntu": 72, "Other": 20}
-# Let's just work with this as a given. 
+OS_LIST = ["Windows", "Mac", "RHEL", "Ubuntu", "Other"]
+# RHEL or Red Hat or RedHat? Which is better for the project?
+
+years = ["2016", "2017"]
+year_2016_data = {"Windows": 30, "Mac": 40,
+                  "RHEL": 70, "Ubuntu": 62, "Other": 10}
+year_2017_data = {"Windows": 32, "Mac": 45,
+                  "RHEL": 80, "Ubuntu": 72, "Other": 20}
+# Let's just work with this as a given.
+# It's eventually going to need geolocation functionality though, so long term..
+
 
 # Colors
 TOTAL_COLOR = 'rgb(200,200,200)'
@@ -18,18 +25,20 @@ RHEL_COLOR = 'rgb(200,80,80)'
 UBUNTU_COLOR = 'rgb(250,160,100)'
 OTHER_COLOR = 'rgb(130,130,150)'
 
-def bar():
-    years = ["2016", "2017"]
+
+def barGraph():
     Windows = [year_2016_data["Windows"], year_2017_data["Windows"]]
     Mac = [year_2016_data["Mac"], year_2017_data["Mac"]]
     RHEL = [year_2016_data["RHEL"], year_2017_data["RHEL"]]
     Ubuntu = [year_2016_data["Ubuntu"], year_2017_data["Ubuntu"]]
     Other = [year_2016_data["Other"], year_2017_data["Other"]]
-    Total = [0,0]
+    # There must be a more compact way to do this.
 
+    Total = [0, 0]
     for OS_count in OS_LIST:
-        Total[0]+=year_2016_data[OS_count]
-        Total[1]+=year_2017_data[OS_count]
+        Total[0] += year_2016_data[OS_count]
+        Total[1] += year_2017_data[OS_count]
+    # The array has one value per year. Total[0] is 2016, Total[1] is 2017.
 
     TotalTrace = go.Bar(
         x=years,
@@ -37,7 +46,6 @@ def bar():
         name="Total",
         marker=dict(
             color=TOTAL_COLOR,
-            #color='rgb(150,50,250)',
         ),
     )
 
@@ -85,7 +93,8 @@ def bar():
         ),
     )
 
-    data = [TotalTrace, WindowsTrace, MacTrace, RedHatTrace, UbuntuTrace, OtherTrace] 
+    data = [TotalTrace, WindowsTrace, MacTrace,
+            RedHatTrace, UbuntuTrace, OtherTrace]
     layout = go.Layout(
         barmode='group',
         width=700,
@@ -103,8 +112,35 @@ def bar():
     return div
 
 
-def map():
-    ds = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/2014_ebola.csv')
+def pieChart():
+    # sinful. clean it.
+    labels = ['Windows', 'Mac', 'Red Hat', 'Ubuntu', 'Other']
+    values = [
+        year_2017_data['Windows'], year_2017_data['Mac'],
+        year_2017_data['RHEL'], year_2017_data['Ubuntu'],
+        year_2017_data['Other']
+    ]
+    colors = [WIN_COLOR, MAC_COLOR, RHEL_COLOR, UBUNTU_COLOR, OTHER_COLOR]
+    layout = go.Layout(
+        width=500,
+        height=500,
+        margin=go.Margin(
+            l=0,
+            r=50,
+            b=100,
+            t=10,
+            pad=1
+        ),
+    )
+    trace = go.Pie(labels=labels, values=values, marker=dict(
+        colors=colors), direction="counter-clockwise")
+    fig = go.Figure(data=[trace], layout=layout)
+    return py.plot(fig, output_type='div')
+
+
+def mapGraph():
+    ds = pd.read_csv(
+        'https://raw.githubusercontent.com/plotly/datasets/master/2014_ebola.csv')
     """
     Country,Month,Year,Lat,Lon,Value
     Guinea, 3, 14, 9.95, -9.7, 122
@@ -141,117 +177,118 @@ def map():
     """
     df = ds.append([
         {
-        'Country':"United States",
-        'Month':7,
-        'Year':14,
-        'Lat':35.0,
-        'Lon':-87.0,
-        'Value':500
+            'Country': "United States",
+            'Month': 7,
+            'Year': 14,
+            'Lat': 35.0,
+            'Lon': -87.0,
+            'Value': 500
         },
         {
-        'Country':"United States",
-        'Month':9,
-        'Year':14,
-        'Lat':35.0,
-        'Lon':-87.0,
-        'Value':2000
+            'Country': "United States",
+            'Month': 9,
+            'Year': 14,
+            'Lat': 35.0,
+            'Lon': -87.0,
+            'Value': 2000
         },
         {
-        'Country':"Great Britain",
-        'Month':7,
-        'Year':14,
-        'Lat':52.0,
-        'Lon':-1.0,
-        'Value':500
+            'Country': "Great Britain",
+            'Month': 7,
+            'Year': 14,
+            'Lat': 52.0,
+            'Lon': -1.0,
+            'Value': 500
         },
         {
-        'Country':"Great Britain",
-        'Month':9,
-        'Year':14,
-        'Lat':52.0,
-        'Lon':-1.0,
-        'Value':1000
+            'Country': "Great Britain",
+            'Month': 9,
+            'Year': 14,
+            'Lat': 52.0,
+            'Lon': -1.0,
+            'Value': 1000
         },
         {
-        'Country':"France",
-        'Month':7,
-        'Year':14,
-        'Lat':47.0,
-        'Lon':3.0,
-        'Value':125
+            'Country': "France",
+            'Month': 7,
+            'Year': 14,
+            'Lat': 47.0,
+            'Lon': 3.0,
+            'Value': 125
         },
         {
-        'Country':"France",
-        'Month':9,
-        'Year':14,
-        'Lat':47.0,
-        'Lon':3.0,
-        'Value':730
+            'Country': "France",
+            'Month': 9,
+            'Year': 14,
+            'Lat': 47.0,
+            'Lon': 3.0,
+            'Value': 730
         },
         {
-        'Country':"Australia",
-        'Month':7,
-        'Year':14,
-        'Lat':-25.0,
-        'Lon':140.0,
-        'Value':300
+            'Country': "Australia",
+            'Month': 7,
+            'Year': 14,
+            'Lat': -25.0,
+            'Lon': 140.0,
+            'Value': 300
         },
         {
-        'Country':"Australia",
-        'Month':9,
-        'Year':14,
-        'Lat':-25.0,
-        'Lon':140.0,
-        'Value':891
+            'Country': "Australia",
+            'Month': 9,
+            'Year': 14,
+            'Lat': -25.0,
+            'Lon': 140.0,
+            'Value': 891
         },
-     ], ignore_index=True)
-    df.head()
+    ], ignore_index=True)
+
+    # df.head() returns first five
+    colors = ['#DDBBBB', '#EE0000', '#CC2222', '#FF3333']
+    months = {6: 'June', 7: 'July', 8: 'Aug', 9: 'Sept'}
     cases = []
-    colors = ['#DDBBBB', '#EE0000', '#CC2222', '#FF3333']#['rgb(239,243,255)','rgb(189,215,231)','rgb(107,174,214)','rgb(33,113,181)']
-    months = {6:'June',7:'July',8:'Aug',9:'Sept'}
-    for i in range(6,10)[::-1]:
-        cases.append(go.Scattergeo(
-                lon = df[ df['Month'] == i ]['Lon'], #-(max(range(6,10))-i),
-                lat = df[ df['Month'] == i ]['Lat'],
-                text = df[ df['Month'] == i ]['Value'],
-                name = months[i],
-                marker = dict(
-                    size = df[ df['Month'] == i ]['Value']/50,
-                    color = colors[i-6],
-                    line = dict(width = 0)
+    for i in range(6, 10)[::-1]:
+        cases.append(
+            go.Scattergeo(
+                lon=df[df['Month'] == i]['Lon'],  # -(max(range(6,10))-i),
+                lat=df[df['Month'] == i]['Lat'],
+                text=df[df['Month'] == i]['Value'],
+                name=months[i],
+                marker=dict(
+                    size=df[df['Month'] == i]['Value'] / 50,
+                    color=colors[i - 6],
+                    line=dict(width=0)
                 )
             )
         )
-    cases[0]['text'] = df[ df['Month'] == 9 ]['Value'].map('{:.0f}'.format).astype(str)+' '+\
-        df[ df['Month'] == 9 ]['Country']
+    cases[0]['text'] = df[df['Month'] == 9]['Value'].map('{:.0f}'.format) \
+        .astype(str) + ' ' + df[df['Month'] == 9]['Country']
+    # Set label as most recent value (sept) and the country's name
     cases[0]['mode'] = 'markers+text'
     cases[0]['textposition'] = 'bottom center'
-    #
-    # LAYOUT SETTINGS HERE
-    #
+
     layout = go.Layout(
-        title = 'Data showing increased instance over time<br>',
-    #Source: <a href="https://data.hdx.rwlabs.org/dataset/rowca-ebola-cases">\
-    #HDX</a>',
+        title='Appropriate Title Here',
+        # <a href="https://data.hdx.rwlabs.org/dataset/rowca-ebola-cases">\
+        # Source: HDX</a>',
         width=1100,
         height=600,
-        geo = dict(
-            resolution = 5,
-            scope = 'world',
-            showframe = False,
-            showcoastlines = True,
-            showland = True,
-            landcolor = "rgb(229, 229, 229)",
-            countrycolor = "rgb(255, 255, 255)" ,
-            coastlinecolor = "rgb(255, 255, 255)",
-            projection = dict(
-                type = 'Mercator'
+        geo=dict(
+            resolution=5,  # <- detail vs performance here. play with this.
+            scope='world',
+            showframe=True,
+            showcoastlines=True,
+            showland=True,
+            landcolor="rgb(229, 229, 229)",
+            countrycolor="rgb(255, 255, 255)",
+            coastlinecolor="rgb(255, 255, 255)",
+            projection=dict(
+                type='Mercator'
             ),
-            lonaxis = dict( range= [ -150.0, 150.0 ] ),
-            lataxis = dict( range= [ -100.0, 100.0 ] ),
-            domain = dict(
-                x = [ 0, 1 ],
-                y = [ 0, 1 ]
+            lonaxis=dict(range=[-150.0, 150.0]),
+            lataxis=dict(range=[-100.0, 100.0]),
+            domain=dict(
+                x=[0, 1],
+                y=[0, 1]
             )
         ),
         margin=go.Margin(
@@ -261,33 +298,9 @@ def map():
             t=30,
             pad=1
         ),
-        legend = dict(
-            traceorder = 'reversed'
-        )
+        legend=dict(traceorder='reversed')
+        # Put newer and larger circles at the z-bottom so the old ones show up
     )
-    fig = go.Figure(layout=layout, data=cases) #cases+inset
-    div = py.plot( fig, validate=False, output_type='div')
+    fig = go.Figure(layout=layout, data=cases)
+    div = py.plot(fig, validate=False, output_type='div')
     return div
-
-def pi():
-    labels=['Windows','Mac','Red Hat','Ubuntu', 'Other']
-    values=[
-            year_2017_data['Windows'], year_2017_data['Mac'],
-            year_2017_data['RHEL'], year_2017_data['Ubuntu'],
-            year_2017_data['Other']
-            ]
-    colors = [WIN_COLOR, MAC_COLOR, RHEL_COLOR, UBUNTU_COLOR, OTHER_COLOR]
-    layout = go.Layout(
-        width = 500,
-        height = 500,
-        margin=go.Margin(
-            l=0,
-            r=50,
-            b=100,
-            t=10,
-            pad=1
-        ),
-    )
-    trace = go.Pie(labels=labels, values=values, marker=dict(colors=colors), direction="counter-clockwise")
-    fig = go.Figure(data=[trace], layout=layout)
-    return py.plot(fig, output_type='div')

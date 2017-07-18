@@ -26,8 +26,8 @@ def user(request, md5):
         return render(request, 'user.html', context)
 
 def plots(request, md5):
-    div = lel.bar()
-    div2 = lel.map()
-    div3 = lel.pi()
-    context = { "bar":div, "map":div2, "pi":div3 }
+    div = lel.barGraph()
+    div2 = lel.pieChart()
+    div3 = lel.mapGraph()
+    context = { "bar":div, "pie":div2, "map":div3 }
     return render(request, 'plots.html', context=context)
