@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import RequestContext, loader
-import plots as lel
 
 # Create your views here.
 
@@ -24,10 +23,3 @@ def user(request, md5):
     else:
         context = {'uid': md5}
         return render(request, 'user.html', context)
-
-def plots(request, md5):
-    div = lel.barGraph()
-    div2 = lel.pieChart()
-    div3 = lel.mapGraph()
-    context = { "bar":div, "pie":div2, "map":div3 }
-    return render(request, 'plots.html', context=context)

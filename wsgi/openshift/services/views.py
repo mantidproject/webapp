@@ -15,6 +15,7 @@ import datetime
 import hashlib
 import settings
 import json
+import plots as lel
 
 OS_NAMES = ['Linux', 'Windows NT', 'Darwin']
 UTC = datetime.tzinfo('UTC')
@@ -352,3 +353,10 @@ class FeatureViewSet(viewsets.ModelViewSet):
                                                           defaults={'count': 0})
         obj.count += count
         obj.save()
+
+def plots(request, md5):
+    div = lel.barGraph()
+    div2 = lel.pieChart()
+    div3 = lel.mapGraph()
+    context = { "bar":div, "pie":div2, "map":div3 }
+    return render(request, 'plots.html', context=context)

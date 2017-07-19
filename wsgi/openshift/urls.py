@@ -8,7 +8,7 @@ admin.autodiscover()
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-import report
+import report, services
 
 urlpatterns = [
     # Examples:
@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^$', report.views.index, name='index'),
     url(r'^host/(?P<md5>\w+)?$', report.views.host, name='host'),
     url(r'^user/(?P<md5>\w+)?$', report.views.user, name='user'),
-    url(r'^plots/(?P<md5>\w+)?$', report.views.plots, name='plots'),
+    url(r'^plots/(?P<md5>\w+)?$', services.views.plots, name='plots'),
 ]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
