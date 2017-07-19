@@ -102,8 +102,8 @@ def barGraph():
         margin=go.Margin(
             l=50,
             r=0,
-            b=100,
-            t=100,
+            b=30,
+            t=5,
             pad=1
         ),
     )
@@ -128,14 +128,14 @@ def pieChart():
             l=0,
             r=50,
             b=100,
-            t=10,
+            t=5,
             pad=1
         ),
     )
     trace = go.Pie(labels=labels, values=values, marker=dict(
         colors=colors), direction="counter-clockwise")
     fig = go.Figure(data=[trace], layout=layout)
-    return py.plot(fig, output_type='div')
+    return py.plot(fig, output_type='div', show_link=False)
 
 
 def mapGraph():
@@ -273,13 +273,15 @@ def mapGraph():
         width=1100,
         height=600,
         geo=dict(
-            scope='world',
             showframe=True,
             showcoastlines=True,
+            showcountries=True,
             showland=True,
+            showsubunits=True,
             landcolor="rgb(229, 229, 229)",
             countrycolor="rgb(255, 255, 255)",
             coastlinecolor="rgb(255, 255, 255)",
+            subunitcolor="rgb(255, 255, 255)",
             projection=dict(
                 type='Mercator'
             ),
@@ -293,7 +295,7 @@ def mapGraph():
         margin=go.Margin(
             l=0,
             r=50,
-            b=100,
+            b=0,
             t=30,
             pad=1
         ),
@@ -301,5 +303,5 @@ def mapGraph():
         # Put newer and larger circles at the z-bottom so the old ones show up
     )
     fig = go.Figure(layout=layout, data=cases)
-    div = py.plot(fig, validate=False, output_type='div')
+    div = py.plot(fig, validate=False, output_type='div', show_link=False)
     return div
