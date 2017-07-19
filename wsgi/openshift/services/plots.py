@@ -95,8 +95,8 @@ def barGraph():
             RedHatTrace, UbuntuTrace, OtherTrace]
     layout = go.Layout(
         barmode='group',
-        width=700,
-        height=700,
+        width=650,
+        height=600,
         margin=go.Margin(
             l=50,
             r=0,
@@ -291,9 +291,9 @@ def mapGraph():
             )
         ),
         margin=go.Margin(
-            l=0,
-            r=50,
-            b=0,
+            l=20,
+            r=20,
+            b=10,
             t=30,
             pad=1
         ),
