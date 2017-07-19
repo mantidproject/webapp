@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
