@@ -1,3 +1,4 @@
+from models import Location
 import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
@@ -173,7 +174,7 @@ def mapGraph():
     Sierra Leone,11,14,8.46,-11.78,
     Sierra Leone,12,14,8.46,-11.78,
     """
-    df = ds.append([
+    extra = [
         {
             'Country': "United States",
             'Month': 7,
@@ -238,8 +239,25 @@ def mapGraph():
             'Lon': 140.0,
             'Value': 891
         },
-    ], ignore_index=True)
-
+    ]
+    locs = Location.objects.all()
+    jsonData=[]
+    for obj in locs:
+        jsonData.append(
+            {
+            'Lon':float(obj.longitude),
+            'Lat':float(obj.latitude),
+            'Country':str(obj.country),
+            #'ip':str(obj.ip),
+            'Month':int(9),
+            'Year':int(14),
+            'Value':int(100),
+            }
+        )
+    custom_dict = pd.DataFrame.from_dict(extra)
+    webster = custom_dict.append(jsonData, ignore_index=True)
+    print webster
+    df = ds.append(extra, ignore_index=True)
     # df.head() returns first five
     colors = ['#DDBBBB', '#EE0000', '#CC2222', '#FF3333']
     months = {6: 'June', 7: 'July', 8: 'Aug', 9: 'Sept'}
@@ -247,19 +265,19 @@ def mapGraph():
     for i in range(6, 10)[::-1]:
         cases.append(
             go.Scattergeo(
-                lon=df[df['Month'] == i]['Lon'],  # -(max(range(6,10))-i),
-                lat=df[df['Month'] == i]['Lat'],
-                text=df[df['Month'] == i]['Value'],
+                lon=webster[webster['Month'] == i]['Lon'],  # -(max(range(6,10))-i),
+                lat=webster[webster['Month'] == i]['Lat'],
+                text=webster[webster['Month'] == i]['Value'],
                 name=months[i],
                 marker=dict(
-                    size=df[df['Month'] == i]['Value'] / 50,
+                    size=webster[webster['Month'] == i]['Value'] / 50,
                     color=colors[i - 6],
                     line=dict(width=0)
                 )
             )
         )
-    cases[0]['text'] = df[df['Month'] == 9]['Value'].map('{:.0f}'.format) \
-        .astype(str) + ' ' + df[df['Month'] == 9]['Country']
+    cases[0]['text'] = webster[webster['Month'] == 9]['Value'].map('{:.0f}'.format) \
+        .astype(str) + ' ' + webster[webster['Month'] == 9]['Country']
     # Set label as most recent value (sept) and the country's name
     cases[0]['mode'] = 'markers+text'
     cases[0]['textposition'] = 'bottom center'
