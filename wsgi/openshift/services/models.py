@@ -5,6 +5,7 @@ import hashlib
 
 # Create your models here.
 
+
 class Location(models.Model):
     ip = models.CharField(max_length=32, unique=True)
     city = models.CharField(max_length=32)
@@ -14,8 +15,8 @@ class Location(models.Model):
     longitude = models.CharField(max_length=32)
 
     def __unicode__(self):
-        return "IP: "+ self.ip + " City/Region/Country: " + self.city + "/" \
-        + self.region + "/" + self.country
+        return "IP: " + self.ip + " City/Region/Country: " + self.city + "/" \
+            + self.region + "/" + self.country
 
     def create(self, ip):
         jsonData = requests.get("http://ipinfo.io/%s/json/" % ip).content
@@ -23,12 +24,17 @@ class Location(models.Model):
         latitude, longitude = apiReturn['loc'].strip().split(',')
         city = apiReturn["city"]
         region = apiReturn["region"]
-        country = apiReturn["country"]
+        countryCode = apiReturn["country"]
+        countryIDs = json.loads(requests.get(
+            "http://country.io/names.json").content)
+        country = countryIDs[countryCode]
         ipHash = hashlib.md5(ip).hexdigest()
-        # change this thing here
+        
         entry = Location(ip=ipHash, city=city, region=region,
-                        country=country, longitude=longitude, latitude=latitude)
+                         country=country, longitude=longitude, latitude=latitude)
         entry.save()
+
+
 class Message(models.Model):
     author = models.CharField(max_length=20)
     text = models.CharField(max_length=140)
