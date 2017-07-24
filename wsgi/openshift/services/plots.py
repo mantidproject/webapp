@@ -10,7 +10,7 @@ OS_LIST = ["Windows", "Mac", "RHEL", "Ubuntu", "Other"]
 years = ["2016", "2017"]
 year_2016_data = {"Windows": 30, "Mac": 40,
                   "RHEL": 70, "Ubuntu": 62, "Other": 10}
-year_2017_data = {"Windows": 32, "Mac": 45,
+year_2017_data = {"Windows": 92, "Mac": 45,
                   "RHEL": 80, "Ubuntu": 72, "Other": 20}
 # Let's just work with this as a given.
 # It's eventually going to need geolocation functionality though, so long term..
@@ -32,7 +32,7 @@ def barGraph():
     Ubuntu = [year_2016_data["Ubuntu"], year_2017_data["Ubuntu"]]
     Other = [year_2016_data["Other"], year_2017_data["Other"]]
     # There must be a more compact way to do this.
-
+    # FOR loop iterating over OS_LIST, maybe.
     Total = [0, 0]
     for OS_count in OS_LIST:
         Total[0] += year_2016_data[OS_count]
@@ -138,108 +138,7 @@ def pieChart():
 
 
 def mapGraph():
-    ds = pd.read_csv(
-        'https://raw.githubusercontent.com/plotly/datasets/master/2014_ebola.csv')
-    """
-    Country,Month,Year,Lat,Lon,Value
-    Guinea, 3, 14, 9.95, -9.7, 122
-    Guinea,4,14,9.95,-9.7,224
-    Guinea,5,14,9.95,-9.7,291
-    Guinea,6,14,9.95,-9.7,413
-    Guinea,7,14,9.95,-9.7,460
-    Guinea,8,14,9.95,-9.7,771
-    Guinea,9,14,9.95,-9.7,1022
-    Guinea,10,14,9.95,-9.7,
-    Guinea,11,14,9.95,-9.7,
-    Guinea,12,14,9.95,-9.7,
-    Liberia,4,14,6.43,-9.43,35
-    Liberia,5,14,6.43,-9.43,13
-    Liberia,6,14,6.43,-9.43,107
-    Liberia,7,14,6.43,-9.43,329
-    Liberia,8,14,6.43,-9.43,1395
-    Liberia,9,14,6.43,-9.43,3362
-    Liberia,10,14,6.43,-9.43,
-    Liberia,11,14,6.43,-9.43,
-    Liberia,12,14,6.43,-9.43,
-    Mali,10,14,17.57,-4,1
-    Mali,11,14,17.57,-4,8
-    Senegal,8,14,14.5,-14.45,1
-    Senegal,9,14,14.5,-14.45,3
-    Sierra Leone,5,14,8.46,-11.78,50
-    Sierra Leone,6,14,8.46,-11.78,239
-    Sierra Leone,7,14,8.46,-11.78,533
-    Sierra Leone,8,14,8.46,-11.78,1216
-    Sierra Leone,9,14,8.46,-11.78,1940
-    Sierra Leone,10,14,8.46,-11.78,
-    Sierra Leone,11,14,8.46,-11.78,
-    Sierra Leone,12,14,8.46,-11.78,
-    """
-    extra = [
-        {
-            'Country': "United States",
-            'Month': 7,
-            'Year': 14,
-            'Lat': 35.0,
-            'Lon': -87.0,
-            'Value': 500
-        },
-        {
-            'Country': "United States",
-            'Month': 9,
-            'Year': 14,
-            'Lat': 35.0,
-            'Lon': -87.0,
-            'Value': 2000
-        },
-        {
-            'Country': "Great Britain",
-            'Month': 7,
-            'Year': 14,
-            'Lat': 52.0,
-            'Lon': -1.0,
-            'Value': 500
-        },
-        {
-            'Country': "Great Britain",
-            'Month': 9,
-            'Year': 14,
-            'Lat': 52.0,
-            'Lon': -1.0,
-            'Value': 1000
-        },
-        {
-            'Country': "France",
-            'Month': 7,
-            'Year': 14,
-            'Lat': 47.0,
-            'Lon': 3.0,
-            'Value': 125
-        },
-        {
-            'Country': "France",
-            'Month': 9,
-            'Year': 14,
-            'Lat': 47.0,
-            'Lon': 3.0,
-            'Value': 730
-        },
-        {
-            'Country': "Australia",
-            'Month': 7,
-            'Year': 14,
-            'Lat': -25.0,
-            'Lon': 140.0,
-            'Value': 300
-        },
-        {
-            'Country': "Australia",
-            'Month': 9,
-            'Year': 14,
-            'Lat': -25.0,
-            'Lon': 140.0,
-            'Value': 891
-        },
-    ]
+
     locs = Location.objects.all()
     jsonData=[]
     for obj in locs:
@@ -251,13 +150,11 @@ def mapGraph():
             #'ip':str(obj.ip),
             'Month':int(9),
             'Year':int(14),
-            'Value':int(100),
+            'Value':int(500),
             }
         )
-    custom_dict = pd.DataFrame.from_dict(extra)
-    webster = custom_dict.append(jsonData, ignore_index=True)
+    webster = pd.DataFrame(jsonData)
     print webster
-    df = ds.append(extra, ignore_index=True)
     # df.head() returns first five
     colors = ['#DDBBBB', '#EE0000', '#CC2222', '#FF3333']
     months = {6: 'June', 7: 'July', 8: 'Aug', 9: 'Sept'}
