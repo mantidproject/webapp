@@ -24,7 +24,7 @@ def createLocation(ipAddress):
     """
     if ipAddress == "127.0.0.1":
         ipAddress = "130.246.132.176"
-         ipinfo's API has a bad JSON format for 127.0.0.1 requests.
+        ipinfo's API has a bad JSON format for 127.0.0.1 requests.
         This changes the loopback IP to a random address for testing.
         Location should have IP as a unique field. Change the IP
         or you won't be able to add the test value more than once. """
