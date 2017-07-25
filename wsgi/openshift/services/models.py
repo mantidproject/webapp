@@ -1,4 +1,6 @@
 from django.db import models
+import os
+import settings
 import json
 import requests
 import hashlib
@@ -24,12 +26,13 @@ class Location(models.Model):
         latitude, longitude = apiReturn['loc'].strip().split(',')
         city = apiReturn["city"]
         region = apiReturn["region"]
-        countryCode = apiReturn["country"]
-        countryIDs = json.loads(requests.get(
-            "http://country.io/names.json").content)
-        country = countryIDs[countryCode]
+        country_code = apiReturn["country"]
+        country_code_file = open(os.path.join(settings.PROJECT_DIR, \
+                                            'countrynames.json'), 'r')
+        country_IDs = json.loads(country_code_file.read())
+        country_code_file.close()
+        country = country_IDs[country_code]
         ipHash = hashlib.md5(ip).hexdigest()
-        
         entry = Location(ip=ipHash, city=city, region=region,
                          country=country, longitude=longitude, latitude=latitude)
         entry.save()
