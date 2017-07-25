@@ -117,7 +117,7 @@ class UsageViewSet(viewsets.ModelViewSet):
         #count = usage["count"]
         osReadable = usage["osReadable"]
         application = usage["application"]
-        component = usage["component"]
+        component = usage.get("component", '')
         uid = usage["uid"]
         host = usage["host"]
         dateTime = usage["dateTime"]
