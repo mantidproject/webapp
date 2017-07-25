@@ -47,7 +47,6 @@ if ON_OPENSHIFT:
 else:
     ALLOWED_HOSTS = []
     DEBUG = True
-DEBUG = True
 
 ROOT_URLCONF = 'urls'
 
