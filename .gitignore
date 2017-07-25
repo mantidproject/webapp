@@ -18,4 +18,3 @@ test/
 wsgi/static/admin/
 wsgi/static/report/
 wsgi/openshift/db.sqlite3
-wsgi/openshift/services/migrations/
