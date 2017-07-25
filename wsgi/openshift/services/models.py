@@ -20,10 +20,14 @@ class Location(models.Model):
     def create(self, ip):
         jsonData = requests.get("http://ipinfo.io/%s/json/" % ip).content
         apiReturn = json.loads(jsonData)
-        latitude, longitude = apiReturn['loc'].strip().split(',')
-        city = apiReturn["city"]
-        region = apiReturn["region"]
-        country = apiReturn["country"]
+        print 'Location:', jsonData
+        if apiReturn.has_key('loc'):
+            latitude, longitude = apiReturn['loc'].strip().split(',')
+        else:
+            latitude, longitude = ('0','0') # default is in the Gulf of Guinea
+        city = apiReturn.get('city', '')
+        region = apiReturn.get('region', '')
+        country = apiReturn.get('country', '')
         ipHash = hashlib.md5(ip).hexdigest()
         # change this thing here
         entry = Location(ip=ipHash, city=city, region=region,
