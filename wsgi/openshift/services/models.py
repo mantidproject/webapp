@@ -32,6 +32,7 @@ class Location(models.Model):
         region = apiReturn.get('region', '')
         country_code = apiReturn.get('country', '')
         if len(country_code) > 0:
+            # file taken from http://country.io/names.json
             with open(os.path.join(settings.PROJECT_DIR, \
                                    'countrynames.json'), 'r') as country_code_file:
                       country_IDs = json.loads(country_code_file.read())
