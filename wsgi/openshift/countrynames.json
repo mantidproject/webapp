@@ -1,4 +1,3 @@
-// Source: http://country.io/names.json
 {
     "BD": "Bangladesh",
     "BE": "Belgium",
@@ -250,4 +249,5 @@
     "UA": "Ukraine",
     "QA": "Qatar",
     "MZ": "Mozambique"
+    // Source: http://country.io/names.json
 }
