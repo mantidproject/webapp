@@ -1,9 +1,12 @@
 from django.db import models
+import os
+import settings
 import json
 import requests
 import hashlib
 
 # Create your models here.
+
 
 class Location(models.Model):
     ip = models.CharField(max_length=32, unique=True)
@@ -14,8 +17,8 @@ class Location(models.Model):
     longitude = models.CharField(max_length=32)
 
     def __unicode__(self):
-        return "IP: "+ self.ip + " City/Region/Country: " + self.city + "/" \
-        + self.region + "/" + self.country
+        return "IP: " + self.ip + " City/Region/Country: " + self.city + "/" \
+            + self.region + "/" + self.country
 
     def create(self, ip):
         jsonData = requests.get("http://ipinfo.io/%s/json/" % ip).content
@@ -27,12 +30,20 @@ class Location(models.Model):
             latitude, longitude = ('0','0') # default is in the Gulf of Guinea
         city = apiReturn.get('city', '')
         region = apiReturn.get('region', '')
-        country = apiReturn.get('country', '')
+        country_code = apiReturn.get('country', '')
+        if len(country_code) > 0:
+            with open(os.path.join(settings.PROJECT_DIR, \
+                                   'countrynames.json'), 'r') as country_code_file:
+                      country_IDs = json.loads(country_code_file.read())
+            country = country_IDs[country_code]
+        else:
+            country = ''
         ipHash = hashlib.md5(ip).hexdigest()
-        # change this thing here
         entry = Location(ip=ipHash, city=city, region=region,
-                        country=country, longitude=longitude, latitude=latitude)
+                         country=country, longitude=longitude, latitude=latitude)
         entry.save()
+
+
 class Message(models.Model):
     author = models.CharField(max_length=20)
     text = models.CharField(max_length=140)
