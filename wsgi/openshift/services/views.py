@@ -98,8 +98,9 @@ class UsageViewSet(viewsets.ModelViewSet):
         if request.method == 'POST':
             # print "Request", request.body
             post_data = json.loads(request.body)
-            HttpIP = request.META['REMOTE_ADDR']
-            print "CLIENT:", request.get_host(), HttpIP, request.META.get('HTTP_X_CLIENT_IP', None), request.META.get('HTTP_X_FORWARDED_FOR', None)
+            # on openshift REMOTE_ADDR points at the django server
+            HttpIP = request.META.get('HTTP_X_FORWARDED_FOR',
+                                      request.META['REMOTE_ADDR'])
             ipHash = createLocation(HttpIP)
 
             if "usages" in post_data.keys():
