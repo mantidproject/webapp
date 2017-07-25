@@ -99,7 +99,7 @@ class UsageViewSet(viewsets.ModelViewSet):
             # print "Request", request.body
             post_data = json.loads(request.body)
             HttpIP = request.META['REMOTE_ADDR']
-            print "CLIENT:", request.get_host(), HttpIP
+            print "CLIENT:", request.get_host(), HttpIP, request.META.get(HTTP_X_CLIENT_IP, None), request.META.get(HTTP_X_FORWARDED_FOR, None)
             ipHash = createLocation(HttpIP)
 
             if "usages" in post_data.keys():
