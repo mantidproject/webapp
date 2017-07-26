@@ -21,10 +21,9 @@ OS_NAMES = ['Linux', 'Windows NT', 'Darwin']
 UTC = datetime.tzinfo('UTC')
 
 def createLocation(ipAddress):
-    """
-    if ipAddress == "127.0.0.1":
+    if not settings.ON_OPENSHIFT and ipAddress == "127.0.0.1":
         ipAddress = "130.246.132.176"
-        ipinfo's API has a bad JSON format for 127.0.0.1 requests.
+        """ ipinfo's API has a bad JSON format for 127.0.0.1 requests.
         This changes the loopback IP to a random address for testing.
         Location should have IP as a unique field. Change the IP
         or you won't be able to add the test value more than once. """
@@ -100,7 +99,9 @@ class UsageViewSet(viewsets.ModelViewSet):
         if request.method == 'POST':
             # print "Request", request.body
             post_data = json.loads(request.body)
-            HttpIP = request.META['REMOTE_ADDR']
+            # on openshift REMOTE_ADDR points at the django server
+            HttpIP = request.META.get('HTTP_X_FORWARDED_FOR',
+                                      request.META['REMOTE_ADDR'])
             ipHash = createLocation(HttpIP)
 
             if "usages" in post_data.keys():
@@ -117,7 +118,7 @@ class UsageViewSet(viewsets.ModelViewSet):
         #count = usage["count"]
         osReadable = usage["osReadable"]
         application = usage["application"]
-        component = usage["component"]
+        component = usage.get("component", '')
         uid = usage["uid"]
         host = usage["host"]
         dateTime = usage["dateTime"]

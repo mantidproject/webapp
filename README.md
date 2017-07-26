@@ -41,11 +41,11 @@ $ wsgi/openshift/manage.py syncdb --noinput
 
 Setup built-in db migrations to do the right thing(tm)
 ```
-$ ./wsgi/openshift/manage.py makemigrations services
-$ ./wsgi/openshift/manage.py migrate services --fake
-$ ./wsgi/openshift/manage.py syncdb
+$ ./wsgi/openshift/manage.py migrate services
 ```
-When asked for about creating an admin account, just say "no."
+When asked for about creating an admin account, just say "no." The
+`manage.py makemigrations services` is only necessary when updating
+the models.
 
 Finally, start the django server itself
 ```

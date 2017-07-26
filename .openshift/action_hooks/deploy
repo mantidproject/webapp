@@ -6,10 +6,8 @@
 
 source $OPENSHIFT_HOMEDIR/python/virtenv/bin/activate
 
-python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py makemigrations --noinput
-
 echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py migrate services'"
 python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py migrate --noinput
 
-echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py collectstatic --noinput'"
-python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py collectstatic --noinput # -v0
+#echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/openshift/manage.py collectstatic --noinput'"
+#python "$OPENSHIFT_REPO_DIR"wsgi/openshift/manage.py collectstatic --noinput # -v0
