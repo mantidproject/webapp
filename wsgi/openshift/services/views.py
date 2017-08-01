@@ -357,7 +357,12 @@ class FeatureViewSet(viewsets.ModelViewSet):
 
 def plots(request, md5):
     div = lel.barGraph()
-    div2 = lel.pieChart()
-    div3 = lel.mapGraph()
-    context = { "bar":div, "pie":div2, "map":div3 }
+
+    context = { "bar":div }
+    return render(request, 'plots.html', context=context)
+
+def year(request, md5, year):
+    div2 = lel.pieChart(year)
+    div3 = lel.mapGraph(year)
+    context = { "pie":div2, "map":div3 }
     return render(request, 'plots.html', context=context)

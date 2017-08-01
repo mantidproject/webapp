@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^host/(?P<md5>\w+)?$', report.views.host, name='host'),
     url(r'^user/(?P<md5>\w+)?$', report.views.user, name='user'),
     url(r'^plots/(?P<md5>\w+)?$', services.views.plots, name='plots'),
+    url(r'^plots/year/(?P<year>\d{4})(?P<md5>\w+)?$', services.views.year, name='year'),
 ]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
