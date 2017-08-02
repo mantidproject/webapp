@@ -179,12 +179,19 @@ def barGraph():
 
 def pieChart(year):
     # sinful. clean it.
-    labels = ['Windows', 'Mac', 'Red Hat', 'Ubuntu', 'Other']
+    # labels = ['Windows', 'Mac', 'Red Hat', 'Ubuntu', 'Other']
+    labels = []
+    values = []
+    for os in OS_LIST:
+        labels.append(os)
+        values.append(all_time_data[year][os])
+        """
     values = [
         year_2017_data['Windows'], year_2017_data['Mac'],
         year_2017_data['RHEL'], year_2017_data['Ubuntu'],
         year_2017_data['Other']
     ]
+    """
     colors = [WIN_COLOR, MAC_COLOR, RHEL_COLOR, UBUNTU_COLOR, OTHER_COLOR]
     layout = go.Layout(
         width=500,
