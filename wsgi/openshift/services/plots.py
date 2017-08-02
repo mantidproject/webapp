@@ -13,50 +13,52 @@ years_generated = range(start.year, now.year+1)
 print years_generated
 
 years = years_generated #["2016", "2017"]
-all_time = {
+all_time_data = {
     "2006": {
-        "Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
+        "Windows": 20, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
     },
     "2007": {
-        "Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
+        "Windows": 50, "Mac": 20, "RHEL": 90, "Ubuntu": 62, "Other": 10
     },
     "2008": {
-        "Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
+        "Windows": 30, "Mac": 10, "RHEL": 90, "Ubuntu": 62, "Other": 10
     },
     "2009": {
-        "Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
+        "Windows": 12, "Mac": 20, "RHEL": 80, "Ubuntu": 62, "Other": 10
     },
     "2010": {
-        "Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
+        "Windows": 29, "Mac": 20, "RHEL": 70, "Ubuntu": 62, "Other": 10
     },
     "2011": {
-        "Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
+        "Windows": 56, "Mac": 40, "RHEL": 75, "Ubuntu": 62, "Other": 10
     },
     "2012": {
-        "Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
+        "Windows": 41, "Mac": 41, "RHEL": 78, "Ubuntu": 62, "Other": 10
     },
     "2013": {
-        "Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
+        "Windows": 55, "Mac": 31, "RHEL": 99, "Ubuntu": 62, "Other": 10
     },
     "2014": {
-        "Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
+        "Windows": 54, "Mac": 22, "RHEL": 86, "Ubuntu": 62, "Other": 10
     },
     "2015": {
-        "Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
+        "Windows": 55, "Mac": 15, "RHEL": 70, "Ubuntu": 62, "Other": 10
     },
     "2016": {
-        "Windows": 30, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
+        "Windows": 30, "Mac": 19, "RHEL": 70, "Ubuntu": 62, "Other": 10
     },
     "2017": {
         "Windows": 92, "Mac": 45, "RHEL": 80, "Ubuntu": 72, "Other": 20
     }
 }
+
 year_2016_data = {"Windows": 30, "Mac": 40, 
                   "RHEL": 70, "Ubuntu": 62, "Other": 10
 }
 year_2017_data = {"Windows": 92, "Mac": 45,
                   "RHEL": 80, "Ubuntu": 72, "Other": 20
 }
+
 # Let's just work with this as a given.
 # It's eventually going to need geolocation functionality though, so long term..
 
@@ -72,14 +74,14 @@ OTHER_COLOR = 'rgb(130,130,150)'
 
 def barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
-    for year in all_time:
+    for year in all_time_data:
         year_total = 0
-        Windows.append(all_time[year]["Windows"])
-        Mac.append(all_time[year]["Mac"])
-        RHEL.append(all_time[year]["RHEL"])
-        Ubuntu.append(all_time[year]["Ubuntu"])
-        Other.append(all_time[year]["Other"])
-        Total.append(sum(all_time[year].values()))
+        Windows.append(all_time_data[year]["Windows"])
+        Mac.append(all_time_data[year]["Mac"])
+        RHEL.append(all_time_data[year]["RHEL"])
+        Ubuntu.append(all_time_data[year]["Ubuntu"])
+        Other.append(all_time_data[year]["Other"])
+        Total.append(sum(all_time_data[year].values()))
     """    
     Windows = [year_2016_data["Windows"], year_2017_data["Windows"]]
     Mac = [year_2016_data["Mac"], year_2017_data["Mac"]]
@@ -92,7 +94,7 @@ def barGraph():
         Total[0] += year_2016_data[OS_count]
         Total[1] += year_2017_data[OS_count]
     # The array has one value per year. Total[0] is 2016, Total[1] is 2017.
-"""
+    """
     # There must be a more compact way to do this.
     # FOR loop iterating over OS_LIST, maybe.
     TotalTrace = go.Bar(
@@ -167,7 +169,12 @@ def barGraph():
     )
     fig = go.Figure(data=data, layout=layout)
     div = py.plot(fig, output_type='div', show_link=False)
-    return div
+    links = "<div id='links'>"
+    for year in years:
+        links += "<a href = '/plots/year/"+str(year)+"'> "+str(year)+"</a><br />"
+    links += "</div>"
+    print links
+    return div + links
 
 
 def pieChart(year):
@@ -194,7 +201,6 @@ def pieChart(year):
         colors=colors), direction="counter-clockwise")
     fig = go.Figure(data=[trace], layout=layout)
     return py.plot(fig, output_type='div', show_link=False)
-
 
 def mapGraph(year):
 
