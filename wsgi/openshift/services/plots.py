@@ -1,4 +1,5 @@
 from models import Location, Usage
+from django.db.models import Count
 import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
@@ -210,8 +211,10 @@ def pieChart(year):
     return py.plot(fig, output_type='div', show_link=False)
 
 def mapGraph(year):
-    usages = Usage.objects.filter(dateTime__year=year) #dateTime="2014-12-11T19:46:40"
-    print "Usages in "+year+":", usages
+    #dateTime="2014-12-11T19:46:40"
+    usages = Usage.objects.filter(dateTime__year=year)\
+        .values('ip').annotate(usage_count=Count('ip'))
+    #print "Usages in "+year+":", usages
     locs_matching = Location.objects.filter(ip__in = usages.values_list('ip', flat=True)) 
     locs_count = locs_matching.count()
     # only get locations whose IP addresses correlate to usages for this year
@@ -219,7 +222,17 @@ def mapGraph(year):
     # SELECT longitude, latitude, country from `location` WHERE ip IN
     # (SELECT ip from `usage` WHERE year = (current_year))
 
-    print locs_count,"matching Locations:", locs_matching
+    """ Next Step:
+        - group usages by common ip (and only for selected year)
+        - assign counts to each usage
+        - get location data for each usage
+        - display
+        
+    """
+    print usages
+    print 
+    print locs_matching
+    #print locs_count,"matching Locations:", locs_matching
     locs = locs_matching#Location.objects.all()
     if locs_count == 0:
         return "<div>No Location data for this year.</div>"
@@ -230,37 +243,39 @@ def mapGraph(year):
             'Lon':float(obj.longitude),
             'Lat':float(obj.latitude),
             'Country':str(obj.country),
-            #'ip':str(obj.ip),
-            'Month':int(9),
-            'Year':int(14),
+            'ip':str(obj.ip),
+            'Year':year,
             'Value':int(500),
             }
         )
+    for obj in jsonData:
+        usage = usages.filter(ip=obj["ip"])
+        count = usage.values_list('usage_count', flat=True)
+        print count[0]
+        obj["Value"] = count[0]
     webster = pd.DataFrame(jsonData)
     print webster
     # df.head() returns first five
     colors = ['#DDBBBB', '#EE0000', '#CC2222', '#FF3333']
-    months = {6: 'June', 7: 'July', 8: 'Aug', 9: 'Sept'}
     cases = []
-    for i in range(6, 10)[::-1]:
+    for i in locs.values_list('ip', flat=True): #range(6, 10)[::-1]:
         cases.append(
             go.Scattergeo(
-                lon=webster[webster['Month'] == i]['Lon'],  # -(max(range(6,10))-i),
-                lat=webster[webster['Month'] == i]['Lat'],
-                text=webster[webster['Month'] == i]['Value'],
-                name=months[i],
+                lon=webster[webster['ip'] == i]['Lon'],  # -(max(range(6,10))-i),
+                lat=webster[webster['ip'] == i]['Lat'],
+                text=webster[webster['ip'] == i]['Value'].map('{:.0f}'.format) \
+                .astype(str) + ' ' + webster[webster['ip'] == i]['Country'],
+                name=webster[webster['ip'] == i]['ip'],
                 marker=dict(
-                    size=webster[webster['Month'] == i]['Value'] / 50,
-                    color=colors[i - 6],
+                    size=webster[webster['ip'] == i]['Value'] / 20,
+                    color=colors[3],
                     line=dict(width=0)
-                )
+                ),
+                mode = 'markers+text',
+                textposition = 'bottom center'
             )
         )
-        cases[0]['text'] = webster[webster['Month'] == 9]['Value'].map('{:.0f}'.format) \
-        .astype(str) + ' ' + webster[webster['Month'] == 9]['Country']
-    # Set label as most recent value (sept) and the country's name
-        cases[0]['mode'] = 'markers+text'
-        cases[0]['textposition'] = 'bottom center'
+
 
     layout = go.Layout(
         title='Appropriate Title Here',
