@@ -212,7 +212,7 @@ def pieChart(year):
 def mapGraph(year):
     usages = Usage.objects.filter(dateTime__year=year) #dateTime="2014-12-11T19:46:40"
     print "Usages in "+year+":", usages
-    locs_matching = Location.objects.filter(ip = usages.values_list('ip')) 
+    locs_matching = Location.objects.filter(ip__in = usages.values_list('ip', flat=True)) 
     locs_count = locs_matching.count()
     # only get locations whose IP addresses correlate to usages for this year
 
