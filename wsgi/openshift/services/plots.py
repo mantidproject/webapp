@@ -1,4 +1,4 @@
-from models import Location
+from models import Location, Usage
 import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
@@ -210,8 +210,19 @@ def pieChart(year):
     return py.plot(fig, output_type='div', show_link=False)
 
 def mapGraph(year):
+    usages = Usage.objects.filter(dateTime__year=year) #dateTime="2014-12-11T19:46:40"
+    print "Usages in "+year+":", usages
+    locs_matching = Location.objects.filter(ip = usages.values_list('ip')) 
+    locs_count = locs_matching.count()
+    # only get locations whose IP addresses correlate to usages for this year
 
-    locs = Location.objects.all()
+    # SELECT longitude, latitude, country from `location` WHERE ip IN
+    # (SELECT ip from `usage` WHERE year = (current_year))
+
+    print locs_count,"matching Locations:", locs_matching
+    locs = locs_matching#Location.objects.all()
+    if locs_count == 0:
+        return "<div>No Location data for this year.</div>"
     jsonData=[]
     for obj in locs:
         jsonData.append(
