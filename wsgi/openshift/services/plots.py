@@ -3,7 +3,7 @@ from django.db.models import Count
 import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
-import pandas as pd
+import pandas
 import datetime
 
 OS_LIST = ["Windows", "Mac", "RHEL", "Ubuntu", "Other"]
@@ -211,33 +211,16 @@ def pieChart(year):
     return py.plot(fig, output_type='div', show_link=False)
 
 def mapGraph(year):
-    #dateTime="2014-12-11T19:46:40"
-    usages = Usage.objects.filter(dateTime__year=year)\
-        .values('ip').annotate(usage_count=Count('ip'))
-    #print "Usages in "+year+":", usages
-    locs_matching = Location.objects.filter(ip__in = usages.values_list('ip', flat=True)) 
-    locs_count = locs_matching.count()
-    # only get locations whose IP addresses correlate to usages for this year
-
-    # SELECT longitude, latitude, country from `location` WHERE ip IN
-    # (SELECT ip from `usage` WHERE year = (current_year))
-
-    """ Next Step:
-        - group usages by common ip (and only for selected year)
-        - assign counts to each usage
-        - get location data for each usage
-        - display
-        
-    """
-    print usages
-    print 
-    print locs_matching
-    #print locs_count,"matching Locations:", locs_matching
-    locs = locs_matching#Location.objects.all()
+    usages = Usage.objects.filter(dateTime__year=year).values('ip') \
+        .annotate(usage_count=Count('ip')) #get ip's and counts for year param
+    locs = Location.objects.filter(ip__in = usages.values_list('ip', flat=True)) 
+    locs_count = locs.count()
     if locs_count == 0:
         return "<div>No Location data for this year.</div>"
     jsonData=[]
     for obj in locs:
+        matching_usage_set = usages.filter(ip=obj.ip)
+        count = matching_usage_set.values_list('usage_count', flat=True)[0]
         jsonData.append(
             {
             'Lon':float(obj.longitude),
@@ -245,30 +228,23 @@ def mapGraph(year):
             'Country':str(obj.country),
             'ip':str(obj.ip),
             'Year':year,
-            'Value':int(500),
+            'Value':count,
             }
         )
-    for obj in jsonData:
-        usage = usages.filter(ip=obj["ip"])
-        count = usage.values_list('usage_count', flat=True)
-        print count[0]
-        obj["Value"] = count[0]
-    webster = pd.DataFrame(jsonData)
-    print webster
-    # df.head() returns first five
-    colors = ['#DDBBBB', '#EE0000', '#CC2222', '#FF3333']
+    usage_locations = pandas.DataFrame(jsonData)
+    print usage_locations
     cases = []
-    for i in locs.values_list('ip', flat=True): #range(6, 10)[::-1]:
+    for i in locs.values_list('ip', flat=True):
         cases.append(
             go.Scattergeo(
-                lon=webster[webster['ip'] == i]['Lon'],  # -(max(range(6,10))-i),
-                lat=webster[webster['ip'] == i]['Lat'],
-                text=webster[webster['ip'] == i]['Value'].map('{:.0f}'.format) \
-                .astype(str) + ' ' + webster[webster['ip'] == i]['Country'],
-                name=webster[webster['ip'] == i]['ip'],
+                lon=usage_locations[usage_locations['ip'] == i]['Lon'],
+                lat=usage_locations[usage_locations['ip'] == i]['Lat'],
+                text=usage_locations[usage_locations['ip'] == i]['Value'].map('{:.0f}'.format) \
+                .astype(str) + ' ' + usage_locations[usage_locations['ip'] == i]['Country'],
+                name=usage_locations[usage_locations['ip'] == i]['ip'],
                 marker=dict(
-                    size=webster[webster['ip'] == i]['Value'] / 20,
-                    color=colors[3],
+                    size=usage_locations[usage_locations['ip'] == i]['Value'] / 20,
+                    color='#FF3333',
                     line=dict(width=0)
                 ),
                 mode = 'markers+text',
@@ -276,11 +252,8 @@ def mapGraph(year):
             )
         )
 
-
     layout = go.Layout(
         title='Appropriate Title Here',
-        # <a href="https://data.hdx.rwlabs.org/dataset/rowca-ebola-cases">\
-        # Source: HDX</a>',
         width=1100,
         height=600,
         geo=dict(
