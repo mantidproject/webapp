@@ -22,7 +22,7 @@ UTC = datetime.tzinfo('UTC')
 
 def createLocation(ipAddress):
     if not settings.ON_OPENSHIFT and ipAddress == "127.0.0.1":
-        ipAddress = "130.246.132.176"
+        ipAddress = "128.219.49.13" #"130.246.132.176"
         """ ipinfo's API has a bad JSON format for 127.0.0.1 requests.
         This changes the loopback IP to a random address for testing.
         Location should have IP as a unique field. Change the IP
