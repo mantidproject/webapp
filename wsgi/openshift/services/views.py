@@ -356,9 +356,9 @@ class FeatureViewSet(viewsets.ModelViewSet):
         obj.save()
 
 def plots(request, md5):
-    div = lel.barGraph()
-
-    context = { "bar":div }
+    barGraph = lel.barGraph()
+    links = lel.links()
+    context = { "bar":barGraph, "links":links }
     return render(request, 'plots.html', context=context)
 
 def year(request, md5, year):

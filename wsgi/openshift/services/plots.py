@@ -170,13 +170,14 @@ def barGraph():
     )
     fig = go.Figure(data=data, layout=layout)
     div = py.plot(fig, output_type='div', show_link=False)
-    links = "<div id='links'>"
+    return div
+
+def links():
+    links = "<div id='links'>Select a Specific Year:<br />"
     for year in years:
         links += "<a href = '/plots/year/"+str(year)+"'> "+str(year)+"</a><br />"
     links += "</div>"
-    print links
-    return div + links
-
+    return links
 
 def pieChart(year):
     # sinful. clean it.
