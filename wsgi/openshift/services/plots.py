@@ -173,10 +173,10 @@ def barGraph():
     return div
 
 def links():
-    links = "<div id='links'>Select a Specific Year:<br />"
+    links = "<div id='links'>Select a Specific Year:<br /><br />"
     for year in years:
-        links += "<a href = '/plots/year/"+str(year)+"'> "+str(year)+"</a><br />"
-    links += "</div>"
+        links += "<a href = '/plots/year/"+str(year)+"'> "+str(year)+"</a>"
+    links += "</div><br />"
     return links
 
 def pieChart(year):
