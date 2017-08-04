@@ -211,7 +211,7 @@ def mapGraph(year):
                 lat=usage_locations[usage_locations['ip'] == i]['Lat'],
                 text=usage_locations[usage_locations['ip'] == i]['Value'].map('{:.0f}'.format) \
                 .astype(str) + ' ' + usage_locations[usage_locations['ip'] == i]['Country'],
-                name=usage_locations[usage_locations['ip'] == i]['ip'],
+                name="cheese",#usage_locations[usage_locations['ip'] == i]['ip'],
                 marker=dict(
                     size=usage_locations[usage_locations['ip'] == i]['Value'] / 20,
                     color='#FF3333',
