@@ -8,12 +8,11 @@ import datetime
 
 OS_LIST = ["Windows", "Mac", "RHEL", "Ubuntu", "Other"]
 # RHEL or Red Hat or RedHat? Which is better for the project?
-now = datetime.datetime.today()
 start = datetime.date(2006,1,1)
-years_generated = range(start.year, now.year+1)
-print years_generated
+now = datetime.datetime.today()
+years = range(start.year, now.year+1)
 
-years = years_generated #["2016", "2017"]
+# Fake data for testing
 all_time_data = {
     "2006": {
         "Windows": 20, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
@@ -52,17 +51,9 @@ all_time_data = {
         "Windows": 92, "Mac": 45, "RHEL": 80, "Ubuntu": 72, "Other": 20
     }
 }
-
-year_2016_data = {"Windows": 30, "Mac": 40, 
-                  "RHEL": 70, "Ubuntu": 62, "Other": 10
-}
-year_2017_data = {"Windows": 92, "Mac": 45,
-                  "RHEL": 80, "Ubuntu": 72, "Other": 20
-}
-
 # Let's just work with this as a given.
-# It's eventually going to need geolocation functionality though, so long term..
-
+# It is here to find a good format to create either a new DB table/model, or
+# to use caching to store these values locally.
 
 # Colors
 TOTAL_COLOR = 'rgb(200,200,200)'
@@ -71,7 +62,6 @@ MAC_COLOR = 'rgb(190,200,250)'
 RHEL_COLOR = 'rgb(200,80,80)'
 UBUNTU_COLOR = 'rgb(250,160,100)'
 OTHER_COLOR = 'rgb(130,130,150)'
-
 
 def barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
@@ -83,21 +73,9 @@ def barGraph():
         Ubuntu.append(all_time_data[year]["Ubuntu"])
         Other.append(all_time_data[year]["Other"])
         Total.append(sum(all_time_data[year].values()))
-    """    
-    Windows = [year_2016_data["Windows"], year_2017_data["Windows"]]
-    Mac = [year_2016_data["Mac"], year_2017_data["Mac"]]
-    RHEL = [year_2016_data["RHEL"], year_2017_data["RHEL"]]
-    Ubuntu = [year_2016_data["Ubuntu"], year_2017_data["Ubuntu"]]
-    Other = [year_2016_data["Other"], year_2017_data["Other"]]
-
-    Total = [0, 0]
-    for OS_count in OS_LIST:
-        Total[0] += year_2016_data[OS_count]
-        Total[1] += year_2017_data[OS_count]
-    # The array has one value per year. Total[0] is 2016, Total[1] is 2017.
-    """
     # There must be a more compact way to do this.
     # FOR loop iterating over OS_LIST, maybe.
+
     TotalTrace = go.Bar(
         x=years,
         y=Total,
@@ -180,20 +158,11 @@ def links():
     return links
 
 def pieChart(year):
-    # sinful. clean it.
-    # labels = ['Windows', 'Mac', 'Red Hat', 'Ubuntu', 'Other']
     labels = []
     values = []
     for os in OS_LIST:
         labels.append(os)
         values.append(all_time_data[year][os])
-        """
-    values = [
-        year_2017_data['Windows'], year_2017_data['Mac'],
-        year_2017_data['RHEL'], year_2017_data['Ubuntu'],
-        year_2017_data['Other']
-    ]
-    """
     colors = [WIN_COLOR, MAC_COLOR, RHEL_COLOR, UBUNTU_COLOR, OTHER_COLOR]
     layout = go.Layout(
         width=500,
