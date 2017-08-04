@@ -1,10 +1,13 @@
 from models import Location, Usage
 from django.db.models import Count
+from django.core.paginator import Paginator
+import django_filters
 import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
 import pandas
 import datetime
+import time
 
 OS_LIST = ["Windows", "Mac", "RHEL", "Ubuntu", "Other"]
 # RHEL or Red Hat or RedHat? Which is better for the project?
@@ -181,39 +184,47 @@ def pieChart(year):
     return py.plot(fig, output_type='div', show_link=False)
 
 def mapGraph(year):
-    usages = Usage.objects.filter(dateTime__year=year).values('ip') \
-        .annotate(usage_count=Count('ip')) #get ip's and counts for year param
-    locs = Location.objects.filter(ip__in = usages.values_list('ip', flat=True)) 
-    locs_count = locs.count()
-    if locs_count == 0:
-        return "<div>No Location data for this year.</div>"
+    start = time.time()
+    print '***** 00'
+    usages = Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
+        .annotate(usage_count=Count('ip')) #get ip's and counts
     jsonData=[]
-    for obj in locs:
-        matching_usage_set = usages.filter(ip=obj.ip)
-        count = matching_usage_set.values_list('usage_count', flat=True)[0]
-        jsonData.append(
-            {
-            'Lon':float(obj.longitude),
-            'Lat':float(obj.latitude),
-            'Country':str(obj.country),
-            'ip':str(obj.ip),
-            'Year':year,
-            'Value':count,
-            }
-        )
+
+    print '***** 11[', time.time() - start ,'] '
+    for obj in usages.iterator():
+            if len(obj['ip']) == 0:
+                continue
+            print '***** BB', obj['ip'], time.time() - start
+            count = obj['usage_count']
+            loc = Location.objects.get(ip=obj['ip'])
+            jsonData.append(
+                {
+                    'Lon':float(loc.longitude),
+                    'Lat':float(loc.latitude),
+                    'Country':str(loc.country),
+                    'ip':str(loc.ip),
+                    'Year':year,
+                    'Value':count,
+                }
+            )
+    print '***** 20[', time.time() - start ,'] '
+    if len(jsonData) == 0:
+        return "<div>No Location data for this year.</div>"
+    print '***** 22[', time.time() - start ,'] '
     usage_locations = pandas.DataFrame(jsonData)
     print usage_locations
     cases = []
-    for i in locs.values_list('ip', flat=True):
+
+    #print '*****', jsonData
+    for _, row in usage_locations.iterrows():
         cases.append(
             go.Scattergeo(
-                lon=usage_locations[usage_locations['ip'] == i]['Lon'],
-                lat=usage_locations[usage_locations['ip'] == i]['Lat'],
-                text=usage_locations[usage_locations['ip'] == i]['Value'].map('{:.0f}'.format) \
-                .astype(str) + ' ' + usage_locations[usage_locations['ip'] == i]['Country'],
+                lon=float(row['Lon']),
+                lat=float(row['Lat']),
+                text='gouda', #%d %s' % (row['Value'],row['Country']),
                 name="cheese",#usage_locations[usage_locations['ip'] == i]['ip'],
                 marker=dict(
-                    size=usage_locations[usage_locations['ip'] == i]['Value'] / 20,
+                    size=row['Value'],
                     color='#FF3333',
                     line=dict(width=0)
                 ),
@@ -221,6 +232,7 @@ def mapGraph(year):
                 textposition = 'bottom center'
             )
         )
+    print '***** 30[', time.time() - start ,'] '
 
     layout = go.Layout(
         title='Appropriate Title Here',
