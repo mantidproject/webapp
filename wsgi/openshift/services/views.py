@@ -356,14 +356,14 @@ class FeatureViewSet(viewsets.ModelViewSet):
         obj.count += count
         obj.save()
 
-@cache_page(60*1) #one-minute cache
+@cache_page(60*30) #half-hour cache
 def plots(request, md5):
     barGraph = plotsfile.barGraph()
     links = plotsfile.links()
     context = { "bar":barGraph, "links":links}
     return render(request, 'plots.html', context=context)
 
-@cache_page(60*1) #one-minute cache
+@cache_page(60*30) #half-hour cache
 def year(request, md5, year):
     div2 = plotsfile.pieChart(year)
     div3 = plotsfile.mapGraph(year)
