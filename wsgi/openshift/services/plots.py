@@ -74,7 +74,6 @@ def barGraph():
     for year in years:
         usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
         .annotate(usage_count=Count('osName')) #get OS's and counts
-        print usages
         WinTotal = 0
         MacTotal = 0
         RhelTotal = 0
@@ -216,7 +215,6 @@ def pieChart(year):
         .annotate(usage_count=Count('osName')) #get OS's and counts
     if not usages:
         return "Error: No OS data for this year."
-    print usages
     for obj in usages.iterator():
         name = obj["osName"]
         version = obj["osReadable"]
@@ -288,24 +286,18 @@ def pieChart(year):
     return py.plot(fig, output_type='div', show_link=False)
 
 def mapGraph(year):
-    start = time.time()
-    print '***** 00'
     usages = Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
         .annotate(usage_count=Count('ip')) #get ip's and counts
     jsonData=[]
 
-    print '***** 11[', time.time() - start ,'] '
     for obj in usages.iterator():
         if len(obj['ip']) == 0:
             continue
-        print 'Entry:', obj['ip'], time.time() - start
         count = obj['usage_count']
         try:
             loc = Location.objects.get(ip=obj['ip'])
-            print "Match"#,loc.ip
         except ObjectDoesNotExist:
             # No match for given IP
-            print "No Match" #, obj['ip']
             continue
         jsonData.append(
             {
@@ -317,14 +309,10 @@ def mapGraph(year):
                 'Value':count,
             }
         )
-    print '***** 20[', time.time() - start ,'] '
     if len(jsonData) == 0:
         return "<div>No Location data for this year.</div>"
-    print '***** 22[', time.time() - start ,'] '
     usage_locations = pandas.DataFrame(jsonData)
-    print usage_locations
     cases = []
-    #print '*****', jsonData
     for _, row in usage_locations.iterrows():
         cases.append(
             go.Scattergeo(
@@ -341,7 +329,6 @@ def mapGraph(year):
                 textposition = 'bottom center'
             )
         )
-    print '***** 30[', time.time() - start ,'] '
     layout = go.Layout(
         title='Appropriate Title Here', #TODO add title to geomap
         width=1100,
