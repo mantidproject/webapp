@@ -171,7 +171,7 @@ def pieChart(year):
     """
     usages = Usage.objects.filter(dateTime__year=year).values('osName').exclude(ip='') \
         .annotate(usage_count=Count('osName')) #get OS's and counts
-    print usages
+    
     for obj in usages.iterator():
         if obj["osName"] == "Windows NT":
             labels.append("Windows")
@@ -180,8 +180,9 @@ def pieChart(year):
         elif obj["osName"] == "Linux":
             labels.append("Linux")
         else:
-            labels.append("Other")
+            labels.append("Other (%s)" % obj["osName"])
         values.append(obj["usage_count"])
+
     colors = [WIN_COLOR, MAC_COLOR, RHEL_COLOR, UBUNTU_COLOR, OTHER_COLOR]
     layout = go.Layout(
         width=500,
