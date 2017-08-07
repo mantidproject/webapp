@@ -260,9 +260,9 @@ def pieChart(year):
                 else:
                     labels.append(pretty_name)
                 colors.append('rgb(%s, %s, %s)' % (
-                    random.randint(0,255),
-                    random.randint(0,255),
-                    random.randint(0,255)
+                    random.randint(100,255),
+                    random.randint(100,255),
+                    random.randint(100,255)
                     ) 
                 )
         else:
