@@ -172,7 +172,8 @@ def pieChart(year):
     """
     usages = Usage.objects.filter(dateTime__year=year).values('osName').exclude(ip='') \
         .annotate(usage_count=Count('osName')) #get OS's and counts
-    
+    if not usages:
+        return "Error: No OS data for this year."
     for obj in usages.iterator():
         if obj["osName"] == "Windows NT":
             labels.append("Windows")
