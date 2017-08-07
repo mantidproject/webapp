@@ -358,11 +358,11 @@ class FeatureViewSet(viewsets.ModelViewSet):
 def plots(request, md5):
     barGraph = lel.barGraph()
     links = lel.links()
-    context = { "bar":barGraph, "links":links }
+    context = { "bar":barGraph, "links":links, "goback":'/' }
     return render(request, 'plots.html', context=context)
 
 def year(request, md5, year):
     div2 = lel.pieChart(year)
     div3 = lel.mapGraph(year)
-    context = { "pie":div2, "map":div3 }
+    context = { "pie":div2, "map":div3, "goback":'/plots'}
     return render(request, 'plots.html', context=context)
