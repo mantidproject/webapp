@@ -65,10 +65,11 @@ WIN_COLOR = 'rgb(70,70,220)'
 MAC_COLOR = 'rgb(190,200,250)'
 RHEL_COLOR = 'rgb(200,80,80)'
 UBUNTU_COLOR = 'rgb(250,160,100)'
+LINUX_COLOR = 'rgb(100,250,160)'
 OTHER_COLOR = 'rgb(130,130,150)'
 
 def barGraph():
-    Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
+    Windows, Mac, RHEL, Ubuntu, Linux, Other, Total = [], [], [], [], [], [], []
 
     for year in years:
         usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
@@ -78,6 +79,7 @@ def barGraph():
         MacTotal = 0
         RhelTotal = 0
         UbuntuTotal = 0
+        LinuxTotal = 0
         OtherTotal = 0
         for obj in usages.iterator():
             name = obj["osName"]
@@ -92,21 +94,22 @@ def barGraph():
                 # OS Type = Linux
                 # Divide by distro - RHEL, Ubuntu, and Other
                 if version == "":
-                    OtherTotal += obj["usage_count"]
+                    LinuxTotal += obj["usage_count"]
                 elif "Red Hat Enterprise" in version:
                     RhelTotal += obj["usage_count"]
                 elif "Ubuntu" in version:
                     UbuntuTotal += obj["usage_count"]
                 else:
-                    OtherTotal += obj["usage_count"]
+                    LinuxTotal += obj["usage_count"]
             else:
                 OtherTotal += obj["usage_count"]
         Windows.append(WinTotal)
         Mac.append(MacTotal)
         RHEL.append(RhelTotal)
         Ubuntu.append(UbuntuTotal)
+        Linux.append(LinuxTotal)
         Other.append(OtherTotal)
-        Total.append(WinTotal + MacTotal + RhelTotal + UbuntuTotal + OtherTotal)
+        Total.append(WinTotal + MacTotal + RhelTotal + UbuntuTotal + LinuxTotal + OtherTotal)
     """
     for year in all_time_data:
         year_total = 0
@@ -164,6 +167,15 @@ def barGraph():
         ),
     )
 
+    LinuxTrace = go.Bar(
+        x=years,
+        y=Linux,
+        name="Unknown Linux Distro",
+        marker=dict(
+            color=LINUX_COLOR,
+        ),
+    )
+
     OtherTrace = go.Bar(
         x=years,
         y=Other,
@@ -174,7 +186,7 @@ def barGraph():
     )
 
     data = [TotalTrace, WindowsTrace, MacTrace,
-            RedHatTrace, UbuntuTrace, OtherTrace]
+            RedHatTrace, UbuntuTrace, LinuxTrace, OtherTrace]
     layout = go.Layout(
         xaxis=dict(
             range=[now.year-2, now.year+0.5] # custom x-axis scaling
