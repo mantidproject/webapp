@@ -97,6 +97,13 @@ if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDIS
     MIDDLEWARE_CLASSES = ('django.middleware.cache.UpdateCacheMiddleware',) + \
         MIDDLEWARE_CLASSES + \
         ('django.middleware.cache.FetchFromCacheMiddleware',)
+else: #local caching
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': ''
+        }
+    }
 
 
 WSGI_APPLICATION = 'wsgi.application'

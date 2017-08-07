@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
+from django.views.decorators.cache import cache_page
 from .models import Message, Usage, FeatureUsage, Location
 from rest_framework import response, views, viewsets, filters
 from rest_framework.decorators import api_view, permission_classes
@@ -355,12 +356,14 @@ class FeatureViewSet(viewsets.ModelViewSet):
         obj.count += count
         obj.save()
 
+@cache_page(60*1) #one-minute cache
 def plots(request, md5):
     barGraph = plotsfile.barGraph()
     links = plotsfile.links()
     context = { "bar":barGraph, "links":links}
     return render(request, 'plots.html', context=context)
 
+@cache_page(60*1) #one-minute cache
 def year(request, md5, year):
     div2 = plotsfile.pieChart(year)
     div3 = plotsfile.mapGraph(year)
