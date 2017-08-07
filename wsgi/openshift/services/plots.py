@@ -74,29 +74,39 @@ def barGraph():
         usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
         .annotate(usage_count=Count('osName')) #get OS's and counts
         print usages
+        WinTotal = 0
+        MacTotal = 0
+        RhelTotal = 0
+        UbuntuTotal = 0
+        OtherTotal = 0
         for obj in usages.iterator():
             name = obj["osName"]
             version = obj["osReadable"]
             if name == "Windows NT":
                 # OS Type = Windows
-                Windows.append(obj["usage_count"])
+                WinTotal += obj["usage_count"]
             elif name == "Darwin":
                 # OS Type = Mac OS X
-                Mac.append(obj["usage_count"])
+                MacTotal += obj["usage_count"]
             elif name == "Linux":
                 # OS Type = Linux
                 # Divide by distro - RHEL, Ubuntu, and Other
                 if version == "":
-                    Other.append(obj["usage_count"])
+                    OtherTotal += obj["usage_count"]
                 elif "Red Hat Enterprise" in version:
-                    RHEL.append(obj["usage_count"])
+                    RhelTotal += obj["usage_count"]
                 elif "Ubuntu" in version:
-                    Ubuntu.append(obj["usage_count"])
+                    UbuntuTotal += obj["usage_count"]
                 else:
-                    Other.append(obj["usage_count"])
+                    OtherTotal += obj["usage_count"]
             else:
-                Other.append(obj["usage_count"])
-
+                OtherTotal += obj["usage_count"]
+        Windows.append(WinTotal)
+        Mac.append(MacTotal)
+        RHEL.append(RhelTotal)
+        Ubuntu.append(UbuntuTotal)
+        Other.append(OtherTotal)
+        Total.append(WinTotal + MacTotal + RhelTotal + UbuntuTotal + OtherTotal)
     """
     for year in all_time_data:
         year_total = 0
