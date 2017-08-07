@@ -9,6 +9,7 @@ import plotly.graph_objs as go
 import pandas
 import datetime
 import time
+import random
 
 OS_LIST = ["Windows", "Mac", "RHEL", "Ubuntu", "Other"]
 # RHEL or Red Hat or RedHat? Which is better for the project?
@@ -258,7 +259,12 @@ def pieChart(year):
                     labels.append("Linux (Unknown Distro)")
                 else:
                     labels.append(pretty_name)
-                colors.append(OTHER_COLOR)
+                colors.append('rgb(%s, %s, %s)' % (
+                    random.randint(0,255),
+                    random.randint(0,255),
+                    random.randint(0,255)
+                    ) 
+                )
         else:
             labels.append("Other (%s)" % name + version)
             colors.append(OTHER_COLOR)
