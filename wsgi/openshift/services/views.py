@@ -358,11 +358,11 @@ class FeatureViewSet(viewsets.ModelViewSet):
 def plots(request, md5):
     barGraph = plotsfile.barGraph()
     links = plotsfile.links()
-    context = { "bar":barGraph, "links":links, "goback":'/' }
+    context = { "bar":barGraph, "links":links}
     return render(request, 'plots.html', context=context)
 
 def year(request, md5, year):
     div2 = plotsfile.pieChart(year)
     div3 = plotsfile.mapGraph(year)
-    context = { "pie":div2, "map":div3, "goback":'/plots'}
+    context = { "pie":div2, "map":div3, "goback":"<a href='../'>Go Back</a>"}
     return render(request, 'plots.html', context=context)
