@@ -164,9 +164,24 @@ def links():
 def pieChart(year):
     labels = []
     values = []
+    """
     for os in OS_LIST:
         labels.append(os)
         values.append(all_time_data[year][os])
+    """
+    usages = Usage.objects.filter(dateTime__year=year).values('osName').exclude(ip='') \
+        .annotate(usage_count=Count('osName')) #get OS's and counts
+    print usages
+    for obj in usages.iterator():
+        if obj["osName"] == "Windows NT":
+            labels.append("Windows")
+        elif obj["osName"] == "Darwin":
+            labels.append("Mac")
+        elif obj["osName"] == "Linux":
+            labels.append("Linux")
+        else:
+            labels.append("Other")
+        values.append(obj["usage_count"])
     colors = [WIN_COLOR, MAC_COLOR, RHEL_COLOR, UBUNTU_COLOR, OTHER_COLOR]
     layout = go.Layout(
         width=500,
@@ -193,27 +208,27 @@ def mapGraph(year):
 
     print '***** 11[', time.time() - start ,'] '
     for obj in usages.iterator():
-            if len(obj['ip']) == 0:
-                continue
-            print 'Entry:', obj['ip'], time.time() - start
-            count = obj['usage_count']
-            try:
-                loc = Location.objects.get(ip=obj['ip'])
-                print "Match"#,loc.ip
-            except ObjectDoesNotExist:
-                # No match for given IP
-                print "No Match" #, obj['ip']
-                continue
-            jsonData.append(
-                {
-                    'Lon':float(loc.longitude),
-                    'Lat':float(loc.latitude),
-                    'Country':str(loc.country),
-                    'ip':str(loc.ip),
-                    'Year':year,
-                    'Value':count,
-                }
-            )
+        if len(obj['ip']) == 0:
+            continue
+        print 'Entry:', obj['ip'], time.time() - start
+        count = obj['usage_count']
+        try:
+            loc = Location.objects.get(ip=obj['ip'])
+            print "Match"#,loc.ip
+        except ObjectDoesNotExist:
+            # No match for given IP
+            print "No Match" #, obj['ip']
+            continue
+        jsonData.append(
+            {
+                'Lon':float(loc.longitude),
+                'Lat':float(loc.latitude),
+                'Country':str(loc.country),
+                'ip':str(loc.ip),
+                'Year':year,
+                'Value':count,
+            }
+        )
     print '***** 20[', time.time() - start ,'] '
     if len(jsonData) == 0:
         return "<div>No Location data for this year.</div>"
