@@ -170,22 +170,54 @@ def pieChart(year):
         labels.append(os)
         values.append(all_time_data[year][os])
     """
-    usages = Usage.objects.filter(dateTime__year=year).values('osName').exclude(ip='') \
+    usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable').exclude(ip='') \
         .annotate(usage_count=Count('osName')) #get OS's and counts
     if not usages:
         return "Error: No OS data for this year."
+    print usages
+    morespecificinfo = ""
     for obj in usages.iterator():
-        if obj["osName"] == "Windows NT":
+        name = obj["osName"]
+        version = obj["osReadable"]
+        
+        if name == "Windows NT":
+            # OS Type = Windows
+            """
+            if version == "":
+                labels.append("Windows (Unknown Version)")
+            elif "Server" in version:
+                labels.append("Windows Server")
+            elif "Windows 7" in version:
+                labels.append("Windows 7")
+            elif "Windows 8" in version:
+                labels.append("Windows 8")
+            elif "Windows 10" in version:
+                labels.append("Windows 10")
+            """
             labels.append("Windows")
             colors.append(WIN_COLOR)
-        elif obj["osName"] == "Darwin":
+        elif name == "Darwin":
+            # OS Type = Mac OS X
             labels.append("Mac")
             colors.append(MAC_COLOR)
-        elif obj["osName"] == "Linux":
-            labels.append("Linux")
+        elif name == "Linux":
+            # OS Type = Linux
+            # Divide by distro - RHEL, Ubuntu, and Other
+            labels.append("Linux (Unknown Version)")
             colors.append(RHEL_COLOR)
+            """
+            if RHEL:
+                labels.append(morespecificinfo)
+                colors.append(RHEL_COLOR)
+            elif Ubuntu:
+                labels.append(morespecificinfo)
+                colors.append(UBUNTU_COLOR)
+            else:
+                labels.append("Other Linux Distro: %s" % obj["osName"])
+                colors.append(OTHER_COLOR)
+            """
         else:
-            labels.append("Other (%s)" % obj["osName"])
+            labels.append("Other (%s)" % name)
             colors.append(OTHER_COLOR)
         values.append(obj["usage_count"])
 
