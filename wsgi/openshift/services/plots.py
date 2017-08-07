@@ -197,7 +197,7 @@ def pieChart(year):
             colors.append(WIN_COLOR)
         elif name == "Darwin":
             # OS Type = Mac OS X
-            labels.append("Mac")
+            labels.append("macOS")
             colors.append(MAC_COLOR)
         elif name == "Linux":
             # OS Type = Linux
@@ -212,7 +212,8 @@ def pieChart(year):
                 labels.append("Ubuntu")
                 colors.append(UBUNTU_COLOR)
             else:
-                labels.append(version)
+                pretty_name = version.split(" ")[0]
+                labels.append(pretty_name)
                 colors.append(OTHER_COLOR)
         else:
             labels.append("Other (%s)" % name + version)
@@ -292,7 +293,7 @@ def mapGraph(year):
         )
     print '***** 30[', time.time() - start ,'] '
     layout = go.Layout(
-        title='Appropriate Title Here',
+        title='Appropriate Title Here', #TODO add title to geomap
         width=1100,
         height=600,
         geo=dict(
