@@ -1,6 +1,7 @@
 from models import Location, Usage
 from django.db.models import Count
 from django.core.paginator import Paginator
+from django.core.exceptions import ObjectDoesNotExist
 import django_filters
 import plotly
 import plotly.offline as py
@@ -194,9 +195,15 @@ def mapGraph(year):
     for obj in usages.iterator():
             if len(obj['ip']) == 0:
                 continue
-            print '***** BB', obj['ip'], time.time() - start
+            print 'Entry:', obj['ip'], time.time() - start
             count = obj['usage_count']
-            loc = Location.objects.get(ip=obj['ip'])
+            try:
+                loc = Location.objects.get(ip=obj['ip'])
+                print "Match"#,loc.ip
+            except ObjectDoesNotExist:
+                # No match for given IP
+                print "No Match" #, obj['ip']
+                continue
             jsonData.append(
                 {
                     'Lon':float(loc.longitude),
@@ -214,7 +221,6 @@ def mapGraph(year):
     usage_locations = pandas.DataFrame(jsonData)
     print usage_locations
     cases = []
-
     #print '*****', jsonData
     for _, row in usage_locations.iterrows():
         cases.append(
