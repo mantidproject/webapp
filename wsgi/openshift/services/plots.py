@@ -212,7 +212,7 @@ def pieChart(year):
                 labels.append("Ubuntu")
                 colors.append(UBUNTU_COLOR)
             else:
-                pretty_name = version.split(" ")[0]
+                pretty_name = version.split()[0]
                 labels.append(pretty_name)
                 colors.append(OTHER_COLOR)
         else:
