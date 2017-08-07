@@ -15,7 +15,7 @@ import datetime
 import hashlib
 import settings
 import json
-import plots as lel
+import plots as plotsfile
 
 OS_NAMES = ['Linux', 'Windows NT', 'Darwin']
 UTC = datetime.tzinfo('UTC')
@@ -356,13 +356,13 @@ class FeatureViewSet(viewsets.ModelViewSet):
         obj.save()
 
 def plots(request, md5):
-    barGraph = lel.barGraph()
-    links = lel.links()
+    barGraph = plotsfile.barGraph()
+    links = plotsfile.links()
     context = { "bar":barGraph, "links":links, "goback":'/' }
     return render(request, 'plots.html', context=context)
 
 def year(request, md5, year):
-    div2 = lel.pieChart(year)
-    div3 = lel.mapGraph(year)
+    div2 = plotsfile.pieChart(year)
+    div3 = plotsfile.mapGraph(year)
     context = { "pie":div2, "map":div3, "goback":'/plots'}
     return render(request, 'plots.html', context=context)
