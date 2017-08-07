@@ -12,7 +12,7 @@ import time
 
 OS_LIST = ["Windows", "Mac", "RHEL", "Ubuntu", "Other"]
 # RHEL or Red Hat or RedHat? Which is better for the project?
-start = datetime.date(2006,1,1)
+start = datetime.date(2014,1,1)
 now = datetime.datetime.today()
 years = range(start.year, now.year+1)
 
