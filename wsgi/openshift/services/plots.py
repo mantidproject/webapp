@@ -69,6 +69,35 @@ OTHER_COLOR = 'rgb(130,130,150)'
 
 def barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
+
+    for year in years:
+        usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
+        .annotate(usage_count=Count('osName')) #get OS's and counts
+        print usages
+        for obj in usages.iterator():
+            name = obj["osName"]
+            version = obj["osReadable"]
+            if name == "Windows NT":
+                # OS Type = Windows
+                Windows.append(obj["usage_count"])
+            elif name == "Darwin":
+                # OS Type = Mac OS X
+                Mac.append(obj["usage_count"])
+            elif name == "Linux":
+                # OS Type = Linux
+                # Divide by distro - RHEL, Ubuntu, and Other
+                if version == "":
+                    Other.append(obj["usage_count"])
+                elif "Red Hat Enterprise" in version:
+                    RHEL.append(obj["usage_count"])
+                elif "Ubuntu" in version:
+                    Ubuntu.append(obj["usage_count"])
+                else:
+                    Other.append(obj["usage_count"])
+            else:
+                Other.append(obj["usage_count"])
+
+    """
     for year in all_time_data:
         year_total = 0
         Windows.append(all_time_data[year]["Windows"])
@@ -79,6 +108,7 @@ def barGraph():
         Total.append(sum(all_time_data[year].values()))
     # There must be a more compact way to do this.
     # FOR loop iterating over OS_LIST, maybe.
+    """
 
     TotalTrace = go.Bar(
         x=years,
@@ -170,7 +200,7 @@ def pieChart(year):
         labels.append(os)
         values.append(all_time_data[year][os])
     """
-    usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable').exclude(ip='') \
+    usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
         .annotate(usage_count=Count('osName')) #get OS's and counts
     if not usages:
         return "Error: No OS data for this year."
