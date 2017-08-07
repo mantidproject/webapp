@@ -330,7 +330,7 @@ def mapGraph(year):
             )
         )
     layout = go.Layout(
-        title='Appropriate Title Here', #TODO add title to geomap
+        title='Location Data',
         width=1100,
         height=600,
         geo=dict(
