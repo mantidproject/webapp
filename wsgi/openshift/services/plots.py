@@ -140,7 +140,7 @@ def barGraph():
     MacTrace = go.Bar(
         x=years,
         y=Mac,
-        name="Mac",
+        name="macOS",
         marker=dict(
             color=MAC_COLOR,
         ),
@@ -149,7 +149,7 @@ def barGraph():
     RedHatTrace = go.Bar(
         x=years,
         y=RHEL,
-        name="Red Hat",
+        name="Red Hat Enterprise Linux",
         marker=dict(
             color=RHEL_COLOR,
         ),
@@ -167,7 +167,7 @@ def barGraph():
     OtherTrace = go.Bar(
         x=years,
         y=Other,
-        name="Other",
+        name="Other/Unknown",
         marker=dict(
             color=OTHER_COLOR,
         ),
