@@ -254,7 +254,10 @@ def pieChart(year):
                 colors.append(UBUNTU_COLOR)
             else:
                 pretty_name = version.split()[0]
-                labels.append(pretty_name)
+                if pretty_name == "Linux":
+                    labels.append("Linux (Unknown Distro)")
+                else:
+                    labels.append(pretty_name)
                 colors.append(OTHER_COLOR)
         else:
             labels.append("Other (%s)" % name + version)
