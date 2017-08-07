@@ -189,7 +189,7 @@ def barGraph():
             b=30,
             t=5,
             pad=1
-        ),
+        ), 
     )
     fig = go.Figure(data=data, layout=layout)
     div = py.plot(fig, output_type='div', show_link=False)
@@ -245,7 +245,7 @@ def pieChart(year):
             if version == "":
                 labels.append("Linux (Unknown Distro)")
                 colors.append(OTHER_COLOR)
-            elif "Red Hat Enterprise" in version:
+            elif "Red Hat Enterprise" or "Scientific" in version:
                 labels.append("Red Hat Enterprise Linux")
                 colors.append(RHEL_COLOR)
             elif "Ubuntu" in version:
