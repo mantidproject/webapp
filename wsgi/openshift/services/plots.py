@@ -225,12 +225,12 @@ def mapGraph(year):
     for _, row in usage_locations.iterrows():
         cases.append(
             go.Scattergeo(
-                lon=float(row['Lon']),
-                lat=float(row['Lat']),
-                text='gouda', #%d %s' % (row['Value'],row['Country']),
-                name="cheese",#usage_locations[usage_locations['ip'] == i]['ip'],
+                lon=[row['Lon']],
+                lat=[row['Lat']],
+                text='%d %s' % (row['Value'],row['Country']),
+                name=row['Country'],
                 marker=dict(
-                    size=row['Value'],
+                    size=row['Value']/20.0,
                     color='#FF3333',
                     line=dict(width=0)
                 ),
@@ -239,7 +239,6 @@ def mapGraph(year):
             )
         )
     print '***** 30[', time.time() - start ,'] '
-
     layout = go.Layout(
         title='Appropriate Title Here',
         width=1100,
