@@ -175,7 +175,6 @@ def pieChart(year):
     if not usages:
         return "Error: No OS data for this year."
     print usages
-    morespecificinfo = ""
     for obj in usages.iterator():
         name = obj["osName"]
         version = obj["osReadable"]
@@ -203,21 +202,17 @@ def pieChart(year):
         elif name == "Linux":
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
-            labels.append("Linux (Unknown Version)")
-            colors.append(RHEL_COLOR)
-            """
-            if RHEL:
-                labels.append(morespecificinfo)
+            if "Red Hat Enterprise" in version:
+                labels.append("Red Hat Enterprise Linux")
                 colors.append(RHEL_COLOR)
-            elif Ubuntu:
-                labels.append(morespecificinfo)
+            elif "Ubuntu" in version:
+                labels.append("Ubuntu")
                 colors.append(UBUNTU_COLOR)
             else:
-                labels.append("Other Linux Distro: %s" % obj["osName"])
+                labels.append(version)
                 colors.append(OTHER_COLOR)
-            """
         else:
-            labels.append("Other (%s)" % name)
+            labels.append("Other (%s)" % name + version)
             colors.append(OTHER_COLOR)
         values.append(obj["usage_count"])
 
