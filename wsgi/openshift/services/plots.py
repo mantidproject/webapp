@@ -164,6 +164,7 @@ def links():
 def pieChart(year):
     labels = []
     values = []
+    colors = []
     """
     for os in OS_LIST:
         labels.append(os)
@@ -175,15 +176,19 @@ def pieChart(year):
     for obj in usages.iterator():
         if obj["osName"] == "Windows NT":
             labels.append("Windows")
+            colors.append(WIN_COLOR)
         elif obj["osName"] == "Darwin":
             labels.append("Mac")
+            colors.append(MAC_COLOR)
         elif obj["osName"] == "Linux":
             labels.append("Linux")
+            colors.append(RHEL_COLOR)
         else:
             labels.append("Other (%s)" % obj["osName"])
+            colors.append(OTHER_COLOR)
         values.append(obj["usage_count"])
 
-    colors = [WIN_COLOR, MAC_COLOR, RHEL_COLOR, UBUNTU_COLOR, OTHER_COLOR]
+    #colors = [WIN_COLOR, MAC_COLOR, RHEL_COLOR, UBUNTU_COLOR, OTHER_COLOR]
     layout = go.Layout(
         width=500,
         height=500,
