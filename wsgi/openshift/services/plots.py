@@ -240,8 +240,8 @@ def mapGraph(year):
             continue
         jsonData.append(
             {
-                'Lon':float(loc.longitude),
                 'Lat':float(loc.latitude),
+                'Lon':float(loc.longitude),
                 'Country':str(loc.country),
                 'Region':str(loc.region),
                 'ip':str(loc.ip),
@@ -254,14 +254,14 @@ def mapGraph(year):
     usage_locations = pandas.DataFrame(jsonData)
     cases = []
     for _, row in usage_locations.iterrows():
-        if (row['Lon'] == 0.0 or row['Lon'] == -0.0) and \
-           (row['Lat'] == 0.0 or row['Lat'] == -0.0):
+        if (row['Lat'] == 0.0 or row['Lat'] == -0.0) and \
+           (row['Lon'] == 0.0 or row['Lon'] == -0.0):
             # [0,0] is a throwaway coordinate
             continue
         cases.append(
             go.Scattergeo(
-                lon=[row['Lon']],
                 lat=[row['Lat']],
+                lon=[row['Lon']],
                 text='%d - %s, %s' % (row['Value'],row['Region'],row['Country']),
                 name=row['Country'],
                 marker=dict(
