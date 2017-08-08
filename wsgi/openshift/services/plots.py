@@ -280,7 +280,7 @@ def mapGraph(year):
                 name=row['Country'],
                 marker=dict(
                     size=10, #row['Value']/20.0,
-                    color='#FF3333',
+                    color='rgba(255,90,90,0.6)',
                     line=dict(width=0)
                 ),
                 mode = 'markers+text',
