@@ -208,7 +208,7 @@ def pieChart(year):
         colors.append(UBUNTU_COLOR)
     if OtherTotal > 0:
         for OS in OtherTotal:
-            if OS == "blank":
+            if OS == "blank" or OS == 'Linux':
                 labels.append("Other Linux")
             else:
                 labels.append(OS)
@@ -253,7 +253,6 @@ def mapGraph(year):
                 'Lon':float(loc.longitude),
                 'Country':str(loc.country),
                 'Region':str(loc.region),
-                'ip':str(loc.ip),
                 'Year':year,
                 'Value':count,
             }
