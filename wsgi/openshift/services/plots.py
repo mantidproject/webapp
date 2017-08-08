@@ -178,10 +178,10 @@ def barGraph():
             RedHatTrace, UbuntuTrace, OtherTrace]
     layout = go.Layout(
         xaxis=dict(
-            range=[now.year-2, now.year+0.5] # custom x-axis scaling
+            range=[start.year-0.5, now.year+0.5] # custom x-axis scaling
         ),
         barmode='group',
-        width=650,
+        width=750,
         height=600,
         margin=go.Margin(
             l=50,
