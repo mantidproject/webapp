@@ -47,7 +47,7 @@ def barGraph():
                 # Divide by distro - RHEL, Ubuntu, and Other
                 if version == "":
                     OtherTotal += obj["usage_count"]
-                elif "Red Hat Enterprise" in version:
+                elif "Red Hat" in version or "Scientific" in version:
                     RhelTotal += obj["usage_count"]
                 elif "Ubuntu" in version:
                     UbuntuTotal += obj["usage_count"]
@@ -148,66 +148,77 @@ def pieChart(year):
     labels = []
     values = []
     colors = []
-
     usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
         .annotate(usage_count=Count('osName')) #get OS's and counts
-
     if not usages:
         return "Error: No OS data for this year."
-
     for obj in usages.iterator():
         name = obj["osName"]
         version = obj["osReadable"]
-        
-        if name == "Windows NT":
-            # OS Type = Windows
-            """
-            if version == "":
-                labels.append("Windows (Unknown Version)")
-            elif "Server" in version:
-                labels.append("Windows Server")
-            elif "Windows 7" in version:
-                labels.append("Windows 7")
-            elif "Windows 8" in version:
-                labels.append("Windows 8")
-            elif "Windows 10" in version:
-                labels.append("Windows 10")
-            """
-            labels.append("Windows")
-            colors.append(WIN_COLOR)
-        elif name == "Darwin":
-            # OS Type = Mac OS X
-            labels.append("macOS")
-            colors.append(MAC_COLOR)
-        elif name == "Linux":
-            # OS Type = Linux
-            # Divide by distro - RHEL, Ubuntu, and Other
-            if version == "":
-                labels.append("Other Linux")
-                colors.append(OTHER_COLOR)
-            elif "Red Hat" in version or "Scientific" in version:
-                labels.append("Red Hat")
-                colors.append(RHEL_COLOR)
-            elif "Ubuntu" in version:
-                labels.append("Ubuntu")
-                colors.append(UBUNTU_COLOR)
-            else:
-                pretty_name = version.split()[0]
-                if pretty_name == "Linux":
-                    labels.append("Linux (Unknown Distro)")
-                else:
-                    labels.append(pretty_name)
-                colors.append('rgb(%s, %s, %s)' % (
-                    random.randint(100,255),
-                    random.randint(100,255),
-                    random.randint(100,255)
-                    ) 
-                )
-        else:
-            labels.append("Other (%s)" % name + version)
-            colors.append(OTHER_COLOR)
-        values.append(obj["usage_count"])
 
+        WinTotal = 0
+        MacTotal = 0
+        RhelTotal = 0
+        UbuntuTotal = 0
+        OtherTotal = {}
+
+        for obj in usages.iterator():
+            name = obj["osName"]
+            version = obj["osReadable"]
+            if name == "Windows NT":
+                # OS Type = Windows
+                WinTotal += obj["usage_count"]
+            elif name == "Darwin":
+                # OS Type = Mac OS X
+                MacTotal += obj["usage_count"]
+            elif name == "Linux":
+                # OS Type = Linux
+                # Divide by distro - RHEL, Ubuntu, and Other
+                if version == "":
+                    OtherTotal["blank"] += obj["usage_count"]
+                elif "Red Hat" in version or "Scientific" in version:
+                    RhelTotal += obj["usage_count"]
+                elif "Ubuntu" in version:
+                    UbuntuTotal += obj["usage_count"]
+                else:
+                    v = str(version).split()[0]
+                    if OtherTotal.has_key(v):
+                        OtherTotal[v] += obj["usage_count"]
+                    else:
+                        OtherTotal[v] = obj["usage_count"]
+            else:
+                # Not Linux, Mac, or Windows? What sorcery is this?
+                OtherTotal += obj["usage_count"]
+
+        if WinTotal > 0:
+            labels.append("Windows")
+            values.append(WinTotal)
+            colors.append(WIN_COLOR)
+        if MacTotal > 0:
+            labels.append("macOS")
+            values.append(MacTotal)
+            colors.append(MAC_COLOR)
+        if RhelTotal > 0:
+            labels.append("Red Hat")
+            values.append(RhelTotal)
+            colors.append(RHEL_COLOR)
+        if UbuntuTotal > 0:
+            labels.append("Ubuntu")
+            values.append(UbuntuTotal)
+            colors.append(UBUNTU_COLOR)
+        if OtherTotal > 0:
+            for OS in OtherTotal:
+                if OS == "blank":
+                    labels.append("Other Linux")
+                else:
+                    labels.append(OS)
+                values.append(OtherTotal[OS])
+                colors.append('rgb(%s, %s, %s)' % (
+                        random.randint(100,255),
+                        random.randint(100,255),
+                        random.randint(100,255)
+                        ) 
+                    )
     layout = go.Layout(
         width=500,
         height=500,
