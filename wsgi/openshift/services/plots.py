@@ -253,6 +253,9 @@ def mapGraph(year):
     usage_locations = pandas.DataFrame(jsonData)
     cases = []
     for _, row in usage_locations.iterrows():
+        if row['Lon'] == 0.0 and row['Lat'] == 0.0:
+            # [0,0] is a throwaway coordinate
+            continue
         cases.append(
             go.Scattergeo(
                 lon=[row['Lon']],
