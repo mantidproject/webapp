@@ -262,8 +262,7 @@ def mapGraph(year):
     usage_locations = pandas.DataFrame(jsonData)
     cases = []
     for _, row in usage_locations.iterrows():
-        if (row['Lat'] == 0.0 or row['Lat'] == -0.0) and \
-           (row['Lon'] == 0.0 or row['Lon'] == -0.0):
+        if (abs(row['Lat']) == 0.0 and abs(row['Lon']) == 0.0):
             # [0,0] is a throwaway coordinate
             continue
         cases.append(
