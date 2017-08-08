@@ -8,57 +8,11 @@ import plotly.offline as py
 import plotly.graph_objs as go
 import pandas
 import datetime
-import time
 import random
 
-OS_LIST = ["Windows", "Mac", "RHEL", "Ubuntu", "Other"]
-# RHEL or Red Hat or RedHat? Which is better for the project?
 start = datetime.date(2014,1,1)
 now = datetime.datetime.today()
 years = range(start.year, now.year+1)
-
-# Fake data for testing
-all_time_data = {
-    "2006": {
-        "Windows": 20, "Mac": 40, "RHEL": 70, "Ubuntu": 62, "Other": 10
-    },
-    "2007": {
-        "Windows": 50, "Mac": 20, "RHEL": 90, "Ubuntu": 62, "Other": 10
-    },
-    "2008": {
-        "Windows": 30, "Mac": 10, "RHEL": 90, "Ubuntu": 62, "Other": 10
-    },
-    "2009": {
-        "Windows": 12, "Mac": 20, "RHEL": 80, "Ubuntu": 62, "Other": 10
-    },
-    "2010": {
-        "Windows": 29, "Mac": 20, "RHEL": 70, "Ubuntu": 62, "Other": 10
-    },
-    "2011": {
-        "Windows": 56, "Mac": 40, "RHEL": 75, "Ubuntu": 62, "Other": 10
-    },
-    "2012": {
-        "Windows": 41, "Mac": 41, "RHEL": 78, "Ubuntu": 62, "Other": 10
-    },
-    "2013": {
-        "Windows": 55, "Mac": 31, "RHEL": 99, "Ubuntu": 62, "Other": 10
-    },
-    "2014": {
-        "Windows": 54, "Mac": 22, "RHEL": 86, "Ubuntu": 62, "Other": 10
-    },
-    "2015": {
-        "Windows": 55, "Mac": 15, "RHEL": 70, "Ubuntu": 62, "Other": 10
-    },
-    "2016": {
-        "Windows": 30, "Mac": 19, "RHEL": 70, "Ubuntu": 62, "Other": 10
-    },
-    "2017": {
-        "Windows": 92, "Mac": 45, "RHEL": 80, "Ubuntu": 72, "Other": 20
-    }
-}
-# Let's just work with this as a given.
-# It is here to find a good format to create either a new DB table/model, or
-# to use caching to store these values locally.
 
 # Colors
 TOTAL_COLOR = 'rgb(200,200,200)'
@@ -108,18 +62,6 @@ def barGraph():
         Ubuntu.append(UbuntuTotal)
         Other.append(OtherTotal)
         Total.append(WinTotal + MacTotal + RhelTotal + UbuntuTotal + OtherTotal)
-    """
-    for year in all_time_data:
-        year_total = 0
-        Windows.append(all_time_data[year]["Windows"])
-        Mac.append(all_time_data[year]["Mac"])
-        RHEL.append(all_time_data[year]["RHEL"])
-        Ubuntu.append(all_time_data[year]["Ubuntu"])
-        Other.append(all_time_data[year]["Other"])
-        Total.append(sum(all_time_data[year].values()))
-    # There must be a more compact way to do this.
-    # FOR loop iterating over OS_LIST, maybe.
-    """
 
     TotalTrace = go.Bar(
         x=years,
@@ -206,15 +148,13 @@ def pieChart(year):
     labels = []
     values = []
     colors = []
-    """
-    for os in OS_LIST:
-        labels.append(os)
-        values.append(all_time_data[year][os])
-    """
+
     usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
         .annotate(usage_count=Count('osName')) #get OS's and counts
+
     if not usages:
         return "Error: No OS data for this year."
+
     for obj in usages.iterator():
         name = obj["osName"]
         version = obj["osReadable"]
@@ -268,7 +208,6 @@ def pieChart(year):
             colors.append(OTHER_COLOR)
         values.append(obj["usage_count"])
 
-    #colors = [WIN_COLOR, MAC_COLOR, RHEL_COLOR, UBUNTU_COLOR, OTHER_COLOR]
     layout = go.Layout(
         width=500,
         height=500,
