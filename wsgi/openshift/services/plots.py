@@ -174,7 +174,7 @@ def pieChart(year):
             elif name == "Linux":
                 # OS Type = Linux
                 # Divide by distro - RHEL, Ubuntu, and Other
-                if version == "":
+                if version == "" or version == "Linux":
                     if OtherTotal.has_key("blank"):
                         OtherTotal['blank'] += obj["usage_count"]
                     else:
