@@ -245,7 +245,7 @@ def pieChart(year):
             if version == "":
                 labels.append("Linux (Unknown Distro)")
                 colors.append(OTHER_COLOR)
-            elif "Red Hat Enterprise" or "Scientific" in version:
+            elif "Red Hat Enterprise" in version or "Scientific" in version:
                 labels.append("Red Hat Enterprise Linux")
                 colors.append(RHEL_COLOR)
             elif "Ubuntu" in version:
