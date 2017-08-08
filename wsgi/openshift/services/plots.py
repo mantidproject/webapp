@@ -243,6 +243,7 @@ def mapGraph(year):
                 'Lon':float(loc.longitude),
                 'Lat':float(loc.latitude),
                 'Country':str(loc.country),
+                'Region':str(loc.region),
                 'ip':str(loc.ip),
                 'Year':year,
                 'Value':count,
@@ -261,7 +262,7 @@ def mapGraph(year):
             go.Scattergeo(
                 lon=[row['Lon']],
                 lat=[row['Lat']],
-                text='%d %s' % (row['Value'],row['Country']),
+                text='%d - %s, %s' % (row['Value'],row['Region'],row['Country']),
                 name=row['Country'],
                 marker=dict(
                     size=10, #row['Value']/20.0,
