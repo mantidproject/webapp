@@ -92,7 +92,7 @@ def barGraph():
     RedHatTrace = go.Bar(
         x=years,
         y=RHEL,
-        name="Red Hat Enterprise Linux",
+        name="Red Hat",
         marker=dict(
             color=RHEL_COLOR,
         ),
@@ -183,10 +183,10 @@ def pieChart(year):
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
             if version == "":
-                labels.append("Linux (Unknown Distro)")
+                labels.append("Other Linux")
                 colors.append(OTHER_COLOR)
-            elif "Red Hat Enterprise" in version or "Scientific" in version:
-                labels.append("Red Hat Enterprise Linux")
+            elif "Red Hat" in version or "Scientific" in version:
+                labels.append("Red Hat")
                 colors.append(RHEL_COLOR)
             elif "Ubuntu" in version:
                 labels.append("Ubuntu")
