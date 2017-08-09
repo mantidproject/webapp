@@ -127,7 +127,7 @@ def barGraph():
             l=50,
             r=0,
             b=30,
-            t=5,
+            t=30,
             pad=1
         ),
     )
@@ -220,7 +220,7 @@ def pieChart(year):
             l=0,
             r=50,
             b=50,
-            t=5,
+            t=30,
             pad=1
         ),
     )
