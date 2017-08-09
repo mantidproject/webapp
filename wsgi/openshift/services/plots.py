@@ -176,7 +176,7 @@ def pieChart(year):
                     OtherTotal['blank'] += obj["usage_count"]
                 else:
                     OtherTotal['blank'] = obj["usage_count"]
-            elif "Red Hat" in version or "Scientific" in version:
+            elif "Red Hat" in version or "Scientific" in version or "CentOS" in version:
                 RhelTotal += obj["usage_count"]
             elif "Ubuntu" in version:
                 UbuntuTotal += obj["usage_count"]
@@ -253,13 +253,15 @@ def mapGraph(year):
                 'Lon':float(loc.longitude),
                 'Country':str(loc.country),
                 'Region':str(loc.region),
-                'Year':year,
                 'Value':count,
             }
         )
     if len(jsonData) == 0:
         return "<div>No Location data for this year.</div>"
+    # collect together things with the same lat/lon
     usage_locations = pandas.DataFrame(jsonData)
+    usage_locations = usage_locations.groupby(['Lat','Lon', 'Country', 'Region'])['Value'].sum().reset_index()
+
     cases = []
     for _, row in usage_locations.iterrows():
         if (abs(row['Lat']) == 0.0 and abs(row['Lon']) == 0.0):
