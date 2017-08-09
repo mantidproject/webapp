@@ -123,8 +123,6 @@ def barGraph():
             range=[start.year-0.5, now.year+0.5] # custom x-axis scaling
         ),
         barmode='group',
-        width=750,
-        height=600,
         margin=go.Margin(
             l=50,
             r=0,
@@ -218,12 +216,10 @@ def pieChart(year):
                 random.randint(100,255),
                 random.randint(100,255) ) )
     layout = go.Layout(
-        width=500,
-        height=500,
         margin=go.Margin(
             l=0,
             r=50,
-            b=100,
+            b=50,
             t=5,
             pad=1
         ),
@@ -284,8 +280,6 @@ def mapGraph(year):
         )
     layout = go.Layout(
         title='Location Data',
-        width=1100,
-        height=600,
         geo=dict(
             showframe=True,
             showcoastlines=True,
