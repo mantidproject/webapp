@@ -47,7 +47,7 @@ def barGraph():
                 # Divide by distro - RHEL, Ubuntu, and Other
                 if version == "":
                     OtherTotal += obj["usage_count"]
-                elif "Red Hat" in version or "Scientific" in version:
+                elif "Red Hat" in version or "Scientific" in version or "CentOS" in version:
                     RhelTotal += obj["usage_count"]
                 elif "Ubuntu" in version:
                     UbuntuTotal += obj["usage_count"]
