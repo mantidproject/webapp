@@ -255,11 +255,11 @@ def mapGraph(year):
             continue
         jsonData.append(
             {
-                'Lat': float(loc.latitude),
-                'Lon': float(loc.longitude),
-                'Country': str(loc.country),
-                'Region': str(loc.region),
-                'Value': count,
+                'Lat':float(loc.latitude),
+                'Lon':float(loc.longitude),
+                'Country':loc.country,
+                'Region':loc.region,
+                'Value':count,
             }
         )
     if len(jsonData) == 0:
