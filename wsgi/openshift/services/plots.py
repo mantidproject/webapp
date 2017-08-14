@@ -23,6 +23,13 @@ UBUNTU_COLOR = 'rgb(250,160,100)'
 OTHER_COLOR = 'rgb(130,130,150)'
 
 
+def getRandomColor():
+    return 'rgb(%s, %s, %s)' % (
+        random.randint(100, 255),
+        random.randint(100, 255),
+        random.randint(100, 255))
+
+
 def barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
 
@@ -216,10 +223,7 @@ def pieChart(year):
             else:
                 labels.append(OS)
             values.append(OtherTotal[OS])
-            colors.append('rgb(%s, %s, %s)' % (
-                random.randint(100, 255),
-                random.randint(100, 255),
-                random.randint(100, 255)))
+            colors.append(getRandomColor())
     layout = go.Layout(
         margin=go.Margin(
             l=0,
