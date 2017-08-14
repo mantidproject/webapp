@@ -240,6 +240,13 @@ def pieChart(year):
 
 
 def mapGraph(year):
+    special_locations = [
+        { 
+            'Name':'ORNL',
+            'Lat':35.9606,
+            'Lon':-83.9206 
+        }
+    ]
     usages = Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
         .annotate(usage_count=Count('ip'))  # get ip's and counts
     jsonData = []
@@ -259,34 +266,38 @@ def mapGraph(year):
                 'Lon':float(loc.longitude),
                 'Country':loc.country,
                 'Region':loc.region,
-                'Value':count,
+                'Value':count*100,
+                'Label':''
             }
         )
     if len(jsonData) == 0:
         return "<div>No Location data for this year.</div>"
     # collect together things with the same lat/lon
     usage_locations = pandas.DataFrame(jsonData)
-    usage_locations = usage_locations.groupby(['Lat', 'Lon', 'Country', 'Region'])[
+    usage_locations = usage_locations.groupby(['Lat', 'Lon', 'Country', 'Region', 'Label'])[
         'Value'].sum().reset_index()
-
     cases = []
     for _, row in usage_locations.iterrows():
         if (abs(row['Lat']) == 0.0 and abs(row['Lon']) == 0.0):
             # [0,0] is a throwaway coordinate
             continue
+        for location in special_locations:
+            if (row['Lat'] == location['Lat'] and row['Lon'] == location['Lon']):
+                row['Label'] = location['Name']
+                continue
         cases.append(
             go.Scattergeo(
                 lat=[row['Lat']],
                 lon=[row['Lon']],
                 text='%d - %s, %s' % (row['Value'],
                                       row['Region'], row['Country']),
-                name=row['Country'],
+                name=row['Label'],
                 marker=dict(
-                    size=10,  # row['Value']/20.0,
+                    size= row['Value']/10000.0,
                     color='rgba(255,90,90,0.6)',
                     line=dict(width=0)
                 ),
-                mode='markers+text',
+                mode='markers',
                 textposition='bottom center'
             )
         )
