@@ -10,9 +10,9 @@ import pandas
 import datetime
 import random
 
-start = datetime.date(2014,1,1)
+start = datetime.date(2014, 1, 1)
 now = datetime.datetime.today()
-years = range(start.year, now.year+1)
+years = range(start.year, now.year + 1)
 
 # Colors
 TOTAL_COLOR = 'rgb(200,200,200)'
@@ -22,12 +22,13 @@ RHEL_COLOR = 'rgb(200,80,80)'
 UBUNTU_COLOR = 'rgb(250,160,100)'
 OTHER_COLOR = 'rgb(130,130,150)'
 
+
 def barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
 
     for year in years:
         usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
-        .annotate(usage_count=Count('osName')) #get OS's and counts
+            .annotate(usage_count=Count('osName'))  # get OS's and counts
         WinTotal = 0
         MacTotal = 0
         RhelTotal = 0
@@ -61,7 +62,8 @@ def barGraph():
         RHEL.append(RhelTotal)
         Ubuntu.append(UbuntuTotal)
         Other.append(OtherTotal)
-        Total.append(WinTotal + MacTotal + RhelTotal + UbuntuTotal + OtherTotal)
+        Total.append(WinTotal + MacTotal + RhelTotal +
+                     UbuntuTotal + OtherTotal)
 
     TotalTrace = go.Bar(
         x=years,
@@ -120,7 +122,7 @@ def barGraph():
             RedHatTrace, UbuntuTrace, OtherTrace]
     layout = go.Layout(
         xaxis=dict(
-            range=[start.year-0.5, now.year+0.5] # custom x-axis scaling
+            range=[start.year - 0.5, now.year + 0.5]  # custom x-axis scaling
         ),
         barmode='group',
         margin=go.Margin(
@@ -135,19 +137,22 @@ def barGraph():
     div = py.plot(fig, output_type='div', show_link=False)
     return div
 
+
 def links():
     links = "<div id='links'>Select a Specific Year:<br /><br />"
     for year in years:
-        links += "<a href = '/plots/year/"+str(year)+"'> "+str(year)+"</a>"
+        links += "<a href = '/plots/year/" + \
+            str(year) + "'> " + str(year) + "</a>"
     links += "</div><br />"
     return links
+
 
 def pieChart(year):
     labels = []
     values = []
     colors = []
     usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
-        .annotate(usage_count=Count('osName')) #get OS's and counts
+        .annotate(usage_count=Count('osName'))  # get OS's and counts
     if not usages:
         return "Error: No OS data for this year."
 
@@ -212,9 +217,9 @@ def pieChart(year):
                 labels.append(OS)
             values.append(OtherTotal[OS])
             colors.append('rgb(%s, %s, %s)' % (
-                random.randint(100,255),
-                random.randint(100,255),
-                random.randint(100,255) ) )
+                random.randint(100, 255),
+                random.randint(100, 255),
+                random.randint(100, 255)))
     layout = go.Layout(
         margin=go.Margin(
             l=0,
@@ -229,10 +234,11 @@ def pieChart(year):
     fig = go.Figure(data=[trace], layout=layout)
     return py.plot(fig, output_type='div', show_link=False)
 
+
 def mapGraph(year):
     usages = Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
-        .annotate(usage_count=Count('ip')) #get ip's and counts
-    jsonData=[]
+        .annotate(usage_count=Count('ip'))  # get ip's and counts
+    jsonData = []
 
     for obj in usages.iterator():
         if len(obj['ip']) == 0:
@@ -245,18 +251,19 @@ def mapGraph(year):
             continue
         jsonData.append(
             {
-                'Lat':float(loc.latitude),
-                'Lon':float(loc.longitude),
-                'Country':str(loc.country),
-                'Region':str(loc.region),
-                'Value':count,
+                'Lat': float(loc.latitude),
+                'Lon': float(loc.longitude),
+                'Country': str(loc.country),
+                'Region': str(loc.region),
+                'Value': count,
             }
         )
     if len(jsonData) == 0:
         return "<div>No Location data for this year.</div>"
     # collect together things with the same lat/lon
     usage_locations = pandas.DataFrame(jsonData)
-    usage_locations = usage_locations.groupby(['Lat','Lon', 'Country', 'Region'])['Value'].sum().reset_index()
+    usage_locations = usage_locations.groupby(['Lat', 'Lon', 'Country', 'Region'])[
+        'Value'].sum().reset_index()
 
     cases = []
     for _, row in usage_locations.iterrows():
@@ -267,15 +274,16 @@ def mapGraph(year):
             go.Scattergeo(
                 lat=[row['Lat']],
                 lon=[row['Lon']],
-                text='%d - %s, %s' % (row['Value'],row['Region'],row['Country']),
+                text='%d - %s, %s' % (row['Value'],
+                                      row['Region'], row['Country']),
                 name=row['Country'],
                 marker=dict(
-                    size=10, #row['Value']/20.0,
+                    size=10,  # row['Value']/20.0,
                     color='rgba(255,90,90,0.6)',
                     line=dict(width=0)
                 ),
-                mode = 'markers+text',
-                textposition = 'bottom center'
+                mode='markers+text',
+                textposition='bottom center'
             )
         )
     layout = go.Layout(
