@@ -289,15 +289,14 @@ def mapGraph(year):
             go.Scattergeo(
                 lat=[row['Lat']],
                 lon=[row['Lon']],
-                text='%d - %s, %s' % (row['Value'],
-                                      row['Region'], row['Country']),
-                name=row['Label'],
+                name='%s, %s' % (row['Region'], row['Country']),
+                text=row['Label'],
                 marker=dict(
                     size= row['Value']/10000.0,
                     color='rgba(255,90,90,0.6)',
                     line=dict(width=0)
                 ),
-                mode='markers',
+                mode='markers+text',
                 textposition='bottom center'
             )
         )
