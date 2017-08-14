@@ -245,7 +245,19 @@ def mapGraph(year):
             'Name':'ORNL',
             'Lat':35.9606,
             'Lon':-83.9206 
-        }
+        },
+
+        { 
+            'Name':'ESS',
+            'Lat':-55.6667,
+            'Lon':12.5833
+        },
+
+        { 
+            'Name':'ISIS',
+            'Lat':51.7500,
+            'Lon':-1.2500
+        },
     ]
     usages = Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
         .annotate(usage_count=Count('ip'))  # get ip's and counts
@@ -278,6 +290,7 @@ def mapGraph(year):
         'Value'].sum().reset_index()
     cases = []
     for _, row in usage_locations.iterrows():
+        print row
         if (abs(row['Lat']) == 0.0 and abs(row['Lon']) == 0.0):
             # [0,0] is a throwaway coordinate
             continue
@@ -329,7 +342,7 @@ def mapGraph(year):
             t=30,
             pad=1
         ),
-        legend=dict(traceorder='reversed')
+        legend=dict()
         # Put newer and larger circles at the z-bottom so the old ones show up
     )
     fig = go.Figure(layout=layout, data=cases)
