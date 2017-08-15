@@ -302,7 +302,7 @@ def mapGraph(year):
             go.Scattergeo(
                 lat=[row['Lat']],
                 lon=[row['Lon']],
-                name='%s, %s' % (row['Region'], row['Country']),
+                name='(%s, %s) - %s' % (row['Lat'], row['Lon'], row['Region']),
                 text=row['Label'],
                 marker=dict(
                     size= row['Value']/10000.0,
@@ -310,7 +310,12 @@ def mapGraph(year):
                     line=dict(width=0)
                 ),
                 mode='markers+text',
-                textposition='bottom center'
+                textposition='bottom center',
+                showlegend=False,
+                hoverinfo="name",
+                hoverlabel = dict(
+                    namelength=[-1]
+                )
             )
         )
     layout = go.Layout(
@@ -342,7 +347,7 @@ def mapGraph(year):
             t=30,
             pad=1
         ),
-        legend=dict()
+        
         # Put newer and larger circles at the z-bottom so the old ones show up
     )
     fig = go.Figure(layout=layout, data=cases)
