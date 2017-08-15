@@ -290,7 +290,7 @@ def mapGraph(year):
         'Value'].sum().reset_index()
     cases = []
     for _, row in usage_locations.iterrows():
-        print row
+        print row #TODO: Remove when done using
         if (abs(row['Lat']) == 0.0 and abs(row['Lon']) == 0.0):
             # [0,0] is a throwaway coordinate
             continue
