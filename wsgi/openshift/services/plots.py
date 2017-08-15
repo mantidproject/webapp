@@ -3,6 +3,7 @@ from django.db.models import Count
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
 import django_filters
+import math
 import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
@@ -241,22 +242,58 @@ def pieChart(year):
 
 def mapGraph(year):
     special_locations = [
-        { 
+        {
             'Name':'ORNL',
             'Lat':35.9606,
-            'Lon':-83.9206 
+            'Lon':-83.9206
         },
 
-        { 
+        {
             'Name':'ESS',
-            'Lat':-55.6667,
+            'Lat':55.6667,
             'Lon':12.5833
         },
 
-        { 
-            'Name':'ISIS',
+        {
+            'Name':'RAL',
             'Lat':51.7500,
             'Lon':-1.2500
+        },
+
+        {
+            'Name':'ILL',
+            'Lat':45.6601,
+            'Lon':4.6308
+        },
+
+        {
+            'Name':'HZB',
+            'Lat':52.5238,
+            'Lon':13.400
+        },
+
+        {
+            'Name':'MLZ',
+            'Lat':48.2500,
+            'Lon':11.6500
+        },
+
+        {
+            'Name':'NCNR',
+            'Lat':39.3288,
+            'Lon':-76.5967
+        },
+
+        {
+            'Name':'BNL',
+            'Lat':40.8695,
+            'Lon':-72.8868
+        },
+
+        {
+            'Name':'PSI',
+            'Lat':47.5606,
+            'Lon':8.2856
         },
     ]
     usages = Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
@@ -295,17 +332,17 @@ def mapGraph(year):
             # [0,0] is a throwaway coordinate
             continue
         for location in special_locations:
-            if (row['Lat'] == location['Lat'] and row['Lon'] == location['Lon']):
+            if (abs(row['Lat'] - location['Lat']) <= .0002 and abs(row['Lon'] - location['Lon']) <= .0002):
                 row['Label'] = location['Name']
                 continue
         cases.append(
             go.Scattergeo(
                 lat=[row['Lat']],
                 lon=[row['Lon']],
-                name='%d (%.2f, %.2f) - %s' % (row['Value'], row['Lat'], row['Lon'], row['Region']),
+                name='%d (%.4f, %.4f) - %s' % (row['Value'], row['Lat'], row['Lon'], row['Region']),
                 text=row['Label'],
                 marker=dict(
-                    size= row['Value']/10000.0,
+                    size= 5*math.log(row['Value']+1),
                     color='rgba(255,90,90,0.6)',
                     line=dict(width=0)
                 ),
@@ -347,7 +384,7 @@ def mapGraph(year):
             t=30,
             pad=1
         ),
-        
+
         # Put newer and larger circles at the z-bottom so the old ones show up
     )
     fig = go.Figure(layout=layout, data=cases)
