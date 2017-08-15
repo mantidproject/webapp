@@ -302,7 +302,7 @@ def mapGraph(year):
             go.Scattergeo(
                 lat=[row['Lat']],
                 lon=[row['Lon']],
-                name='(%s, %s) - %s' % (row['Lat'], row['Lon'], row['Region']),
+                name='(%.2f, %.2f) - %s' % (row['Lat'], row['Lon'], row['Region']),
                 text=row['Label'],
                 marker=dict(
                     size= row['Value']/10000.0,
