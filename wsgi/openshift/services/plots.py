@@ -22,10 +22,12 @@ RHEL_COLOR = 'rgb(200,80,80)'
 UBUNTU_COLOR = 'rgb(250,160,100)'
 OTHER_COLOR = 'rgb(130,130,150)'
 
+#
 # Utility functions
+#
 def sortOS(usage_QuerySet):
     """ Given a QuerySet of usages, return counts of each OS's usage and a dict
-        of unknown systems. Currently only adapted for Pie Chart. """
+        of unknown (other) systems. """
     WinTotal = 0
     MacTotal = 0
     RhelTotal = 0
@@ -64,56 +66,31 @@ def sortOS(usage_QuerySet):
             OtherTotal += obj["usage_count"]
     return WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal
 
+
 def getRandomColor():
     return 'rgb(%s, %s, %s)' % (
         random.randint(100, 255),
         random.randint(100, 255),
         random.randint(100, 255))
 
+#
 # Graphs
+#
 def barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
 
     for year in years:
         usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
             .annotate(usage_count=Count('osName'))  # get OS's and counts
-        WinTotal = 0
-        MacTotal = 0
-        RhelTotal = 0
-        UbuntuTotal = 0
-        OtherTotal = 0
-        for obj in usages.iterator():
-            name = obj["osName"]
-            version = obj["osReadable"]
-            if name == "Windows NT":
-                # OS Type = Windows
-                WinTotal += obj["usage_count"]
-            elif name == "Darwin":
-                # OS Type = Mac OS X
-                MacTotal += obj["usage_count"]
-            elif name == "Linux":
-                # OS Type = Linux
-                # Divide by distro - RHEL, Ubuntu, and Other
-                if version == "":
-                    OtherTotal += obj["usage_count"]
-                elif "Red Hat" in version or "Scientific" in version or "CentOS" in version:
-                    RhelTotal += obj["usage_count"]
-                elif "Ubuntu" in version:
-                    UbuntuTotal += obj["usage_count"]
-                else:
-                    OtherTotal += obj["usage_count"]
-            else:
-                # Not Linux, Mac, or Windows? What sorcery is this?
-                OtherTotal += obj["usage_count"]
+        WinTotal, MacTotal, UbuntuTotal, RhelTotal, OtherTotal = sortOS(usages)
         Windows.append(WinTotal)
         Mac.append(MacTotal)
         RHEL.append(RhelTotal)
         Ubuntu.append(UbuntuTotal)
-        Other.append(OtherTotal)
-        Total.append(WinTotal + MacTotal + RhelTotal +
-                     UbuntuTotal + OtherTotal)
-
-    TotalTrace = go.Bar(
+        Other.append(len(OtherTotal))
+        Total.append(WinTotal + MacTotal + RhelTotal + UbuntuTotal + len(OtherTotal))
+    
+    TotalTrace=go.Bar(
         x=years,
         y=Total,
         name="Total",
@@ -122,7 +99,7 @@ def barGraph():
         ),
     )
 
-    WindowsTrace = go.Bar(
+    WindowsTrace=go.Bar(
         x=years,
         y=Windows,
         name="Windows",
@@ -130,7 +107,7 @@ def barGraph():
             color=WIN_COLOR,
         ),
     )
-    MacTrace = go.Bar(
+    MacTrace=go.Bar(
         x=years,
         y=Mac,
         name="macOS",
@@ -139,7 +116,7 @@ def barGraph():
         ),
     )
 
-    RedHatTrace = go.Bar(
+    RedHatTrace=go.Bar(
         x=years,
         y=RHEL,
         name="Red Hat",
@@ -148,7 +125,7 @@ def barGraph():
         ),
     )
 
-    UbuntuTrace = go.Bar(
+    UbuntuTrace=go.Bar(
         x=years,
         y=Ubuntu,
         name="Ubuntu",
@@ -157,7 +134,7 @@ def barGraph():
         ),
     )
 
-    OtherTrace = go.Bar(
+    OtherTrace=go.Bar(
         x=years,
         y=Other,
         name="Other Linux",
@@ -166,9 +143,9 @@ def barGraph():
         ),
     )
 
-    data = [TotalTrace, WindowsTrace, MacTrace,
+    data=[TotalTrace, WindowsTrace, MacTrace,
             RedHatTrace, UbuntuTrace, OtherTrace]
-    layout = go.Layout(
+    layout=go.Layout(
         xaxis=dict(
             range=[start.year - 0.5, now.year + 0.5]  # custom x-axis scaling
         ),
@@ -181,13 +158,13 @@ def barGraph():
             pad=1
         ),
     )
-    fig = go.Figure(data=data, layout=layout)
-    div = py.plot(fig, output_type='div', show_link=False)
+    fig=go.Figure(data=data, layout=layout)
+    div=py.plot(fig, output_type='div', show_link=False)
     return div
 
 
 def links():
-    links = "<div id='links'>Select a Specific Year:<br /><br />"
+    links="<div id='links'>Select a Specific Year:<br /><br />"
     for year in years:
         links += "<a href = '/plots/year/" + \
             str(year) + "'> " + str(year) + "</a>"
@@ -196,15 +173,15 @@ def links():
 
 
 def pieChart(year):
-    labels = []
-    values = []
-    colors = []
-    usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
+    labels=[]
+    values=[]
+    colors=[]
+    usages=Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
         .annotate(usage_count=Count('osName'))  # get OS's and counts
     if not usages:
         return "Error: No OS data for this year."
-    
-    WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal = sortOS(usages)
+
+    WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal=sortOS(usages)
 
     if WinTotal > 0:
         labels.append("Windows")
@@ -230,7 +207,7 @@ def pieChart(year):
                 labels.append(OS)
             values.append(OtherTotal[OS])
             colors.append(getRandomColor())
-    layout = go.Layout(
+    layout=go.Layout(
         margin=go.Margin(
             l=0,
             r=50,
@@ -239,43 +216,43 @@ def pieChart(year):
             pad=1
         ),
     )
-    trace = go.Pie(labels=labels, values=values, marker=dict(
+    trace=go.Pie(labels=labels, values=values, marker=dict(
         colors=colors), direction="counter-clockwise")
-    fig = go.Figure(data=[trace], layout=layout)
+    fig=go.Figure(data=[trace], layout=layout)
     return py.plot(fig, output_type='div', show_link=False)
 
 
 def mapGraph(year):
-    usages = Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
+    usages=Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
         .annotate(usage_count=Count('ip'))  # get ip's and counts
-    jsonData = []
+    jsonData=[]
 
     for obj in usages.iterator():
         if len(obj['ip']) == 0:
             continue
-        count = obj['usage_count']
+        count=obj['usage_count']
         try:
-            loc = Location.objects.get(ip=obj['ip'])
+            loc=Location.objects.get(ip=obj['ip'])
         except ObjectDoesNotExist:
             # No match for given IP
             continue
         jsonData.append(
             {
-                'Lat':float(loc.latitude),
-                'Lon':float(loc.longitude),
-                'Country':loc.country,
-                'Region':loc.region,
-                'Value':count,
+                'Lat': float(loc.latitude),
+                'Lon': float(loc.longitude),
+                'Country': loc.country,
+                'Region': loc.region,
+                'Value': count,
             }
         )
     if len(jsonData) == 0:
         return "<div>No Location data for this year.</div>"
     # collect together things with the same lat/lon
-    usage_locations = pandas.DataFrame(jsonData)
-    usage_locations = usage_locations.groupby(['Lat', 'Lon', 'Country', 'Region'])[
+    usage_locations=pandas.DataFrame(jsonData)
+    usage_locations=usage_locations.groupby(['Lat', 'Lon', 'Country', 'Region'])[
         'Value'].sum().reset_index()
 
-    cases = []
+    cases=[]
     for _, row in usage_locations.iterrows():
         if (abs(row['Lat']) == 0.0 and abs(row['Lon']) == 0.0):
             # [0,0] is a throwaway coordinate
@@ -296,7 +273,7 @@ def mapGraph(year):
                 textposition='bottom center'
             )
         )
-    layout = go.Layout(
+    layout=go.Layout(
         title='Location Data',
         geo=dict(
             showframe=True,
@@ -328,6 +305,6 @@ def mapGraph(year):
         legend=dict(traceorder='reversed')
         # Put newer and larger circles at the z-bottom so the old ones show up
     )
-    fig = go.Figure(layout=layout, data=cases)
-    div = py.plot(fig, validate=False, output_type='div', show_link=False)
+    fig=go.Figure(layout=layout, data=cases)
+    div=py.plot(fig, validate=False, output_type='div', show_link=False)
     return div
