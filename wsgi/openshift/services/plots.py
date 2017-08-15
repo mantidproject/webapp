@@ -278,7 +278,7 @@ def mapGraph(year):
                 'Lon':float(loc.longitude),
                 'Country':loc.country,
                 'Region':loc.region,
-                'Value':count*100,
+                'Value':count,
                 'Label':''
             }
         )
