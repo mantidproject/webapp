@@ -110,7 +110,7 @@ def barGraph():
     MacTrace=go.Bar(
         x=years,
         y=Mac,
-        name="macOS",
+        name="MacOS",
         marker=dict(
             color=MAC_COLOR,
         ),
@@ -188,7 +188,7 @@ def pieChart(year):
         values.append(WinTotal)
         colors.append(WIN_COLOR)
     if MacTotal > 0:
-        labels.append("macOS")
+        labels.append("MacOS")
         values.append(MacTotal)
         colors.append(MAC_COLOR)
     if RhelTotal > 0:
