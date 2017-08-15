@@ -22,6 +22,47 @@ RHEL_COLOR = 'rgb(200,80,80)'
 UBUNTU_COLOR = 'rgb(250,160,100)'
 OTHER_COLOR = 'rgb(130,130,150)'
 
+# Utility functions
+def sortOS(usage_QuerySet):
+    """ Given a QuerySet of usages, return counts of each OS's usage and a dict
+        of unknown systems. Currently only adapted for Pie Chart. """
+    WinTotal = 0
+    MacTotal = 0
+    RhelTotal = 0
+    UbuntuTotal = 0
+    OtherTotal = {}
+
+    for obj in usage_QuerySet.iterator():
+        name = obj["osName"]
+        version = obj["osReadable"]
+        if name == "Windows NT":
+            # OS Type = Windows
+            WinTotal += obj["usage_count"]
+        elif name == "Darwin":
+            # OS Type = Mac OS X
+            MacTotal += obj["usage_count"]
+        elif name == "Linux":
+            # OS Type = Linux
+            # Divide by distro - RHEL, Ubuntu, and Other
+            if version == "" or version == "Linux":
+                if OtherTotal.has_key("blank"):
+                    OtherTotal['blank'] += obj["usage_count"]
+                else:
+                    OtherTotal['blank'] = obj["usage_count"]
+            elif "Red Hat" in version or "Scientific" in version or "CentOS" in version:
+                RhelTotal += obj["usage_count"]
+            elif "Ubuntu" in version:
+                UbuntuTotal += obj["usage_count"]
+            else:
+                v = str(version).split()[0]
+                if OtherTotal.has_key(v):
+                    OtherTotal[v] += obj["usage_count"]
+                else:
+                    OtherTotal[v] = obj["usage_count"]
+        else:
+            # Not Linux, Mac, or Windows? What sorcery is this?
+            OtherTotal += obj["usage_count"]
+    return WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal
 
 def getRandomColor():
     return 'rgb(%s, %s, %s)' % (
@@ -29,7 +70,7 @@ def getRandomColor():
         random.randint(100, 255),
         random.randint(100, 255))
 
-
+# Graphs
 def barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
 
@@ -162,43 +203,8 @@ def pieChart(year):
         .annotate(usage_count=Count('osName'))  # get OS's and counts
     if not usages:
         return "Error: No OS data for this year."
-
-    WinTotal = 0
-    MacTotal = 0
-    RhelTotal = 0
-    UbuntuTotal = 0
-    OtherTotal = {}
-
-    for obj in usages.iterator():
-        name = obj["osName"]
-        version = obj["osReadable"]
-        if name == "Windows NT":
-            # OS Type = Windows
-            WinTotal += obj["usage_count"]
-        elif name == "Darwin":
-            # OS Type = Mac OS X
-            MacTotal += obj["usage_count"]
-        elif name == "Linux":
-            # OS Type = Linux
-            # Divide by distro - RHEL, Ubuntu, and Other
-            if version == "" or version == "Linux":
-                if OtherTotal.has_key("blank"):
-                    OtherTotal['blank'] += obj["usage_count"]
-                else:
-                    OtherTotal['blank'] = obj["usage_count"]
-            elif "Red Hat" in version or "Scientific" in version or "CentOS" in version:
-                RhelTotal += obj["usage_count"]
-            elif "Ubuntu" in version:
-                UbuntuTotal += obj["usage_count"]
-            else:
-                v = str(version).split()[0]
-                if OtherTotal.has_key(v):
-                    OtherTotal[v] += obj["usage_count"]
-                else:
-                    OtherTotal[v] = obj["usage_count"]
-        else:
-            # Not Linux, Mac, or Windows? What sorcery is this?
-            OtherTotal += obj["usage_count"]
+    
+    WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal = sortOS(usages)
 
     if WinTotal > 0:
         labels.append("Windows")
