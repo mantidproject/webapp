@@ -3,6 +3,7 @@ from django.db.models import Count
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
 import django_filters
+import math
 import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
@@ -223,7 +224,62 @@ def pieChart(year):
 
 
 def mapGraph(year):
-    usages=Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
+    special_locations = [
+        {
+            'Name':'ORNL',
+            'Lat':35.9606,
+            'Lon':-83.9206
+        },
+
+        {
+            'Name':'ESS',
+            'Lat':55.6667,
+            'Lon':12.5833
+        },
+
+        {
+            'Name':'RAL',
+            'Lat':51.7500,
+            'Lon':-1.2500
+        },
+
+        {
+            'Name':'ILL',
+            'Lat':45.6601,
+            'Lon':4.6308
+        },
+
+        {
+            'Name':'HZB',
+            'Lat':52.5238,
+            'Lon':13.400
+        },
+
+        {
+            'Name':'MLZ',
+            'Lat':48.2500,
+            'Lon':11.6500
+        },
+
+        {
+            'Name':'NCNR',
+            'Lat':39.3288,
+            'Lon':-76.5967
+        },
+
+        {
+            'Name':'BNL',
+            'Lat':40.8695,
+            'Lon':-72.8868
+        },
+
+        {
+            'Name':'PSI',
+            'Lat':47.5606,
+            'Lon':8.2856
+        },
+    ]
+    usages = Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
         .annotate(usage_count=Count('ip'))  # get ip's and counts
     jsonData=[]
 
@@ -238,39 +294,47 @@ def mapGraph(year):
             continue
         jsonData.append(
             {
-                'Lat': float(loc.latitude),
-                'Lon': float(loc.longitude),
-                'Country': loc.country,
-                'Region': loc.region,
-                'Value': count,
+                'Lat':float(loc.latitude),
+                'Lon':float(loc.longitude),
+                'Country':loc.country,
+                'Region':loc.region,
+                'Value':count,
+                'Label':''
             }
         )
     if len(jsonData) == 0:
         return "<div>No Location data for this year.</div>"
     # collect together things with the same lat/lon
-    usage_locations=pandas.DataFrame(jsonData)
-    usage_locations=usage_locations.groupby(['Lat', 'Lon', 'Country', 'Region'])[
+    usage_locations = pandas.DataFrame(jsonData)
+    usage_locations = usage_locations.groupby(['Lat', 'Lon', 'Country', 'Region', 'Label'])[
         'Value'].sum().reset_index()
-
-    cases=[]
+    cases = []
     for _, row in usage_locations.iterrows():
         if (abs(row['Lat']) == 0.0 and abs(row['Lon']) == 0.0):
             # [0,0] is a throwaway coordinate
             continue
+        for location in special_locations:
+            if (abs(row['Lat'] - location['Lat']) <= .0002 and abs(row['Lon'] - location['Lon']) <= .0002):
+                row['Label'] = location['Name']
+                continue
         cases.append(
             go.Scattergeo(
                 lat=[row['Lat']],
                 lon=[row['Lon']],
-                text='%d - %s, %s' % (row['Value'],
-                                      row['Region'], row['Country']),
-                name=row['Country'],
+                name='%d (%.4f, %.4f) - %s' % (row['Value'], row['Lat'], row['Lon'], row['Region']),
+                text=row['Label'],
                 marker=dict(
-                    size=10,  # row['Value']/20.0,
+                    size= 5*math.log(row['Value']+1),
                     color='rgba(255,90,90,0.6)',
                     line=dict(width=0)
                 ),
                 mode='markers+text',
-                textposition='bottom center'
+                textposition='bottom center',
+                showlegend=False,
+                hoverinfo="name",
+                hoverlabel = dict(
+                    namelength=[-1]
+                )
             )
         )
     layout=go.Layout(
@@ -302,7 +366,7 @@ def mapGraph(year):
             t=30,
             pad=1
         ),
-        legend=dict(traceorder='reversed')
+
         # Put newer and larger circles at the z-bottom so the old ones show up
     )
     fig=go.Figure(layout=layout, data=cases)

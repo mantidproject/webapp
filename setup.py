@@ -10,7 +10,7 @@ packages = ['Django==1.11.2',
             'Markdown',
             'MySQL-python',
             'requests',
-            'plotly',
+            'plotly>=2.0.14',
             'pandas',
             ]
 
