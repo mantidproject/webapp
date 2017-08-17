@@ -26,7 +26,7 @@ OTHER_COLOR = 'rgb(130,130,150)'
 #
 # Utility functions
 #
-def sortOS(usage_QuerySet):
+def countOS(usage_QuerySet):
     """ Given a QuerySet of usages, return counts of each OS's usage and a dict
         of unknown (other) systems. """
     WinTotal = 0
@@ -83,15 +83,17 @@ def barGraph():
     for year in years:
         usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
             .annotate(usage_count=Count('osName'))  # get OS's and counts
-        WinTotal, MacTotal, UbuntuTotal, RhelTotal, OtherTotal = sortOS(usages)
+        WinTotal, MacTotal, UbuntuTotal, RhelTotal, OtherTotal = countOS(
+            usages)
         Windows.append(WinTotal)
         Mac.append(MacTotal)
         RHEL.append(RhelTotal)
         Ubuntu.append(UbuntuTotal)
         Other.append(len(OtherTotal))
-        Total.append(WinTotal + MacTotal + RhelTotal + UbuntuTotal + len(OtherTotal))
-    
-    TotalTrace=go.Bar(
+        Total.append(WinTotal + MacTotal + RhelTotal +
+                     UbuntuTotal + len(OtherTotal))
+
+    TotalTrace = go.Bar(
         x=years,
         y=Total,
         name="Total",
@@ -100,7 +102,7 @@ def barGraph():
         ),
     )
 
-    WindowsTrace=go.Bar(
+    WindowsTrace = go.Bar(
         x=years,
         y=Windows,
         name="Windows",
@@ -108,7 +110,7 @@ def barGraph():
             color=WIN_COLOR,
         ),
     )
-    MacTrace=go.Bar(
+    MacTrace = go.Bar(
         x=years,
         y=Mac,
         name="MacOS",
@@ -117,7 +119,7 @@ def barGraph():
         ),
     )
 
-    RedHatTrace=go.Bar(
+    RedHatTrace = go.Bar(
         x=years,
         y=RHEL,
         name="Red Hat",
@@ -126,7 +128,7 @@ def barGraph():
         ),
     )
 
-    UbuntuTrace=go.Bar(
+    UbuntuTrace = go.Bar(
         x=years,
         y=Ubuntu,
         name="Ubuntu",
@@ -135,7 +137,7 @@ def barGraph():
         ),
     )
 
-    OtherTrace=go.Bar(
+    OtherTrace = go.Bar(
         x=years,
         y=Other,
         name="Other Linux",
@@ -144,9 +146,9 @@ def barGraph():
         ),
     )
 
-    data=[TotalTrace, WindowsTrace, MacTrace,
+    data = [TotalTrace, WindowsTrace, MacTrace,
             RedHatTrace, UbuntuTrace, OtherTrace]
-    layout=go.Layout(
+    layout = go.Layout(
         xaxis=dict(
             range=[start.year - 0.5, now.year + 0.5]  # custom x-axis scaling
         ),
@@ -159,13 +161,13 @@ def barGraph():
             pad=1
         ),
     )
-    fig=go.Figure(data=data, layout=layout)
-    div=py.plot(fig, output_type='div', show_link=False)
+    fig = go.Figure(data=data, layout=layout)
+    div = py.plot(fig, output_type='div', show_link=False)
     return div
 
 
 def links():
-    links="<div id='links'>Select a Specific Year:<br /><br />"
+    links = "<div id='links'>Select a Specific Year:<br /><br />"
     for year in years:
         links += "<a href = '/plots/year/" + \
             str(year) + "'> " + str(year) + "</a>"
@@ -174,15 +176,15 @@ def links():
 
 
 def pieChart(year):
-    labels=[]
-    values=[]
-    colors=[]
-    usages=Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
+    labels = []
+    values = []
+    colors = []
+    usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
         .annotate(usage_count=Count('osName'))  # get OS's and counts
     if not usages:
         return "Error: No OS data for this year."
 
-    WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal=sortOS(usages)
+    WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal = countOS(usages)
 
     if WinTotal > 0:
         labels.append("Windows")
@@ -208,7 +210,7 @@ def pieChart(year):
                 labels.append(OS)
             values.append(OtherTotal[OS])
             colors.append(getRandomColor())
-    layout=go.Layout(
+    layout = go.Layout(
         margin=go.Margin(
             l=0,
             r=50,
@@ -217,89 +219,89 @@ def pieChart(year):
             pad=1
         ),
     )
-    trace=go.Pie(labels=labels, values=values, marker=dict(
+    trace = go.Pie(labels=labels, values=values, marker=dict(
         colors=colors), direction="counter-clockwise")
-    fig=go.Figure(data=[trace], layout=layout)
+    fig = go.Figure(data=[trace], layout=layout)
     return py.plot(fig, output_type='div', show_link=False)
 
 
 def mapGraph(year):
     special_locations = [
         {
-            'Name':'ORNL',
-            'Lat':35.9606,
-            'Lon':-83.9206
+            'Name': 'ORNL',
+            'Lat': 35.9606,
+            'Lon': -83.9206
         },
 
         {
-            'Name':'ESS',
-            'Lat':55.6667,
-            'Lon':12.5833
+            'Name': 'ESS',
+            'Lat': 55.6667,
+            'Lon': 12.5833
         },
 
         {
-            'Name':'RAL',
-            'Lat':51.7500,
-            'Lon':-1.2500
+            'Name': 'RAL',
+            'Lat': 51.7500,
+            'Lon': -1.2500
         },
 
         {
-            'Name':'ILL',
-            'Lat':45.6601,
-            'Lon':4.6308
+            'Name': 'ILL',
+            'Lat': 45.6601,
+            'Lon': 4.6308
         },
 
         {
-            'Name':'HZB',
-            'Lat':52.5238,
-            'Lon':13.400
+            'Name': 'HZB',
+            'Lat': 52.5238,
+            'Lon': 13.400
         },
 
         {
-            'Name':'MLZ',
-            'Lat':48.2500,
-            'Lon':11.6500
+            'Name': 'MLZ',
+            'Lat': 48.2500,
+            'Lon': 11.6500
         },
 
         {
-            'Name':'NCNR',
-            'Lat':39.3288,
-            'Lon':-76.5967
+            'Name': 'NCNR',
+            'Lat': 39.3288,
+            'Lon': -76.5967
         },
 
         {
-            'Name':'BNL',
-            'Lat':40.8695,
-            'Lon':-72.8868
+            'Name': 'BNL',
+            'Lat': 40.8695,
+            'Lon': -72.8868
         },
 
         {
-            'Name':'PSI',
-            'Lat':47.5606,
-            'Lon':8.2856
+            'Name': 'PSI',
+            'Lat': 47.5606,
+            'Lon': 8.2856
         },
     ]
     usages = Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
         .annotate(usage_count=Count('ip'))  # get ip's and counts
-    jsonData=[]
+    jsonData = []
 
     for obj in usages.iterator():
         if len(obj['ip']) == 0:
             continue
-        count=obj['usage_count']
+        count = obj['usage_count']
         try:
-            loc=Location.objects.get(ip=obj['ip'])
+            loc = Location.objects.get(ip=obj['ip'])
         except ObjectDoesNotExist:
             # No match for given IP
             continue
         jsonData.append(
             {
-                'Lat':float(loc.latitude),
-                'Lon':float(loc.longitude),
-                'Country':loc.country,
-                'Region':loc.region,
-                'Value':count,
-                'Label':''
+                'Lat': float(loc.latitude),
+                'Lon': float(loc.longitude),
+                'Country': loc.country,
+                'Region': loc.region,
+                'Value': count,
+                'Label': ''
             }
         )
     if len(jsonData) == 0:
@@ -321,10 +323,11 @@ def mapGraph(year):
             go.Scattergeo(
                 lat=[row['Lat']],
                 lon=[row['Lon']],
-                name='%d (%.4f, %.4f) - %s' % (row['Value'], row['Lat'], row['Lon'], row['Region']),
+                name='%d (%.4f, %.4f) - %s' % (row['Value'],
+                                               row['Lat'], row['Lon'], row['Region']),
                 text=row['Label'],
                 marker=dict(
-                    size= 5*math.log(row['Value']+1),
+                    size=5 * math.log(row['Value'] + 1),
                     color='rgba(255,90,90,0.6)',
                     line=dict(width=0)
                 ),
@@ -332,12 +335,12 @@ def mapGraph(year):
                 textposition='bottom center',
                 showlegend=False,
                 hoverinfo="name",
-                hoverlabel = dict(
+                hoverlabel=dict(
                     namelength=[-1]
                 )
             )
         )
-    layout=go.Layout(
+    layout = go.Layout(
         title='Location Data',
         geo=dict(
             showframe=True,
@@ -369,6 +372,108 @@ def mapGraph(year):
 
         # Put newer and larger circles at the z-bottom so the old ones show up
     )
-    fig=go.Figure(layout=layout, data=cases)
-    div=py.plot(fig, validate=False, output_type='div', show_link=False)
+    fig = go.Figure(layout=layout, data=cases)
+    div = py.plot(fig, validate=False, output_type='div', show_link=False)
     return div
+
+
+def pieChart2(year):
+    unique_pairs = []
+    queryset = Usage.objects.filter(dateTime__year=year).values(
+        'osName', 'osReadable', 'uid')
+    if not queryset:
+        return "Error: No user data for this year."
+    i = 0
+    for obj in queryset.order_by("uid"):
+        pair = [obj["uid"], obj["osName"], obj["osReadable"]]
+        if pair in unique_pairs:
+            i += 1
+        else:
+            print pair
+            unique_pairs.append(pair)
+    print len(unique_pairs), "- skipped", i
+    final_list = []
+    WinTotal = 0
+    MacTotal = 0
+    RhelTotal = 0
+    UbuntuTotal = 0
+    OtherTotal = {}
+    for pair in unique_pairs:
+        uid = pair[0]
+        name = pair[1]
+        version = pair[2]
+        if name == "Windows NT":
+            # OS Type = Windows
+            final_list.append({uid: "Windows"})
+            WinTotal += 1
+        elif name == "Darwin":
+            # OS Type = Mac OS X
+            final_list.append({uid: "Mac"})
+            MacTotal += 1
+        elif name == "Linux":
+            # OS Type = Linux
+            # Divide by distro - RHEL, Ubuntu, and Other
+            if version == "" or version == "Linux":
+                final_list.append({uid: "Linux"})
+                if OtherTotal.has_key("blank"):
+                    OtherTotal['blank'] += 1
+                else:
+                    OtherTotal['blank'] = 1
+            elif "Red Hat" in version or "Scientific" in version or "CentOS" in version:
+                final_list.append({uid: "RHEL"})
+                RhelTotal += 1
+            elif "Ubuntu" in version:
+                final_list.append({uid: "Linux"})
+                UbuntuTotal += 1
+            else:
+                v = str(version).split()[0]
+                if OtherTotal.has_key(v):
+                    OtherTotal[v] += 1
+                else:
+                    OtherTotal[v] = 1
+        else:
+            # Not Linux, Mac, or Windows? What sorcery is this?
+            OtherTotal += 1
+    print final_list
+    labels = []
+    values = []
+    colors = []
+
+    if WinTotal > 0:
+        labels.append("Windows")
+        values.append(WinTotal)
+        colors.append(WIN_COLOR)
+    if MacTotal > 0:
+        labels.append("MacOS")
+        values.append(MacTotal)
+        colors.append(MAC_COLOR)
+    if RhelTotal > 0:
+        labels.append("Red Hat")
+        values.append(RhelTotal)
+        colors.append(RHEL_COLOR)
+    if UbuntuTotal > 0:
+        labels.append("Ubuntu")
+        values.append(UbuntuTotal)
+        colors.append(UBUNTU_COLOR)
+    if OtherTotal > 0:
+        for OS in OtherTotal:
+            if OS == "blank" or OS == 'Linux':
+                labels.append("Other Linux")
+            else:
+                labels.append(OS)
+            values.append(OtherTotal[OS])
+            colors.append(getRandomColor())
+
+    layout = go.Layout(
+        margin=go.Margin(
+            l=0,
+            r=50,
+            b=50,
+            t=30,
+            pad=1
+        ),
+    )
+    trace = go.Pie(labels=labels, values=values, marker=dict(
+        colors=colors), direction="counter-clockwise")
+    fig = go.Figure(data=[trace], layout=layout)
+    return py.plot(fig, output_type='div', show_link=False)
