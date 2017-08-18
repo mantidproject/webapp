@@ -38,23 +38,23 @@ def countOS(usage_QuerySet):
     for obj in usage_QuerySet.iterator():
         name = obj["osName"]
         version = obj["osReadable"]
-        if name == "Windows NT":
+        if determineOS(name, version)[0] == "Windows":
             # OS Type = Windows
             WinTotal += obj["usage_count"]
-        elif name == "Darwin":
+        elif determineOS(name, version)[0] == "Mac":
             # OS Type = Mac OS X
             MacTotal += obj["usage_count"]
-        elif name == "Linux":
+        elif determineOS(name, version)[0] == "Linux":
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
-            if version == "" or version == "Linux":
+            if determineOS == ["Linux", "Other"]:
                 if OtherTotal.has_key("blank"):
                     OtherTotal['blank'] += obj["usage_count"]
                 else:
                     OtherTotal['blank'] = obj["usage_count"]
-            elif "Red Hat" in version or "Scientific" in version or "CentOS" in version:
+            elif determineOS(name, version)[1] == "Red Hat":
                 RhelTotal += obj["usage_count"]
-            elif "Ubuntu" in version:
+            elif determineOS(name, version)[1] == "Ubuntu":
                 UbuntuTotal += obj["usage_count"]
             else:
                 v = str(version).split()[0]
@@ -73,7 +73,27 @@ def getRandomColor():
         random.randint(100, 255),
         random.randint(100, 255),
         random.randint(100, 255))
-
+#
+# OS Determination 
+#
+def determineOS(osName, osReadable):
+    """ Return tuple of OS type "Windows" and version "Windows 7" """
+    if osName == "Windows NT":
+        return "Windows", ""
+    if osName == "Darwin":
+        return "Mac", ""
+    if osName == "Linux":
+        if osReadable == "" or osReadable == "Linux":
+            return "Linux", "Other"
+        elif "Red Hat" in osReadable or "Scientific" in osReadable or "CentOS" in osReadable:
+            return "Linux", "Red Hat"
+        elif "Ubuntu" in osReadable:
+            return "Linux", "Ubuntu"
+        else:
+            version = str(osReadable).split()[0]
+            return "Linux", version
+    else:
+        return "Unknown"
 #
 # Graphs
 #
@@ -402,27 +422,27 @@ def pieChart2(year):
         uid = pair[0]
         name = pair[1]
         version = pair[2]
-        if name == "Windows NT":
+        if determineOS(name, version)[0] == "Windows":
             # OS Type = Windows
             final_list.append({uid: "Windows"})
             WinTotal += 1
-        elif name == "Darwin":
+        elif determineOS(name, version)[0] == "Mac":
             # OS Type = Mac OS X
             final_list.append({uid: "Mac"})
             MacTotal += 1
-        elif name == "Linux":
+        elif determineOS(name, version)[0] == "Linux":
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
-            if version == "" or version == "Linux":
+            if determineOS(name, version) == ["Linux", "Other"]:
                 final_list.append({uid: "Linux"})
                 if OtherTotal.has_key("blank"):
                     OtherTotal['blank'] += 1
                 else:
                     OtherTotal['blank'] = 1
-            elif "Red Hat" in version or "Scientific" in version or "CentOS" in version:
+            elif determineOS(name, version)[1] == "Red Hat":
                 final_list.append({uid: "RHEL"})
                 RhelTotal += 1
-            elif "Ubuntu" in version:
+            elif determineOS(name, version)[1] == "Ubuntu":
                 final_list.append({uid: "Linux"})
                 UbuntuTotal += 1
             else:
