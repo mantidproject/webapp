@@ -153,6 +153,8 @@ def determineOS(osName, osReadable):
 #
 # Graphs
 #
+
+## Homepage
 def barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
 
@@ -251,6 +253,7 @@ def links():
     return links
 
 
+## Usages
 def usages_pieChart(year):
     labels = []
     values = []
@@ -398,6 +401,7 @@ def usages_mapGraph(year):
     return div
 
 
+## Uids
 def uids_pieChart(year):
     unique_pairs = []
     queryset = Usage.objects.filter(dateTime__year=year).values(
