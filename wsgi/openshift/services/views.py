@@ -366,9 +366,8 @@ def usage_plots(request, md5):
 @cache_page(60*30) #half-hour cache
 def usage_year(request, md5, year):
     pie = plotsfile.usages_pieChart(year)
-    pie2 = plotsfile.uids_pieChart(year)
     map = plotsfile.mapGraph(year)
-    context = { "pie":pie, "pie2":pie2, "map":map, "goback":"<a href='../'>Go Back</a>"}
+    context = { "pie":pie, "map":map, "goback":"<a href='../'>Go Back</a>"}
     return render(request, 'plots.html', context=context)
 
 @cache_page(60*30) #half-hour cache
@@ -380,8 +379,7 @@ def uid_plots(request, md5):
 
 @cache_page(60*30) #half-hour cache
 def uid_year(request, md5, year):
-    pie = plotsfile.usages_pieChart(year)
-    pie2 = plotsfile.uids_pieChart(year)
+    pie = plotsfile.uids_pieChart(year)
     map = plotsfile.mapGraph(year)
-    context = { "pie":pie, "pie2":pie2, "map":map, "goback":"<a href='../'>Go Back</a>"}
+    context = { "pie":pie, "map":map, "goback":"<a href='../'>Go Back</a>"}
     return render(request, 'plots.html', context=context)
