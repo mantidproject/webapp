@@ -195,7 +195,7 @@ def links():
     return links
 
 
-def pieChart(year):
+def usages_pieChart(year):
     labels = []
     values = []
     colors = []
@@ -397,7 +397,7 @@ def mapGraph(year):
     return div
 
 
-def pieChart2(year):
+def uids_pieChart(year):
     unique_pairs = []
     queryset = Usage.objects.filter(dateTime__year=year).values(
         'osName', 'osReadable', 'uid')
