@@ -365,7 +365,8 @@ def plots(request, md5):
 
 @cache_page(60*30) #half-hour cache
 def year(request, md5, year):
-    div2 = plotsfile.pieChart(year)
-    div3 = plotsfile.mapGraph(year)
-    context = { "pie":div2, "map":div3, "goback":"<a href='../'>Go Back</a>"}
+    pie = plotsfile.pieChart(year)
+    pie2 = plotsfile.pieChart2(year)
+    map = plotsfile.mapGraph(year)
+    context = { "pie":pie, "pie2":pie2, "map":map, "goback":"<a href='../'>Go Back</a>"}
     return render(request, 'plots.html', context=context)

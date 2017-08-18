@@ -45,6 +45,13 @@
             width:90%;
             height:45%;
         }
+        .sidebyside {
+            float: left;
+            margin: 0;
+            padding: 0;
+            display: inline;
+            width: 50%;
+        }
     </style>
 </head>
 <body>
@@ -54,7 +61,18 @@
         {% autoescape off %}
         <div id="top">
             {{ bar }}
+            <div class = "sidebyside">
+                <h2>
+                OS usage by Total
+                </h2>
             {{ pie }}
+            </div>
+            <div class = "sidebyside">
+                <h2>
+                OS usage by User
+                </h2>
+            {{ pie2 }}
+            </div>
             <hr />
         </div>
         <div id="bottom">
