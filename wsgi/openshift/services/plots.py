@@ -47,7 +47,7 @@ def countOS(usage_QuerySet):
         elif determineOS(name, version)[0] == "Linux":
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
-            if determineOS == ["Linux", "Other"]:
+            if determineOS(name, version) == ["Linux", "Other"]:
                 if OtherTotal.has_key("blank"):
                     OtherTotal['blank'] += obj["usage_count"]
                 else:
@@ -79,21 +79,21 @@ def getRandomColor():
 def determineOS(osName, osReadable):
     """ Return tuple of OS type "Windows" and version "Windows 7" """
     if osName == "Windows NT":
-        return "Windows", ""
+        return ["Windows", ""]
     if osName == "Darwin":
-        return "Mac", ""
+        return ["Mac", ""]
     if osName == "Linux":
         if osReadable == "" or osReadable == "Linux":
-            return "Linux", "Other"
+            return ["Linux", "Other"]
         elif "Red Hat" in osReadable or "Scientific" in osReadable or "CentOS" in osReadable:
-            return "Linux", "Red Hat"
+            return ["Linux", "Red Hat"]
         elif "Ubuntu" in osReadable:
-            return "Linux", "Ubuntu"
+            return ["Linux", "Ubuntu"]
         else:
             version = str(osReadable).split()[0]
-            return "Linux", version
+            return ["Linux", version]
     else:
-        return "Unknown"
+        return ["Unknown", ""]
 #
 # Graphs
 #
@@ -189,7 +189,7 @@ def barGraph():
 def links():
     links = "<div id='links'>Select a Specific Year:<br /><br />"
     for year in years:
-        links += "<a href = '/plots/year/" + \
+        links += "<a href = 'year/" + \
             str(year) + "'> " + str(year) + "</a>"
     links += "</div><br />"
     return links

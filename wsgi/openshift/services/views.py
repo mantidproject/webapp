@@ -357,14 +357,29 @@ class FeatureViewSet(viewsets.ModelViewSet):
         obj.save()
 
 @cache_page(60*30) #half-hour cache
-def plots(request, md5):
+def usage_plots(request, md5):
     barGraph = plotsfile.barGraph()
     links = plotsfile.links()
     context = { "bar":barGraph, "links":links}
     return render(request, 'plots.html', context=context)
 
 @cache_page(60*30) #half-hour cache
-def year(request, md5, year):
+def usage_year(request, md5, year):
+    pie = plotsfile.usages_pieChart(year)
+    pie2 = plotsfile.uids_pieChart(year)
+    map = plotsfile.mapGraph(year)
+    context = { "pie":pie, "pie2":pie2, "map":map, "goback":"<a href='../'>Go Back</a>"}
+    return render(request, 'plots.html', context=context)
+
+@cache_page(60*30) #half-hour cache
+def uid_plots(request, md5):
+    barGraph = plotsfile.barGraph()
+    links = plotsfile.links()
+    context = { "bar":barGraph, "links":links}
+    return render(request, 'plots.html', context=context)
+
+@cache_page(60*30) #half-hour cache
+def uid_year(request, md5, year):
     pie = plotsfile.usages_pieChart(year)
     pie2 = plotsfile.uids_pieChart(year)
     map = plotsfile.mapGraph(year)
