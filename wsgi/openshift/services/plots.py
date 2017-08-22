@@ -522,7 +522,7 @@ def uids_mapGraph(year):
     unique_uids = uids_copy
     """
     new_uniques = []
-    for i in range(1,len(unique_uids)-1):
+    for i in range(1,len(unique_uids)):
         uid = unique_uids[i]["uid"]
         os = unique_uids[i]["os"]
         #print "stack",uid, os
