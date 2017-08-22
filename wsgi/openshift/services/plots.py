@@ -408,15 +408,12 @@ def uids_pieChart(year):
         'osName', 'osReadable', 'uid')
     if not queryset:
         return "Error: No user data for this year."
-    i = 0
     for obj in queryset.order_by("uid"):
         pair = [obj["uid"], obj["osName"], obj["osReadable"]]
         if pair in unique_pairs:
-            i += 1
+            pass
         else:
-            print pair
             unique_pairs.append(pair)
-    print len(unique_pairs), "- skipped", i
     final_list = []
     WinTotal = 0
     MacTotal = 0
@@ -459,7 +456,6 @@ def uids_pieChart(year):
         else:
             # Not Linux, Mac, or Windows? What sorcery is this?
             OtherTotal += 1
-    print final_list
     labels = []
     values = []
     colors = []
@@ -504,14 +500,50 @@ def uids_pieChart(year):
     return py.plot(fig, output_type='div', show_link=False)
 
 def uids_mapGraph(year):
-    usages = Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
-        .annotate(usage_count=Count('ip'))  # get ip's and counts
+    uids = Usage.objects.filter(dateTime__year=year).values(
+        'osName', 'osReadable', 'uid', 'ip').order_by("osName").order_by("osReadable").order_by("uid")
+    if not uids:
+        return "<div>No location data for this year.</div>"
     jsonData = []
+    
+    unique_uids = []
+    for obj in uids:
+        obj["os"] = determineOS(obj["osName"], obj["osReadable"])
+        unique_uids.append({"uid":obj["uid"],"os":obj["os"], "ip":obj["ip"]})
 
-    for obj in usages.iterator():
-        if len(obj['ip']) == 0:
+    """
+    uids_copy = unique_uids
+
+    for obj in unique_uids:
+        for obj2 in uids_copy:
+            if obj["uid"] == obj2["uid"] and obj["os"]==obj2["os"]:
+                uids_copy.remove(obj2)
+
+    unique_uids = uids_copy
+    """
+    new_uniques = []
+    for i in range(1,len(unique_uids)-1):
+        uid = unique_uids[i]["uid"]
+        os = unique_uids[i]["os"]
+        #print "stack",uid, os
+        prev_uid = unique_uids[i-1]["uid"]
+        prev_os = unique_uids[i-1]["os"]
+        #print "prev",prev_uid, prev_os
+        if not uid == prev_uid or not os == prev_os:
+            print
+            print "add",unique_uids[i]["uid"], unique_uids[i]["os"]
+            print
+            new_uniques.append(unique_uids[i])
+        else:
+            print "failed",unique_uids[i]["uid"], unique_uids[i]["os"]
+            
+    unique_uids = new_uniques
+    for obj in unique_uids:
+        if len(obj["ip"]) == 0:
             continue
-        count = obj['usage_count']
+        count = 1 #, I guess?
+
+
         try:
             loc = Location.objects.get(ip=obj['ip'])
         except ObjectDoesNotExist:
