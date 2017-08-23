@@ -155,7 +155,7 @@ def determineOS(osName, osReadable):
 #
 
 ## Homepage
-def barGraph():
+def usages_barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
 
     for year in years:
@@ -243,6 +243,93 @@ def barGraph():
     div = py.plot(fig, output_type='div', show_link=False)
     return div
 
+def uids_barGraph():
+    Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
+
+    for year in years:
+        usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
+            .annotate(usage_count=Count('osName'))  # get OS's and counts
+        WinTotal, MacTotal, UbuntuTotal, RhelTotal, OtherTotal = countOS(
+            usages)
+        Windows.append(WinTotal)
+        Mac.append(MacTotal)
+        RHEL.append(RhelTotal)
+        Ubuntu.append(UbuntuTotal)
+        Other.append(len(OtherTotal))
+        Total.append(WinTotal + MacTotal + RhelTotal +
+                     UbuntuTotal + len(OtherTotal))
+
+    TotalTrace = go.Bar(
+        x=years,
+        y=Total,
+        name="Total",
+        marker=dict(
+            color=TOTAL_COLOR,
+        ),
+    )
+
+    WindowsTrace = go.Bar(
+        x=years,
+        y=Windows,
+        name="Windows",
+        marker=dict(
+            color=WIN_COLOR,
+        ),
+    )
+    MacTrace = go.Bar(
+        x=years,
+        y=Mac,
+        name="MacOS",
+        marker=dict(
+            color=MAC_COLOR,
+        ),
+    )
+
+    RedHatTrace = go.Bar(
+        x=years,
+        y=RHEL,
+        name="Red Hat",
+        marker=dict(
+            color=RHEL_COLOR,
+        ),
+    )
+
+    UbuntuTrace = go.Bar(
+        x=years,
+        y=Ubuntu,
+        name="Ubuntu",
+        marker=dict(
+            color=UBUNTU_COLOR,
+        ),
+    )
+
+    OtherTrace = go.Bar(
+        x=years,
+        y=Other,
+        name="Other Linux",
+        marker=dict(
+            color=OTHER_COLOR,
+        ),
+    )
+
+    data = [TotalTrace, WindowsTrace, MacTrace,
+            RedHatTrace, UbuntuTrace, OtherTrace]
+    layout = go.Layout(
+        xaxis=dict(
+            range=[start.year - 0.5, now.year + 0.5]  # custom x-axis scaling
+        ),
+        barmode='group',
+        margin=go.Margin(
+            l=50,
+            r=0,
+            b=30,
+            t=30,
+            pad=1
+        ),
+    )
+    fig = go.Figure(data=data, layout=layout)
+    div = py.plot(fig, output_type='div', show_link=False)
+    return div
 
 def links():
     links = "<div id='links'>Select a Specific Year:<br /><br />"
@@ -500,50 +587,23 @@ def uids_pieChart(year):
     return py.plot(fig, output_type='div', show_link=False)
 
 def uids_mapGraph(year):
-    uids = Usage.objects.filter(dateTime__year=year).values(
-        'osName', 'osReadable', 'uid', 'ip').order_by("osName").order_by("osReadable").order_by("uid")
+    uids = Usage.objects.filter(dateTime__year=year).values('uid', 'ip')
     if not uids:
         return "<div>No location data for this year.</div>"
     jsonData = []
-
-    unique_uids = []
-    for obj in uids:
-        obj["os"] = determineOS(obj["osName"], obj["osReadable"])
-        unique_uids.append({"uid":obj["uid"],"os":obj["os"], "ip":obj["ip"]})
-
-    """
-    uids_copy = unique_uids
-
-    for obj in unique_uids:
-        for obj2 in uids_copy:
-            if obj["uid"] == obj2["uid"] and obj["os"]==obj2["os"]:
-                uids_copy.remove(obj2)
-
-    unique_uids = uids_copy
-    """
-    new_uniques = []
-    for i in range(1,len(unique_uids)):
-        uid = unique_uids[i]["uid"]
-        os = unique_uids[i]["os"]
-        #print "stack",uid, os
-        prev_uid = unique_uids[i-1]["uid"]
-        prev_os = unique_uids[i-1]["os"]
-        #print "prev",prev_uid, prev_os
-        if not uid == prev_uid or not os == prev_os:
-            print
-            print "add",unique_uids[i]["uid"], unique_uids[i]["os"]
-            print
-            new_uniques.append(unique_uids[i])
+    unique_pairs = []
+    for obj in uids.order_by("uid"):
+        pair = {"uid":obj["uid"], "ip":obj["ip"]}
+        if pair in unique_pairs:
+            print "skipped", pair
         else:
-            print "failed",unique_uids[i]["uid"], unique_uids[i]["os"]
+            unique_pairs.append({"uid":obj["uid"], "ip":obj["ip"]})
+            print pair
 
-    unique_uids = new_uniques
-    for obj in unique_uids:
+    for obj in unique_pairs:
         if len(obj["ip"]) == 0:
             continue
         count = 1 #, I guess?
-
-
         try:
             loc = Location.objects.get(ip=obj['ip'])
         except ObjectDoesNotExist:
