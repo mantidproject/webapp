@@ -8,6 +8,8 @@ admin.autodiscover()
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
+from django.views.generic.base import RedirectView
+
 import report, services
 
 urlpatterns = [
@@ -18,7 +20,8 @@ urlpatterns = [
     url(r'^api/', include('services.urls')),
     # should be in services/urls.py
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^$', report.views.index, name='index'),
+    #url(r'^$', report.views.index, name='index'),
+    url(r'^$', RedirectView.as_view(url='/usage/', permanent=True)),
     url(r'^host/(?P<md5>\w+)?$', report.views.host, name='host'),
     url(r'^user/(?P<md5>\w+)?$', report.views.user, name='user'),
     url(r'^usage/(?P<md5>\w+)?$', services.views.usage_plots, name='plots'),
