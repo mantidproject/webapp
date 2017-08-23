@@ -143,9 +143,8 @@ def countOSByUid(uid_QuerySet):
     for obj in uid_QuerySet.order_by("uid"):
         pair = {"uid":obj["uid"], "osName":obj["osName"], "osReadable":obj["osReadable"]}
         if pair in unique_pairs:
-            print "skipped", pair
+            pass
         else:
-            print pair
             unique_pairs.append(pair)
 
     for obj in unique_pairs:
@@ -654,7 +653,6 @@ def uids_mapGraph(year):
             pass
         else:
             unique_pairs.append(pair)
-    skipped = 0
     for obj in unique_pairs:
         if len(obj["ip"]) == 0:
             continue
@@ -663,8 +661,6 @@ def uids_mapGraph(year):
             loc = Location.objects.get(ip=obj['ip'])
         except ObjectDoesNotExist:
             # No match for given IP
-            skipped += 1
-            print skipped,"not shown"
             continue
         # only show one digit for location
         name = '(%.1f, %.1f) - %s' % (float(loc.latitude), float(loc.longitude), loc.region)
