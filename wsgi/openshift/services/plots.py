@@ -123,6 +123,63 @@ def countOS(usage_QuerySet):
             OtherTotal += obj["usage_count"]
     return WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal
 
+def countOSByUid(uid_QuerySet):
+    """ Given a QuerySet of usages, return counts of each OS's usage as it 
+    matches to a UID and include a dict of unknown (other) systems. 
+    Example: 
+    - UID Bob uses RedHat 25 times and Windows 3 times.
+    - UID Steve uses RedHat 2 times and macOS 5 times.
+    - countOSByUid returns (WinTotal = 1, MacTotal = 1, RhelTotal = 2, ...)
+    """
+    
+    WinTotal = 0
+    MacTotal = 0
+    RhelTotal = 0
+    UbuntuTotal = 0
+    OtherTotal = {}
+
+    unique_pairs = []
+
+    for obj in uid_QuerySet.order_by("uid"):
+        pair = {"uid":obj["uid"], "osName":obj["osName"], "osReadable":obj["osReadable"]}
+        if pair in unique_pairs:
+            print "skipped", pair
+        else:
+            print pair
+            unique_pairs.append(pair)
+
+    for obj in unique_pairs:
+        name = obj["osName"]
+        version = obj["osReadable"]
+        uid = obj["uid"]
+        if determineOS(name, version)[0] == "Windows":
+            # OS Type = Windows
+            WinTotal += 1
+        elif determineOS(name, version)[0] == "Mac":
+            # OS Type = Mac OS X
+            MacTotal += 1
+        elif determineOS(name, version)[0] == "Linux":
+            # OS Type = Linux
+            # Divide by distro - RHEL, Ubuntu, and Other
+            if determineOS(name, version) == ["Linux", "Other"]:
+                if OtherTotal.has_key("blank"):
+                    OtherTotal['blank'] += 1
+                else:
+                    OtherTotal['blank'] = 1
+            elif determineOS(name, version)[1] == "Red Hat":
+                RhelTotal += 1
+            elif determineOS(name, version)[1] == "Ubuntu":
+                UbuntuTotal += 1
+            else:
+                v = str(version).split()[0]
+                if OtherTotal.has_key(v):
+                    OtherTotal[v] += 1
+                else:
+                    OtherTotal[v] = 1
+        else:
+            # Not Linux, Mac, or Windows? What sorcery is this?
+            OtherTotal += 1
+    return WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal
 
 def getRandomColor():
     return 'rgb(%s, %s, %s)' % (
@@ -247,10 +304,9 @@ def uids_barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
 
     for year in years:
-        usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
-            .annotate(usage_count=Count('osName'))  # get OS's and counts
-        WinTotal, MacTotal, UbuntuTotal, RhelTotal, OtherTotal = countOS(
-            usages)
+        uids = Usage.objects.filter(dateTime__year=year) \
+                .values('osName', 'osReadable', 'uid')
+        WinTotal, MacTotal, UbuntuTotal, RhelTotal, OtherTotal = countOSByUid(uids)
         Windows.append(WinTotal)
         Mac.append(MacTotal)
         RHEL.append(RhelTotal)
@@ -595,11 +651,10 @@ def uids_mapGraph(year):
     for obj in uids.order_by("uid"):
         pair = {"uid":obj["uid"], "ip":obj["ip"]}
         if pair in unique_pairs:
-            print "skipped", pair
+            pass
         else:
-            unique_pairs.append({"uid":obj["uid"], "ip":obj["ip"]})
-            print pair
-
+            unique_pairs.append(pair)
+    skipped = 0
     for obj in unique_pairs:
         if len(obj["ip"]) == 0:
             continue
@@ -608,6 +663,8 @@ def uids_mapGraph(year):
             loc = Location.objects.get(ip=obj['ip'])
         except ObjectDoesNotExist:
             # No match for given IP
+            skipped += 1
+            print skipped,"not shown"
             continue
         # only show one digit for location
         name = '(%.1f, %.1f) - %s' % (float(loc.latitude), float(loc.longitude), loc.region)
