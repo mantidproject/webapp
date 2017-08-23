@@ -210,7 +210,7 @@ def determineOS(osName, osReadable):
 # Graphs
 #
 
-def links():
+def yearLinks():
     links = "<div id='links'>Select a Specific Year:<br /><br />"
     for year in years:
         links += "<a href = 'year/" + \
@@ -218,7 +218,18 @@ def links():
     links += "</div><br />"
     return links
 
-
+def utilLinks():
+    links = """
+    <p>Other Reports:
+                <a href="/host/">list of hosts</a>
+                and <a href="/user/">list of users</a>
+            </p>
+            
+            <p>You can also go to
+            <a href='/api'>api</a>, <a href="/admin">admin</a>,
+            or <a href="/phpmyadmin">sql admin</a></p>
+            """
+    return links
 ## Usages
 def usages_barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []

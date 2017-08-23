@@ -359,8 +359,9 @@ class FeatureViewSet(viewsets.ModelViewSet):
 @cache_page(60*30) #half-hour cache
 def usage_plots(request, md5):
     barGraph = plotsfile.usages_barGraph()
-    links = plotsfile.links()
-    context = { "bar":barGraph, "links":links}
+    years = plotsfile.yearLinks()
+    util = plotsfile.utilLinks()
+    context = { "bar":barGraph, "years":years, "util":util, "goback":"<a href='/uid/'>Switch to Users</a>"}
     return render(request, 'plots.html', context=context)
 
 @cache_page(60*30) #half-hour cache
@@ -373,8 +374,9 @@ def usage_year(request, md5, year):
 @cache_page(60*30) #half-hour cache
 def uid_plots(request, md5):
     barGraph = plotsfile.uids_barGraph()
-    links = plotsfile.links()
-    context = { "bar":barGraph, "links":links}
+    years = plotsfile.yearLinks()
+    util = plotsfile.utilLinks()
+    context = { "bar":barGraph, "years":years, "util":util, "goback":"<a href='/usage/'>Switch to Usages</a>"}
     return render(request, 'plots.html', context=context)
 
 @cache_page(60*30) #half-hour cache
