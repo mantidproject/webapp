@@ -23,6 +23,6 @@ urlpatterns = [
     url(r'^user/(?P<md5>\w+)?$', report.views.user, name='user'),
     url(r'^usage/(?P<md5>\w+)?$', services.views.usage_plots, name='plots'),
     url(r'^usage/year/(?P<year>\d{4})(?P<md5>\w+)?$', services.views.uid_year, name='year'),
-    url(r'^uid/(?P<md5>\w+)?$', services.views.usage_plots, name='plots'),
+    url(r'^uid/(?P<md5>\w+)?$', services.views.uid_plots, name='plots'),
     url(r'^uid/year/(?P<year>\d{4})(?P<md5>\w+)?$', services.views.uid_year, name='year'),
 ]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
