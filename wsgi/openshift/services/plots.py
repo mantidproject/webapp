@@ -130,7 +130,7 @@ def getRandomColor():
         random.randint(100, 255),
         random.randint(100, 255))
 #
-# OS Determination 
+# OS Determination
 #
 def determineOS(osName, osReadable):
     """ Return tuple of OS type "Windows" and version "Windows 7" """
@@ -505,7 +505,7 @@ def uids_mapGraph(year):
     if not uids:
         return "<div>No location data for this year.</div>"
     jsonData = []
-    
+
     unique_uids = []
     for obj in uids:
         obj["os"] = determineOS(obj["osName"], obj["osReadable"])
@@ -536,7 +536,7 @@ def uids_mapGraph(year):
             new_uniques.append(unique_uids[i])
         else:
             print "failed",unique_uids[i]["uid"], unique_uids[i]["os"]
-            
+
     unique_uids = new_uniques
     for obj in unique_uids:
         if len(obj["ip"]) == 0:
@@ -549,37 +549,43 @@ def uids_mapGraph(year):
         except ObjectDoesNotExist:
             # No match for given IP
             continue
+        # only show one digit for location
+        name = '(%.1f, %.1f) - %s' % (float(loc.latitude), float(loc.longitude), loc.region)
         jsonData.append(
             {
                 'Lat': float(loc.latitude),
                 'Lon': float(loc.longitude),
                 'Country': loc.country,
                 'Region': loc.region,
-                'Value': count,
-                'Label': ''
+                'Name':name,
+                'Value':count,
+                'Label':''
             }
         )
     if len(jsonData) == 0:
         return "<div>No Location data for this year.</div>"
     # collect together things with the same lat/lon
+    # see http://www.longitudestore.com/how-big-is-one-gps-degree.html
+    # for justification of 2 decimal digits being plenty
     usage_locations = pandas.DataFrame(jsonData)
-    usage_locations = usage_locations.groupby(['Lat', 'Lon', 'Country', 'Region', 'Label'])[
-        'Value'].sum().reset_index()
+    usage_locations[['Lat','Lon']] = usage_locations[['Lat','Lon']].apply(lambda x: pandas.Series.round(x, 2))
+    usage_locations = usage_locations.groupby(['Lat', 'Lon', 'Name', 'Label'])['Value'].sum().reset_index()
     cases = []
     for _, row in usage_locations.iterrows():
         if (abs(row['Lat']) == 0.0 and abs(row['Lon']) == 0.0):
             # [0,0] is a throwaway coordinate
             continue
         for location in special_locations:
-            if (abs(row['Lat'] - location['Lat']) <= .0002 and abs(row['Lon'] - location['Lon']) <= .0002):
+            if (abs(row['Lat'] - location['Lat']) <= .01 and abs(row['Lon'] - location['Lon']) <= .01):
                 row['Label'] = location['Name']
+                oldlabel = row['Name'].split('- ')[-1]
+                row['Name'] = row['Name'].replace(oldlabel, location['Name'])
                 continue
         cases.append(
             go.Scattergeo(
                 lat=[row['Lat']],
                 lon=[row['Lon']],
-                name='%d (%.4f, %.4f) - %s' % (row['Value'],
-                                               row['Lat'], row['Lon'], row['Region']),
+                name='%d %s' % (row['Value'], row['Name']),
                 text=row['Label'],
                 marker=dict(
                     size=5 * math.log(row['Value'] + 1),
