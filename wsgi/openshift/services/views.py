@@ -358,7 +358,7 @@ class FeatureViewSet(viewsets.ModelViewSet):
 
 @cache_page(60*30) #half-hour cache
 def usage_plots(request, md5):
-    barGraph = plotsfile.barGraph()
+    barGraph = plotsfile.usages_barGraph()
     links = plotsfile.links()
     context = { "bar":barGraph, "links":links}
     return render(request, 'plots.html', context=context)
@@ -372,7 +372,7 @@ def usage_year(request, md5, year):
 
 @cache_page(60*30) #half-hour cache
 def uid_plots(request, md5):
-    barGraph = plotsfile.barGraph()
+    barGraph = plotsfile.uids_barGraph()
     links = plotsfile.links()
     context = { "bar":barGraph, "links":links}
     return render(request, 'plots.html', context=context)
