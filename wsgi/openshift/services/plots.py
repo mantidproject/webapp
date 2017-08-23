@@ -210,7 +210,16 @@ def determineOS(osName, osReadable):
 # Graphs
 #
 
-## Homepage
+def links():
+    links = "<div id='links'>Select a Specific Year:<br /><br />"
+    for year in years:
+        links += "<a href = 'year/" + \
+            str(year) + "'> " + str(year) + "</a>"
+    links += "</div><br />"
+    return links
+
+
+## Usages
 def usages_barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
 
@@ -299,103 +308,6 @@ def usages_barGraph():
     div = py.plot(fig, output_type='div', show_link=False)
     return div
 
-def uids_barGraph():
-    Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
-
-    for year in years:
-        uids = Usage.objects.filter(dateTime__year=year) \
-                .values('osName', 'osReadable', 'uid')
-        WinTotal, MacTotal, UbuntuTotal, RhelTotal, OtherTotal = countOSByUid(uids)
-        Windows.append(WinTotal)
-        Mac.append(MacTotal)
-        RHEL.append(RhelTotal)
-        Ubuntu.append(UbuntuTotal)
-        Other.append(len(OtherTotal))
-        Total.append(WinTotal + MacTotal + RhelTotal +
-                     UbuntuTotal + len(OtherTotal))
-
-    TotalTrace = go.Bar(
-        x=years,
-        y=Total,
-        name="Total",
-        marker=dict(
-            color=TOTAL_COLOR,
-        ),
-    )
-
-    WindowsTrace = go.Bar(
-        x=years,
-        y=Windows,
-        name="Windows",
-        marker=dict(
-            color=WIN_COLOR,
-        ),
-    )
-    MacTrace = go.Bar(
-        x=years,
-        y=Mac,
-        name="MacOS",
-        marker=dict(
-            color=MAC_COLOR,
-        ),
-    )
-
-    RedHatTrace = go.Bar(
-        x=years,
-        y=RHEL,
-        name="Red Hat",
-        marker=dict(
-            color=RHEL_COLOR,
-        ),
-    )
-
-    UbuntuTrace = go.Bar(
-        x=years,
-        y=Ubuntu,
-        name="Ubuntu",
-        marker=dict(
-            color=UBUNTU_COLOR,
-        ),
-    )
-
-    OtherTrace = go.Bar(
-        x=years,
-        y=Other,
-        name="Other Linux",
-        marker=dict(
-            color=OTHER_COLOR,
-        ),
-    )
-
-    data = [TotalTrace, WindowsTrace, MacTrace,
-            RedHatTrace, UbuntuTrace, OtherTrace]
-    layout = go.Layout(
-        xaxis=dict(
-            range=[start.year - 0.5, now.year + 0.5]  # custom x-axis scaling
-        ),
-        barmode='group',
-        margin=go.Margin(
-            l=50,
-            r=0,
-            b=30,
-            t=30,
-            pad=1
-        ),
-    )
-    fig = go.Figure(data=data, layout=layout)
-    div = py.plot(fig, output_type='div', show_link=False)
-    return div
-
-def links():
-    links = "<div id='links'>Select a Specific Year:<br /><br />"
-    for year in years:
-        links += "<a href = 'year/" + \
-            str(year) + "'> " + str(year) + "</a>"
-    links += "</div><br />"
-    return links
-
-
-## Usages
 def usages_pieChart(year):
     labels = []
     values = []
@@ -544,6 +456,92 @@ def usages_mapGraph(year):
 
 
 ## Uids
+def uids_barGraph():
+    Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
+
+    for year in years:
+        uids = Usage.objects.filter(dateTime__year=year) \
+                .values('osName', 'osReadable', 'uid')
+        WinTotal, MacTotal, UbuntuTotal, RhelTotal, OtherTotal = countOSByUid(uids)
+        Windows.append(WinTotal)
+        Mac.append(MacTotal)
+        RHEL.append(RhelTotal)
+        Ubuntu.append(UbuntuTotal)
+        Other.append(len(OtherTotal))
+        Total.append(WinTotal + MacTotal + RhelTotal +
+                     UbuntuTotal + len(OtherTotal))
+
+    TotalTrace = go.Bar(
+        x=years,
+        y=Total,
+        name="Total",
+        marker=dict(
+            color=TOTAL_COLOR,
+        ),
+    )
+
+    WindowsTrace = go.Bar(
+        x=years,
+        y=Windows,
+        name="Windows",
+        marker=dict(
+            color=WIN_COLOR,
+        ),
+    )
+    MacTrace = go.Bar(
+        x=years,
+        y=Mac,
+        name="MacOS",
+        marker=dict(
+            color=MAC_COLOR,
+        ),
+    )
+
+    RedHatTrace = go.Bar(
+        x=years,
+        y=RHEL,
+        name="Red Hat",
+        marker=dict(
+            color=RHEL_COLOR,
+        ),
+    )
+
+    UbuntuTrace = go.Bar(
+        x=years,
+        y=Ubuntu,
+        name="Ubuntu",
+        marker=dict(
+            color=UBUNTU_COLOR,
+        ),
+    )
+
+    OtherTrace = go.Bar(
+        x=years,
+        y=Other,
+        name="Other Linux",
+        marker=dict(
+            color=OTHER_COLOR,
+        ),
+    )
+
+    data = [TotalTrace, WindowsTrace, MacTrace,
+            RedHatTrace, UbuntuTrace, OtherTrace]
+    layout = go.Layout(
+        xaxis=dict(
+            range=[start.year - 0.5, now.year + 0.5]  # custom x-axis scaling
+        ),
+        barmode='group',
+        margin=go.Margin(
+            l=50,
+            r=0,
+            b=30,
+            t=30,
+            pad=1
+        ),
+    )
+    fig = go.Figure(data=data, layout=layout)
+    div = py.plot(fig, output_type='div', show_link=False)
+    return div
 def uids_pieChart(year):
     unique_pairs = []
     queryset = Usage.objects.filter(dateTime__year=year).values(
