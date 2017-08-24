@@ -3,6 +3,7 @@ from django.db.models import Count
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
 import django_filters
+from collections import defaultdict
 import math
 import plotly
 import plotly.offline as py
@@ -89,7 +90,7 @@ def countOS(usage_QuerySet):
     MacTotal = 0
     RhelTotal = 0
     UbuntuTotal = 0
-    OtherTotal = {}
+    OtherTotal = defaultdict(int)
 
     for obj in usage_QuerySet.iterator():
         os = determineOS(obj["osName"], obj["osReadable"])
@@ -103,19 +104,13 @@ def countOS(usage_QuerySet):
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
             if os[1] == "Other":
-                if OtherTotal.has_key("blank"):
-                    OtherTotal['blank'] += obj["usage_count"]
-                else:
-                    OtherTotal['blank'] = obj["usage_count"]
+                OtherTotal['blank'] += obj["usage_count"]
             elif os[1] == "Red Hat":
                 RhelTotal += obj["usage_count"]
             elif os[1] == "Ubuntu":
                 UbuntuTotal += obj["usage_count"]
             else:
-                if OtherTotal.has_key(os[1]):
-                    OtherTotal[os[1]] += obj["usage_count"]
-                else:
-                    OtherTotal[os[1]] = obj["usage_count"]
+                OtherTotal[os[1]] += obj["usage_count"]
         else:
             # Not Linux, Mac, or Windows? What sorcery is this?
             OtherTotal += obj["usage_count"]
@@ -134,10 +129,9 @@ def countOSByUid(uid_QuerySet):
     MacTotal = 0
     RhelTotal = 0
     UbuntuTotal = 0
-    OtherTotal = {}
+    OtherTotal = defaultdict(int)
 
     unique_pairs = set()
-
     for obj in uid_QuerySet: # .order_by("uid"):
         pair = (obj['uid'], determineOS(obj["osName"], obj["osReadable"]))
         unique_pairs.add(pair)
@@ -153,19 +147,13 @@ def countOSByUid(uid_QuerySet):
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
             if os[1] == "Other":
-                if OtherTotal.has_key("blank"):
-                    OtherTotal['blank'] += 1
-                else:
-                    OtherTotal['blank'] = 1
+                OtherTotal['blank'] += 1
             elif os[1] == "Red Hat":
                 RhelTotal += 1
             elif os[1] == "Ubuntu":
                 UbuntuTotal += 1
             else:
-                if OtherTotal.has_key(os[1]):
-                    OtherTotal[os[1]] += 1
-                else:
-                    OtherTotal[os[1]] = 1
+                OtherTotal[os[1]] += 1
         else:
             # Not Linux, Mac, or Windows? What sorcery is this?
             OtherTotal += 1
@@ -646,7 +634,7 @@ def uids_mapGraph(year):
     for uid, ip in unique_pairs:
         count = 1 #, I guess?
         try:
-            loc = Location.objects.get(ip=obj['ip'])
+            loc = Location.objects.get(ip=ip)
         except ObjectDoesNotExist:
             # No match for given IP
             continue
