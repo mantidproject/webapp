@@ -340,7 +340,41 @@ def pieChart(data):
     return py.plot(fig, output_type='div', show_link=False)
 
 def mapGraph(data):
-    pass
+    layout = go.Layout(
+        title='Location Data',
+        geo=dict(
+            showframe=True,
+            showcoastlines=True,
+            showcountries=True,
+            showland=True,
+            showsubunits=True,
+            landcolor="rgb(229, 229, 229)",
+            countrycolor="rgb(255, 255, 255)",
+            coastlinecolor="rgb(255, 255, 255)",
+            subunitcolor="rgb(255, 255, 255)",
+            projection=dict(
+                type='Mercator'
+            ),
+            lonaxis=dict(range=[-150.0, 150.0]),
+            lataxis=dict(range=[-100.0, 100.0]),
+            domain=dict(
+                x=[0, 1],
+                y=[0, 1]
+            )
+        ),
+        margin=go.Margin(
+            l=20,
+            r=20,
+            b=10,
+            t=30,
+            pad=1
+        ),
+
+        # Put newer and larger circles at the z-bottom so the old ones show up
+    )
+    fig = go.Figure(layout=layout, data=data)
+    div = py.plot(fig, validate=False, output_type='div', show_link=False)
+    return div
 
 ## Usages
 def usages_barGraph():
@@ -431,42 +465,7 @@ def usages_mapGraph(year):
                 )
             )
         )
-    layout = go.Layout(
-        title='Location Data',
-        geo=dict(
-            showframe=True,
-            showcoastlines=True,
-            showcountries=True,
-            showland=True,
-            showsubunits=True,
-            landcolor="rgb(229, 229, 229)",
-            countrycolor="rgb(255, 255, 255)",
-            coastlinecolor="rgb(255, 255, 255)",
-            subunitcolor="rgb(255, 255, 255)",
-            projection=dict(
-                type='Mercator'
-            ),
-            lonaxis=dict(range=[-150.0, 150.0]),
-            lataxis=dict(range=[-100.0, 100.0]),
-            domain=dict(
-                x=[0, 1],
-                y=[0, 1]
-            )
-        ),
-        margin=go.Margin(
-            l=20,
-            r=20,
-            b=10,
-            t=30,
-            pad=1
-        ),
-
-        # Put newer and larger circles at the z-bottom so the old ones show up
-    )
-    fig = go.Figure(layout=layout, data=cases)
-    div = py.plot(fig, validate=False, output_type='div', show_link=False)
-    return div
-
+    return mapGraph(cases)
 
 ## Uids
 def uids_barGraph():
@@ -605,39 +604,4 @@ def uids_mapGraph(year):
                 )
             )
         )
-    layout = go.Layout(
-        title='Location Data',
-        geo=dict(
-            showframe=True,
-            showcoastlines=True,
-            showcountries=True,
-            showland=True,
-            showsubunits=True,
-            landcolor="rgb(229, 229, 229)",
-            countrycolor="rgb(255, 255, 255)",
-            coastlinecolor="rgb(255, 255, 255)",
-            subunitcolor="rgb(255, 255, 255)",
-            projection=dict(
-                type='Mercator'
-            ),
-            lonaxis=dict(range=[-150.0, 150.0]),
-            lataxis=dict(range=[-100.0, 100.0]),
-            domain=dict(
-                x=[0, 1],
-                y=[0, 1]
-            )
-        ),
-        margin=go.Margin(
-            l=20,
-            r=20,
-            b=10,
-            t=30,
-            pad=1
-        ),
-
-        # Put newer and larger circles at the z-bottom so the old ones show up
-    )
-    fig = go.Figure(layout=layout, data=cases)
-    div = py.plot(fig, validate=False, output_type='div', show_link=False)
-    return div
-
+    return mapGraph(cases)
