@@ -199,14 +199,11 @@ def yearLinks():
 
 def utilLinks():
     links = """
-    <p>Other Reports:
-                <a href="/host/">list of hosts</a>
-                and <a href="/user/">list of users</a>
+            <p>Utilities:
+                    <a href='/api'>api</a>
+                    <a href="/admin">admin</a>
+                    <a href="/phpmyadmin">sql admin</a>
             </p>
-
-            <p>You can also go to
-            <a href='/api'>api</a>, <a href="/admin">admin</a>,
-            or <a href="/phpmyadmin">sql admin</a></p>
             """
     return links
 
