@@ -217,7 +217,7 @@ def utilLinks():
 
 ## Generic
 def barGraph(data):
-    TotalTrace, WindowsTrace, MacTrace, RedHatTrace, UbuntuTrace, OtherTrace = data
+    Windows, Mac, RHEL, Ubuntu, Other, Total = data
 
     TotalTrace = go.Bar(
         x=years,
@@ -313,7 +313,7 @@ def usages_barGraph():
         Other.append(len(OtherTotal))
         Total.append(WinTotal + MacTotal + RhelTotal +
                      UbuntuTotal + len(OtherTotal))
-    data = [WinTotal, MacTotal, RhelTotal, UbuntuTotal, len(OtherTotal)]
+    data = [Windows, Mac, RHEL, Ubuntu, Other, Total]
     return barGraph(data)
 
 def usages_pieChart(year):
@@ -478,7 +478,7 @@ def uids_barGraph():
         Other.append(len(OtherTotal))
         Total.append(WinTotal + MacTotal + RhelTotal +
                      UbuntuTotal + len(OtherTotal))
-    data = [WinTotal, MacTotal, RhelTotal, UbuntuTotal, len(OtherTotal)]
+    data = [Windows, Mac, RHEL, Ubuntu, Other, Total]
     return barGraph(data)
 
 def uids_pieChart(year):
