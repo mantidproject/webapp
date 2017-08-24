@@ -214,6 +214,10 @@ def utilLinks():
 
 ## Generic
 def barGraph(data):
+    if not data:
+        return """ If you're reading this, something is very wrong. 
+                Please reach out to the developers on 
+                <a href='https://github.com/mantidproject/webapp'>GitHub</a>."""
     Windows, Mac, RHEL, Ubuntu, Other, Total = data
 
     TotalTrace = go.Bar(
