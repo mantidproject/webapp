@@ -113,7 +113,7 @@ def countOS(usage_QuerySet):
                 OtherTotal[os[1]] += obj["usage_count"]
         else:
             # Not Linux, Mac, or Windows? What sorcery is this?
-            OtherTotal += obj["usage_count"]
+            raise RuntimeError('Unknown os: ' + os[0])
     return WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal
 
 def countOSByUid(uid_QuerySet):
@@ -156,7 +156,8 @@ def countOSByUid(uid_QuerySet):
                 OtherTotal[os[1]] += 1
         else:
             # Not Linux, Mac, or Windows? What sorcery is this?
-            OtherTotal += 1
+            raise RuntimeError('Unknown os: ' + os[0])
+
     return WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal
 
 def getRandomColor():
@@ -216,8 +217,8 @@ def utilLinks():
 ## Generic
 def barGraph(data):
     if not data:
-        return """ If you're reading this, something is very wrong. 
-                Please reach out to the developers on 
+        return """ If you're reading this, something is very wrong.
+                Please reach out to the developers on
                 <a href='https://github.com/mantidproject/webapp'>GitHub</a>."""
     Windows, Mac, RHEL, Ubuntu, Other, Total = data
 
@@ -384,8 +385,7 @@ def usages_barGraph():
     for year in years:
         usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
             .annotate(usage_count=Count('osName'))  # get OS's and counts
-        WinTotal, MacTotal, UbuntuTotal, RhelTotal, OtherTotal = countOS(
-            usages)
+        WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal = countOS(usages)
         Windows.append(WinTotal)
         Mac.append(MacTotal)
         RHEL.append(RhelTotal)
@@ -402,8 +402,7 @@ def usages_pieChart(year):
     if not usages:
         return "Error: No OS data for this year."
 
-    WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal = countOS(usages)
-    data = WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal 
+    data = countOS(usages)
     return pieChart(data)
 
 def usages_mapGraph(year):
@@ -475,7 +474,7 @@ def uids_barGraph():
     for year in years:
         uids = Usage.objects.filter(dateTime__year=year) \
                 .values('osName', 'osReadable', 'uid')
-        WinTotal, MacTotal, UbuntuTotal, RhelTotal, OtherTotal = countOSByUid(uids)
+        WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal = countOSByUid(uids)
         Windows.append(WinTotal)
         Mac.append(MacTotal)
         RHEL.append(RhelTotal)
@@ -487,8 +486,8 @@ def uids_barGraph():
     return barGraph(data)
 
 def uids_pieChart(year):
-    queryset = Usage.objects.filter(dateTime__year=year).values(
-        'osName', 'osReadable', 'uid')
+    queryset = Usage.objects.filter(dateTime__year=year) \
+                 .values('osName', 'osReadable', 'uid')
     if not queryset:
         return "Error: No user data for this year."
 
@@ -501,7 +500,8 @@ def uids_pieChart(year):
     MacTotal = 0
     RhelTotal = 0
     UbuntuTotal = 0
-    OtherTotal = {}
+    OtherTotal = defaultdict(int)
+
     for uid, os in unique_pairs:
         if os[0] == "Windows":
             # OS Type = Windows
@@ -513,24 +513,18 @@ def uids_pieChart(year):
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
             if os[1] == "Other":
-                if OtherTotal.has_key("blank"):
-                    OtherTotal['blank'] += 1
-                else:
-                    OtherTotal['blank'] = 1
+                OtherTotal['blank'] += 1
             elif os[1] == "Red Hat":
                 RhelTotal += 1
             elif os[1] == "Ubuntu":
                 UbuntuTotal += 1
             else:
-                if OtherTotal.has_key(os[1]):
-                    OtherTotal[os[1]] += 1
-                else:
-                    OtherTotal[os[1]] = 1
+                OtherTotal[os[1]] += 1
         else:
             # Not Linux, Mac, or Windows? What sorcery is this?
-            OtherTotal += 1
-    
-    data = WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal 
+            raise RuntimeError('Unknown os: ' + os[0])
+
+    data = WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal
     return pieChart(data)
 
 def uids_mapGraph(year):
