@@ -132,7 +132,7 @@ def countOSByUid(uid_QuerySet):
     OtherTotal = defaultdict(int)
 
     unique_pairs = set()
-    for obj in uid_QuerySet: # .order_by("uid"):
+    for obj in uid_QuerySet:
         pair = (obj['uid'], determineOS(obj["osName"], obj["osReadable"]))
         unique_pairs.add(pair)
 
@@ -390,9 +390,12 @@ def usages_barGraph():
         Mac.append(MacTotal)
         RHEL.append(RhelTotal)
         Ubuntu.append(UbuntuTotal)
-        Other.append(len(OtherTotal))
+        other_sum = 0
+        for key in OtherTotal.keys():
+            other_sum += OtherTotal[key]
+        Other.append(other_sum)
         Total.append(WinTotal + MacTotal + RhelTotal +
-                     UbuntuTotal + len(OtherTotal))
+                     UbuntuTotal + other_sum)
     data = [Windows, Mac, RHEL, Ubuntu, Other, Total]
     return barGraph(data)
 
@@ -479,9 +482,12 @@ def uids_barGraph():
         Mac.append(MacTotal)
         RHEL.append(RhelTotal)
         Ubuntu.append(UbuntuTotal)
-        Other.append(len(OtherTotal))
+        other_sum = 0
+        for key in OtherTotal.keys():
+            other_sum += OtherTotal[key]
+        Other.append(other_sum)
         Total.append(WinTotal + MacTotal + RhelTotal +
-                     UbuntuTotal + len(OtherTotal))
+                     UbuntuTotal + other_sum)
     data = [Windows, Mac, RHEL, Ubuntu, Other, Total]
     return barGraph(data)
 
