@@ -132,11 +132,11 @@ def countOSByUid(uid_QuerySet):
     OtherTotal = defaultdict(int)
 
     unique_pairs = set()
-    for obj in uid_QuerySet:
+    for obj in uid_QuerySet.iterator():
         pair = (obj['uid'], determineOS(obj["osName"], obj["osReadable"]))
         unique_pairs.add(pair)
 
-    for uid, os in unique_pairs:
+    for _, os in unique_pairs:
         if os[0] == "Windows":
             # OS Type = Windows
             WinTotal += 1
