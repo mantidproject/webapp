@@ -185,12 +185,7 @@ def determineOS(osName, osReadable):
             version = str(osReadable).split()[0]
             return ("Linux", version)
     else:
-<<<<<<< HEAD
-        return ["Unknown", ""]
-
-=======
         return ("Unknown", "")
->>>>>>> 9c09a55627453ebb4932fcc6d8adfbc2aa444dcd
 #
 # Links
 #
@@ -577,21 +572,9 @@ def uids_mapGraph(year):
     if not uids:
         return "<div>No location data for this year.</div>"
     jsonData = []
-<<<<<<< HEAD
-    unique_pairs = []
-    for obj in uids.order_by("uid"):
-        pair = {"uid":obj["uid"], "ip":obj["ip"]}
-        if pair in unique_pairs:
-            pass
-        else:
-            print pair
-            unique_pairs.append(pair)
-    for obj in unique_pairs:
-=======
 
     unique_pairs = set()
     for obj in uids:
->>>>>>> 9c09a55627453ebb4932fcc6d8adfbc2aa444dcd
         if len(obj["ip"]) == 0:
             continue
         pair = (obj["uid"], obj["ip"])
