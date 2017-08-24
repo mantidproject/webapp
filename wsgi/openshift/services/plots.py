@@ -555,7 +555,6 @@ def uids_pieChart(year):
         pair = (obj["uid"], determineOS(obj["osName"], obj["osReadable"]))
         unique_pairs.add(pair)
 
-    final_list = []
     WinTotal = 0
     MacTotal = 0
     RhelTotal = 0
@@ -564,26 +563,21 @@ def uids_pieChart(year):
     for uid, os in unique_pairs:
         if os[0] == "Windows":
             # OS Type = Windows
-            final_list.append({uid: "Windows"})
             WinTotal += 1
         elif os[0] == "Mac":
             # OS Type = Mac OS X
-            final_list.append({uid: "Mac"})
             MacTotal += 1
         elif os[0] == "Linux":
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
             if os[1] == "Other":
-                final_list.append({uid: "Linux"})
                 if OtherTotal.has_key("blank"):
                     OtherTotal['blank'] += 1
                 else:
                     OtherTotal['blank'] = 1
             elif os[1] == "Red Hat":
-                final_list.append({uid: "RHEL"})
                 RhelTotal += 1
             elif os[1] == "Ubuntu":
-                final_list.append({uid: "Linux"})
                 UbuntuTotal += 1
             else:
                 if OtherTotal.has_key(os[1]):
