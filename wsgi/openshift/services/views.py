@@ -361,14 +361,14 @@ def usage_plots(request, md5):
     barGraph = plotsfile.usages_barGraph()
     years = plotsfile.yearLinks()
     util = plotsfile.utilLinks()
-    context = { "bar":barGraph, "years":years, "util":util, "goback":"<a href='/uid/'>Switch to Users</a>"}
+    context = { "title":"Total Startups", "bar":barGraph, "years":years, "util":util, "goback":"<a href='/uid/'>Switch to Users</a>"}
     return render(request, 'plots.html', context=context)
 
 @cache_page(60*30) #half-hour cache
 def usage_year(request, md5, year):
     pie = plotsfile.usages_pieChart(year)
     map = plotsfile.usages_mapGraph(year)
-    context = { "pie":pie, "map":map, "goback":"<a href='../'>Go Back</a>"}
+    context = { "title":"Startups By Year", "pie":pie, "map":map, "goback":"<a href='../'>Go Back</a>"}
     return render(request, 'plots.html', context=context)
 
 @cache_page(60*30) #half-hour cache
@@ -376,12 +376,12 @@ def uid_plots(request, md5):
     barGraph = plotsfile.uids_barGraph()
     years = plotsfile.yearLinks()
     util = plotsfile.utilLinks()
-    context = { "bar":barGraph, "years":years, "util":util, "goback":"<a href='/usage/'>Switch to Usages</a>"}
+    context = { "title":"Startups By User", "bar":barGraph, "years":years, "util":util, "goback":"<a href='/usage/'>Switch to Usages</a>"}
     return render(request, 'plots.html', context=context)
 
 @cache_page(60*30) #half-hour cache
 def uid_year(request, md5, year):
     pie = plotsfile.uids_pieChart(year)
     map = plotsfile.uids_mapGraph(year)
-    context = { "pie":pie, "map":map, "goback":"<a href='../'>Go Back</a>"}
+    context = { "title":"Startups By User", "pie":pie, "map":map, "goback":"<a href='../'>Go Back</a>"}
     return render(request, 'plots.html', context=context)

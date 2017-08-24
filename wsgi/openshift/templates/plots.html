@@ -49,9 +49,10 @@
 </head>
 <body>
     <div id="main">
-            <h2 id="title">Mantid Statistics</h2>
+            {% autoescape off %}
+            <h2 id="title">{{ title }}</h2>
             <!-- Optional subtitle: <h4 id="title"></h4> -->
-        {% autoescape off %}
+        
         <div id="top">
             {{ bar }}
             {{ pie }}
