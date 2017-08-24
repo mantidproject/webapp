@@ -92,89 +92,80 @@ def countOS(usage_QuerySet):
     OtherTotal = {}
 
     for obj in usage_QuerySet.iterator():
-        name = obj["osName"]
-        version = obj["osReadable"]
-        if determineOS(name, version)[0] == "Windows":
+        os = determineOS(obj["osName"], obj["osReadable"])
+        if os[0] == "Windows":
             # OS Type = Windows
             WinTotal += obj["usage_count"]
-        elif determineOS(name, version)[0] == "Mac":
+        elif os[0] == "Mac":
             # OS Type = Mac OS X
             MacTotal += obj["usage_count"]
-        elif determineOS(name, version)[0] == "Linux":
+        elif os[0] == "Linux":
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
-            if determineOS(name, version) == ["Linux", "Other"]:
+            if os[1] == "Other":
                 if OtherTotal.has_key("blank"):
                     OtherTotal['blank'] += obj["usage_count"]
                 else:
                     OtherTotal['blank'] = obj["usage_count"]
-            elif determineOS(name, version)[1] == "Red Hat":
+            elif os[1] == "Red Hat":
                 RhelTotal += obj["usage_count"]
-            elif determineOS(name, version)[1] == "Ubuntu":
+            elif os[1] == "Ubuntu":
                 UbuntuTotal += obj["usage_count"]
             else:
-                v = str(version).split()[0]
-                if OtherTotal.has_key(v):
-                    OtherTotal[v] += obj["usage_count"]
+                if OtherTotal.has_key(os[1]):
+                    OtherTotal[os[1]] += obj["usage_count"]
                 else:
-                    OtherTotal[v] = obj["usage_count"]
+                    OtherTotal[os[1]] = obj["usage_count"]
         else:
             # Not Linux, Mac, or Windows? What sorcery is this?
             OtherTotal += obj["usage_count"]
     return WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal
 
 def countOSByUid(uid_QuerySet):
-    """ Given a QuerySet of usages, return counts of each OS's usage as it 
-    matches to a UID and include a dict of unknown (other) systems. 
-    Example: 
+    """ Given a QuerySet of usages, return counts of each OS's usage as it
+    matches to a UID and include a dict of unknown (other) systems.
+    Example:
     - UID Bob uses RedHat 25 times and Windows 3 times.
     - UID Steve uses RedHat 2 times and macOS 5 times.
     - countOSByUid returns (WinTotal = 1, MacTotal = 1, RhelTotal = 2, ...)
     """
-    
+
     WinTotal = 0
     MacTotal = 0
     RhelTotal = 0
     UbuntuTotal = 0
     OtherTotal = {}
 
-    unique_pairs = []
+    unique_pairs = set()
 
-    for obj in uid_QuerySet.order_by("uid"):
-        pair = {"uid":obj["uid"], "osName":obj["osName"], "osReadable":obj["osReadable"]}
-        if pair in unique_pairs:
-            pass
-        else:
-            unique_pairs.append(pair)
+    for obj in uid_QuerySet: # .order_by("uid"):
+        pair = (obj['uid'], determineOS(obj["osName"], obj["osReadable"]))
+        unique_pairs.add(pair)
 
-    for obj in unique_pairs:
-        name = obj["osName"]
-        version = obj["osReadable"]
-        uid = obj["uid"]
-        if determineOS(name, version)[0] == "Windows":
+    for uid, os in unique_pairs:
+        if os[0] == "Windows":
             # OS Type = Windows
             WinTotal += 1
-        elif determineOS(name, version)[0] == "Mac":
+        elif os[0] == "Mac":
             # OS Type = Mac OS X
             MacTotal += 1
-        elif determineOS(name, version)[0] == "Linux":
+        elif os[0] == "Linux":
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
-            if determineOS(name, version) == ["Linux", "Other"]:
+            if os[1] == "Other":
                 if OtherTotal.has_key("blank"):
                     OtherTotal['blank'] += 1
                 else:
                     OtherTotal['blank'] = 1
-            elif determineOS(name, version)[1] == "Red Hat":
+            elif os[1] == "Red Hat":
                 RhelTotal += 1
-            elif determineOS(name, version)[1] == "Ubuntu":
+            elif os[1] == "Ubuntu":
                 UbuntuTotal += 1
             else:
-                v = str(version).split()[0]
-                if OtherTotal.has_key(v):
-                    OtherTotal[v] += 1
+                if OtherTotal.has_key(os[1]):
+                    OtherTotal[os[1]] += 1
                 else:
-                    OtherTotal[v] = 1
+                    OtherTotal[os[1]] = 1
         else:
             # Not Linux, Mac, or Windows? What sorcery is this?
             OtherTotal += 1
@@ -191,21 +182,21 @@ def getRandomColor():
 def determineOS(osName, osReadable):
     """ Return tuple of OS type "Windows" and version "Windows 7" """
     if osName == "Windows NT":
-        return ["Windows", ""]
+        return ("Windows", "")
     if osName == "Darwin":
-        return ["Mac", ""]
+        return ("Mac", "")
     if osName == "Linux":
         if osReadable == "" or osReadable == "Linux":
-            return ["Linux", "Other"]
+            return ("Linux", "Other")
         elif "Red Hat" in osReadable or "Scientific" in osReadable or "CentOS" in osReadable:
-            return ["Linux", "Red Hat"]
+            return ("Linux", "Red Hat")
         elif "Ubuntu" in osReadable:
-            return ["Linux", "Ubuntu"]
+            return ("Linux", "Ubuntu")
         else:
             version = str(osReadable).split()[0]
-            return ["Linux", version]
+            return ("Linux", version)
     else:
-        return ["Unknown", ""]
+        return ("Unknown", "")
 #
 # Graphs
 #
@@ -224,7 +215,7 @@ def utilLinks():
                 <a href="/host/">list of hosts</a>
                 and <a href="/user/">list of users</a>
             </p>
-            
+
             <p>You can also go to
             <a href='/api'>api</a>, <a href="/admin">admin</a>,
             or <a href="/phpmyadmin">sql admin</a></p>
@@ -554,56 +545,51 @@ def uids_barGraph():
     div = py.plot(fig, output_type='div', show_link=False)
     return div
 def uids_pieChart(year):
-    unique_pairs = []
     queryset = Usage.objects.filter(dateTime__year=year).values(
         'osName', 'osReadable', 'uid')
     if not queryset:
         return "Error: No user data for this year."
-    for obj in queryset.order_by("uid"):
-        pair = [obj["uid"], obj["osName"], obj["osReadable"]]
-        if pair in unique_pairs:
-            pass
-        else:
-            unique_pairs.append(pair)
+
+    unique_pairs = set()
+    for obj in queryset:
+        pair = (obj["uid"], determineOS(obj["osName"], obj["osReadable"]))
+        unique_pairs.add(pair)
+
     final_list = []
     WinTotal = 0
     MacTotal = 0
     RhelTotal = 0
     UbuntuTotal = 0
     OtherTotal = {}
-    for pair in unique_pairs:
-        uid = pair[0]
-        name = pair[1]
-        version = pair[2]
-        if determineOS(name, version)[0] == "Windows":
+    for uid, os in unique_pairs:
+        if os[0] == "Windows":
             # OS Type = Windows
             final_list.append({uid: "Windows"})
             WinTotal += 1
-        elif determineOS(name, version)[0] == "Mac":
+        elif os[0] == "Mac":
             # OS Type = Mac OS X
             final_list.append({uid: "Mac"})
             MacTotal += 1
-        elif determineOS(name, version)[0] == "Linux":
+        elif os[0] == "Linux":
             # OS Type = Linux
             # Divide by distro - RHEL, Ubuntu, and Other
-            if determineOS(name, version) == ["Linux", "Other"]:
+            if os[1] == "Other":
                 final_list.append({uid: "Linux"})
                 if OtherTotal.has_key("blank"):
                     OtherTotal['blank'] += 1
                 else:
                     OtherTotal['blank'] = 1
-            elif determineOS(name, version)[1] == "Red Hat":
+            elif os[1] == "Red Hat":
                 final_list.append({uid: "RHEL"})
                 RhelTotal += 1
-            elif determineOS(name, version)[1] == "Ubuntu":
+            elif os[1] == "Ubuntu":
                 final_list.append({uid: "Linux"})
                 UbuntuTotal += 1
             else:
-                v = str(version).split()[0]
-                if OtherTotal.has_key(v):
-                    OtherTotal[v] += 1
+                if OtherTotal.has_key(os[1]):
+                    OtherTotal[os[1]] += 1
                 else:
-                    OtherTotal[v] = 1
+                    OtherTotal[os[1]] = 1
         else:
             # Not Linux, Mac, or Windows? What sorcery is this?
             OtherTotal += 1
@@ -655,16 +641,15 @@ def uids_mapGraph(year):
     if not uids:
         return "<div>No location data for this year.</div>"
     jsonData = []
-    unique_pairs = []
-    for obj in uids.order_by("uid"):
-        pair = {"uid":obj["uid"], "ip":obj["ip"]}
-        if pair in unique_pairs:
-            pass
-        else:
-            unique_pairs.append(pair)
-    for obj in unique_pairs:
+
+    unique_pairs = set()
+    for obj in uids:
         if len(obj["ip"]) == 0:
             continue
+        pair = (obj["uid"], obj["ip"])
+        unique_pairs.add(pair)
+
+    for uid, ip in unique_pairs:
         count = 1 #, I guess?
         try:
             loc = Location.objects.get(ip=obj['ip'])
