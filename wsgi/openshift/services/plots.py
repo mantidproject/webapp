@@ -186,6 +186,7 @@ def determineOS(osName, osReadable):
             return ("Linux", version)
     else:
         return ("Unknown", "")
+
 #
 # Links
 #
