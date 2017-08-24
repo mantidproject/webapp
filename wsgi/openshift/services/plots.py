@@ -497,40 +497,7 @@ def uids_pieChart(year):
     if not queryset:
         return "Error: No user data for this year."
 
-    unique_pairs = set()
-    for obj in queryset:
-        pair = (obj["uid"], determineOS(obj["osName"], obj["osReadable"]))
-        unique_pairs.add(pair)
-
-    WinTotal = 0
-    MacTotal = 0
-    RhelTotal = 0
-    UbuntuTotal = 0
-    OtherTotal = defaultdict(int)
-
-    for uid, os in unique_pairs:
-        if os[0] == "Windows":
-            # OS Type = Windows
-            WinTotal += 1
-        elif os[0] == "Mac":
-            # OS Type = Mac OS X
-            MacTotal += 1
-        elif os[0] == "Linux":
-            # OS Type = Linux
-            # Divide by distro - RHEL, Ubuntu, and Other
-            if os[1] == "Other":
-                OtherTotal['blank'] += 1
-            elif os[1] == "Red Hat":
-                RhelTotal += 1
-            elif os[1] == "Ubuntu":
-                UbuntuTotal += 1
-            else:
-                OtherTotal[os[1]] += 1
-        else:
-            # Not Linux, Mac, or Windows? What sorcery is this?
-            raise RuntimeError('Unknown os: ' + os[0])
-
-    data = WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal
+    data = countOSByUid(queryset)
     return pieChart(data)
 
 def uids_mapGraph(year):
