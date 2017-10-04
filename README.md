@@ -9,12 +9,12 @@ Running Django locally using virtualenv
 **Note:** This is the abbreviated/modified version of what is
 [described elsewhere](http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/).
 
-First setup virtualenv. This should be done in your source tree.
+First setup virtualenv with python3. This should be done in your source tree.
 ```
 $ pip install virtualenv
 $ virtualenv --version
-12.0.4
-$ virtualenv `pwd`/venv
+15.1.0
+$ virtualenv -p python3 `pwd`/venv
 ```
 
 Start the [virtual environment](https://virtualenv.pypa.io/en/latest/index.html) and install

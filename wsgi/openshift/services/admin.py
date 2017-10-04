@@ -23,6 +23,7 @@ class UsageAdmin(admin.ModelAdmin):
                     'component',
                     'ip')
 
+
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('ip',
                     'city',
@@ -30,6 +31,7 @@ class LocationAdmin(admin.ModelAdmin):
                     'country',
                     'latitude',
                     'longitude')
+
 
 class FeatureUsageAdmin(admin.ModelAdmin):
     list_display = ('type',

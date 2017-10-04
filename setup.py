@@ -3,14 +3,14 @@ from setuptools import setup, find_packages
 import os
 
 # Put here required packages
-packages = ['Django==1.11.2',
+packages = ['Django==1.11.5',
             'static3',  # serve static files in the server
-            'djangorestframework==3.6.3',
-            'django-filter==1.0.4',
+            'djangorestframework',  # was 3.6.4
+            'django-filter',  # was 1.0.4
             'Markdown',
-            'MySQL-python',
+            'mysqlclient',  # python3 fork of MySQL-python
             'requests',
-            'plotly>=2.0.14',
+            'plotly',  # was 2.0.15
             'pandas',
             ]
 
@@ -19,7 +19,7 @@ if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDIS
     packages.append('hiredis')
 
 setup(name='MantidReports',
-      version='1.0',
+      version='1.2',
       description='RESTful services relatd to mantid',
       author='P.F.Peterson',
       author_email='petersonpr@ornl.gov',

@@ -79,7 +79,8 @@ MIDDLEWARE_CLASSES = (
 )
 
 # If you want configure the REDISCLOUD
-if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDISCLOUD_PASSWORD' in os.environ:
+if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ \
+   and 'REDISCLOUD_PASSWORD' in os.environ:
     redis_server = os.environ['REDISCLOUD_URL']
     redis_port = os.environ['REDISCLOUD_PORT']
     redis_password = os.environ['REDISCLOUD_PASSWORD']
@@ -97,7 +98,7 @@ if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDIS
     MIDDLEWARE_CLASSES = ('django.middleware.cache.UpdateCacheMiddleware',) + \
         MIDDLEWARE_CLASSES + \
         ('django.middleware.cache.FetchFromCacheMiddleware',)
-else: #local caching
+else:  # local caching
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -110,7 +111,7 @@ WSGI_APPLICATION = 'wsgi.application'
 
 TEMPLATES = [
     {
-        #'DEBUG':DEBUG,
+        # 'DEBUG':DEBUG,
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             '/home/ugr/GitHub/webapp/wsgi/openshift/report/templates/',
@@ -118,11 +119,11 @@ TEMPLATES = [
             os.path.join(PROJECT_DIR, 'report/templates')
         ],
         'APP_DIRS': True,
-        #'LOADERS': [
-        #    'django.template.loaders.filesystem.Loader',
-        #    'django.template.loaders.app_directories.Loader',
-        #    'django.template.loaders.eggs.Loader',
-        #],
+        # 'LOADERS': [
+        #     'django.template.loaders.filesystem.Loader',
+        #     'django.template.loaders.app_directories.Loader',
+        #     'django.template.loaders.eggs.Loader',
+        # ],
         'OPTIONS': {
             'context_processors': [
                 "django.contrib.auth.context_processors.auth",
@@ -204,5 +205,5 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )

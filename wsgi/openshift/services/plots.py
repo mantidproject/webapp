@@ -1,11 +1,8 @@
-from models import Location, Usage
+from services.models import Location, Usage
 from django.db.models import Count
-from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
-import django_filters
 from collections import defaultdict
 import math
-import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
 import pandas
@@ -14,7 +11,7 @@ import random
 
 start = datetime.date(2014, 1, 1)
 now = datetime.datetime.today()
-years = range(start.year, now.year + 1)
+years = list(range(start.year, now.year + 1))
 
 # Colors
 TOTAL_COLOR = 'rgb(200,200,200)'
@@ -80,6 +77,7 @@ special_locations = [
         },
     ]
 
+
 #
 # Utility functions
 #
@@ -115,6 +113,7 @@ def countOS(usage_QuerySet):
             # Not Linux, Mac, or Windows? What sorcery is this?
             raise RuntimeError('Unknown os: ' + os[0])
     return WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal
+
 
 def countOSByUid(uid_QuerySet):
     """ Given a QuerySet of usages, return counts of each OS's usage as it
@@ -160,11 +159,13 @@ def countOSByUid(uid_QuerySet):
 
     return WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal
 
+
 def getRandomColor():
     return 'rgb(%s, %s, %s)' % (
         random.randint(100, 255),
         random.randint(100, 255),
         random.randint(100, 255))
+
 
 #
 # OS Determination
@@ -178,7 +179,8 @@ def determineOS(osName, osReadable):
     if osName == "Linux":
         if osReadable == "" or osReadable == "Linux":
             return ("Linux", "Other")
-        elif "Red Hat" in osReadable or "Scientific" in osReadable or "CentOS" in osReadable:
+        elif "Red Hat" in osReadable or "Scientific" in osReadable \
+                or "CentOS" in osReadable:
             return ("Linux", "Red Hat")
         elif "Ubuntu" in osReadable:
             return ("Linux", "Ubuntu")
@@ -187,6 +189,7 @@ def determineOS(osName, osReadable):
             return ("Linux", version)
     else:
         return ("Unknown", "")
+
 
 #
 # Links
@@ -198,6 +201,7 @@ def yearLinks():
             str(year) + "'> " + str(year) + "</a>"
     links += "</div><br />"
     return links
+
 
 def utilLinks():
     links = """
@@ -214,12 +218,12 @@ def utilLinks():
 #
 
 
-## Generic
+# Generic
 def barGraph(data):
     if not data:
         return """ If you're reading this, something is very wrong.
                 Please reach out to the developers on
-                <a href='https://github.com/mantidproject/webapp'>GitHub</a>."""
+                <a href='https://github.com/mantidproject/reports'>GitHub</a>."""
     Windows, Mac, RHEL, Ubuntu, Other, Total = data
 
     TotalTrace = go.Bar(
@@ -294,6 +298,7 @@ def barGraph(data):
     div = py.plot(fig, output_type='div', show_link=False)
     return div
 
+
 def pieChart(data):
     if not data:
         return "No OS data for this year."
@@ -341,6 +346,7 @@ def pieChart(data):
     fig = go.Figure(data=[trace], layout=layout)
     return py.plot(fig, output_type='div', show_link=False)
 
+
 def mapGraph(data):
     layout = go.Layout(
         title='Location Data',
@@ -378,13 +384,16 @@ def mapGraph(data):
     div = py.plot(fig, validate=False, output_type='div', show_link=False)
     return div
 
-## Usages
+
+# Usages
 def usages_barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
 
     for year in years:
-        usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
-            .annotate(usage_count=Count('osName'))  # get OS's and counts
+        # get OS's and counts
+        usages = Usage.objects.filter(dateTime__year=year) \
+                              .values('osName', 'osReadable') \
+                              .annotate(usage_count=Count('osName'))
         WinTotal, MacTotal, RhelTotal, UbuntuTotal, OtherTotal = countOS(usages)
         Windows.append(WinTotal)
         Mac.append(MacTotal)
@@ -399,18 +408,23 @@ def usages_barGraph():
     data = [Windows, Mac, RHEL, Ubuntu, Other, Total]
     return barGraph(data)
 
+
 def usages_pieChart(year):
-    usages = Usage.objects.filter(dateTime__year=year).values('osName', 'osReadable') \
-        .annotate(usage_count=Count('osName'))  # get OS's and counts
+    # get OS's and counts
+    usages = Usage.objects.filter(dateTime__year=year) \
+                          .values('osName', 'osReadable') \
+                          .annotate(usage_count=Count('osName'))
     if not usages:
         return "Error: No OS data for this year."
 
     data = countOS(usages)
     return pieChart(data)
 
+
 def usages_mapGraph(year):
-    usages = Usage.objects.filter(dateTime__year=year).values('ip').exclude(ip='') \
-        .annotate(usage_count=Count('ip'))  # get ip's and counts
+    # get ip's and counts
+    usages = Usage.objects.filter(dateTime__year=year).values('ip') \
+        .exclude(ip='').annotate(usage_count=Count('ip'))
     jsonData = []
 
     for obj in usages.iterator():
@@ -436,15 +450,17 @@ def usages_mapGraph(year):
         return "<div>No Location data for this year.</div>"
     # collect together things with the same lat/lon
     usage_locations = pandas.DataFrame(jsonData)
-    usage_locations = usage_locations.groupby(['Lat', 'Lon', 'Country', 'Region', 'Label'])[
-        'Value'].sum().reset_index()
+    usage_locations = usage_locations.groupby(['Lat', 'Lon', 'Country',
+                                               'Region', 'Label'])[
+                                                   'Value'].sum().reset_index()
     cases = []
     for _, row in usage_locations.iterrows():
         if (abs(row['Lat']) == 0.0 and abs(row['Lon']) == 0.0):
             # [0,0] is a throwaway coordinate
             continue
         for location in special_locations:
-            if (abs(row['Lat'] - location['Lat']) <= .0002 and abs(row['Lon'] - location['Lon']) <= .0002):
+            if (abs(row['Lat'] - location['Lat']) <= .0002
+                    and abs(row['Lon'] - location['Lon']) <= .0002):
                 row['Label'] = location['Name']
                 continue
         cases.append(
@@ -452,7 +468,8 @@ def usages_mapGraph(year):
                 lat=[row['Lat']],
                 lon=[row['Lon']],
                 name='%d (%.4f, %.4f) - %s' % (row['Value'],
-                                               row['Lat'], row['Lon'], row['Region']),
+                                               row['Lat'], row['Lon'],
+                                               row['Region']),
                 text=row['Label'],
                 marker=dict(
                     size=5 * math.log(row['Value'] + 1),
@@ -470,7 +487,8 @@ def usages_mapGraph(year):
         )
     return mapGraph(cases)
 
-## Uids
+
+# Uids
 def uids_barGraph():
     Windows, Mac, RHEL, Ubuntu, Other, Total = [], [], [], [], [], []
 
@@ -491,6 +509,7 @@ def uids_barGraph():
     data = [Windows, Mac, RHEL, Ubuntu, Other, Total]
     return barGraph(data)
 
+
 def uids_pieChart(year):
     queryset = Usage.objects.filter(dateTime__year=year) \
                  .values('osName', 'osReadable', 'uid')
@@ -499,6 +518,7 @@ def uids_pieChart(year):
 
     data = countOSByUid(queryset)
     return pieChart(data)
+
 
 def uids_mapGraph(year):
     uids = Usage.objects.filter(dateTime__year=year).values('uid', 'ip')
@@ -514,23 +534,24 @@ def uids_mapGraph(year):
         unique_pairs.add(pair)
 
     for uid, ip in unique_pairs:
-        count = 1 #, I guess?
+        count = 1  # I guess?
         try:
             loc = Location.objects.get(ip=ip)
         except ObjectDoesNotExist:
             # No match for given IP
             continue
         # only show one digit for location
-        name = '(%.1f, %.1f) - %s' % (float(loc.latitude), float(loc.longitude), loc.region)
+        name = '(%.1f, %.1f) - %s' % (float(loc.latitude),
+                                      float(loc.longitude), loc.region)
         jsonData.append(
             {
-                'Lat': float(loc.latitude),
-                'Lon': float(loc.longitude),
+                'Lat':     float(loc.latitude),
+                'Lon':     float(loc.longitude),
                 'Country': loc.country,
-                'Region': loc.region,
-                'Name':name,
-                'Value':count,
-                'Label':''
+                'Region':  loc.region,
+                'Name':    name,
+                'Value':   count,
+                'Label':   ''
             }
         )
     if len(jsonData) == 0:
@@ -539,7 +560,7 @@ def uids_mapGraph(year):
     # see http://www.longitudestore.com/how-big-is-one-gps-degree.html
     # for justification of 2 decimal digits being plenty
     usage_locations = pandas.DataFrame(jsonData)
-    usage_locations[['Lat','Lon']] = usage_locations[['Lat','Lon']].apply(lambda x: pandas.Series.round(x, 2))
+    usage_locations[['Lat', 'Lon']] = usage_locations[['Lat', 'Lon']].apply(lambda x: pandas.Series.round(x, 2))
     usage_locations = usage_locations.groupby(['Lat', 'Lon', 'Name', 'Label'])['Value'].sum().reset_index()
     cases = []
     for _, row in usage_locations.iterrows():
@@ -547,7 +568,8 @@ def uids_mapGraph(year):
             # [0,0] is a throwaway coordinate
             continue
         for location in special_locations:
-            if (abs(row['Lat'] - location['Lat']) <= .01 and abs(row['Lon'] - location['Lon']) <= .01):
+            if (abs(row['Lat'] - location['Lat']) <= .01
+                    and abs(row['Lon'] - location['Lon']) <= .01):
                 row['Label'] = location['Name']
                 oldlabel = row['Name'].split('- ')[-1]
                 row['Name'] = row['Name'].replace(oldlabel, location['Name'])

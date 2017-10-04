@@ -1,10 +1,13 @@
 from rest_framework import serializers
 from .models import Message, Usage, FeatureUsage, Location
 
+
 class LocationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Location
-        fields = ('ip', 'url', 'city', 'region', 'country', 'longitude', 'latitude')
+        fields = ('ip', 'url', 'city', 'region',
+                  'country', 'longitude', 'latitude')
+
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -18,14 +21,15 @@ class UsageSerializer(serializers.HyperlinkedModelSerializer):
     application = serializers.CharField(required=False, allow_blank=True)
     component = serializers.CharField(required=False, allow_blank=True)
     ip = serializers.CharField(required=False, allow_blank=True)
-    #uid = serializers.HyperlinkedIdentityField(view_name='UsageViewSet', format='html', lookup_field='Usage.uid')
+    # uid = serializers.HyperlinkedIdentityField(view_name='UsageViewSet',
+    #                                format='html', lookup_field='Usage.uid')
 
     class Meta:
         model = Usage
-        #fields = '__all__'
-        fields = ['osReadable', 'application', 'component', 'url', 'uid', 'host',
-                  'dateTime', 'osName', 'osArch', 'osVersion', 'ParaView',
-                  'mantidVersion', 'mantidSha1', 'ip']
+        # fields = '__all__'
+        fields = ['osReadable', 'application', 'component', 'url', 'uid',
+                  'host', 'dateTime', 'osName', 'osArch', 'osVersion',
+                  'ParaView', 'mantidVersion', 'mantidSha1', 'ip']
 
 
 class FeatureSerializer(serializers.HyperlinkedModelSerializer):
@@ -36,16 +40,17 @@ class FeatureSerializer(serializers.HyperlinkedModelSerializer):
 
     def checkLength(self, value, length, label):
         if (len(value) != length):
-            raise serializers.ValidationError(
-                "value is not consistent with %s (length %d != %d)" % (label, len(value), length))
+            msg = "value is not consistent with %s (length %d != %d)" % (label, len(value), length)
+            raise serializers.ValidationError(msg)
 
     def checkHex(self, value, label):
+        original = value
         for i in "0123456789abcdef":
             value = value.replace(i, "")
 
         if len(value) > 0:
             raise serializers.ValidationError(
-                "'%s' is not consistent with %s" % (attrs[source], label))
+                "'%s' is not consistent with %s" % (original, label))
 
     # def validate_uid(self, value):
     #   """uid should be an md5"""

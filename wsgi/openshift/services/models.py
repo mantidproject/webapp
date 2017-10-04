@@ -23,25 +23,27 @@ class Location(models.Model):
     def create(self, ip):
         jsonData = requests.get("http://ipinfo.io/%s/json/" % ip).content
         apiReturn = json.loads(jsonData)
-        print 'Location:', jsonData
-        if apiReturn.has_key('loc'):
+        # print('Location:', jsonData)
+        if 'loc' in apiReturn:
             latitude, longitude = apiReturn['loc'].strip().split(',')
         else:
-            latitude, longitude = ('0','0') # default is in the Gulf of Guinea
+            # default is in the Gulf of Guinea
+            latitude, longitude = ('0', '0')
         city = apiReturn.get('city', '')
         region = apiReturn.get('region', '')
         country_code = apiReturn.get('country', '')
         if len(country_code) > 0:
             # file taken from http://country.io/names.json
-            with open(os.path.join(settings.PROJECT_DIR, \
-                                   'countrynames.json'), 'r') as country_code_file:
-                      country_IDs = json.loads(country_code_file.read())
-            country = country_IDs[country_code]
+            with open(os.path.join(settings.PROJECT_DIR, 'countrynames.json'),
+                      'r') as country_code_file:
+                country_IDs = json.loads(country_code_file.read())
+                country = country_IDs[country_code]
         else:
             country = ''
         ipHash = hashlib.md5(ip).hexdigest()
         entry = Location(ip=ipHash, city=city, region=region,
-                         country=country, longitude=longitude, latitude=latitude)
+                         country=country,
+                         longitude=longitude, latitude=latitude)
         entry.save()
 
 

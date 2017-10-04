@@ -1,16 +1,12 @@
 from django.conf.urls import include, url
 
-from django.conf import settings
-from django.conf.urls.static import static
-
 from django.contrib import admin
 admin.autodiscover()
 
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
 from django.views.generic.base import RedirectView
 
-import report, services
+import report
+import services
 
 urlpatterns = [
     # Examples:
@@ -20,7 +16,7 @@ urlpatterns = [
     url(r'^api/', include('services.urls')),
     # should be in services/urls.py
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    #url(r'^$', report.views.index, name='index'),
+    # url(r'^$', report.views.index, name='index'),
     url(r'^$', RedirectView.as_view(url='/usage/', permanent=True)),
     url(r'^host/(?P<md5>\w+)?$', report.views.host, name='host'),
     url(r'^user/(?P<md5>\w+)?$', report.views.user, name='user'),
@@ -28,4 +24,4 @@ urlpatterns = [
     url(r'^usage/year/(?P<year>\d{4})(?P<md5>\w+)?$', services.views.usage_year, name='year'),
     url(r'^uid/(?P<md5>\w+)?$', services.views.uid_plots, name='plots'),
     url(r'^uid/year/(?P<year>\d{4})(?P<md5>\w+)?$', services.views.uid_year, name='year'),
-]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
