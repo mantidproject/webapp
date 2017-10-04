@@ -324,14 +324,13 @@ def pieChart(data):
         labels.append("Ubuntu")
         values.append(UbuntuTotal)
         colors.append(UBUNTU_COLOR)
-    if OtherTotal > 0:
-        for OS in OtherTotal:
-            if OS == "blank" or OS == 'Linux':
-                labels.append("Other Linux")
-            else:
-                labels.append(OS)
-            values.append(OtherTotal[OS])
-            colors.append(getRandomColor())
+    for OS in OtherTotal:
+        if OS == "blank" or OS == 'Linux':
+            labels.append("Other Linux")
+        else:
+            labels.append(OS)
+        values.append(OtherTotal[OS])
+        colors.append(getRandomColor())
     layout = go.Layout(
         margin=go.Margin(
             l=0,
