@@ -41,11 +41,22 @@ $ wsgi/openshift/manage.py syncdb --noinput
 
 Setup built-in db migrations to do the right thing(tm)
 ```
-$ ./wsgi/openshift/manage.py migrate services
+$ ./wsgi/openshift/manage.py migrate
 ```
 When asked for about creating an admin account, just say "no." The
 `manage.py makemigrations services` is only necessary when updating
 the models.
+
+If you have a sql dump to ingest, this can be done using
+```
+$ wsgi/openshift/manage.py dbshell
+SQLite version 3.20.1 2017-08-24 16:21:36
+Enter ".help" for usage hints.
+sqlite> .read filename.sql
+...
+sqlite> .quit
+```
+I get an error message when `sqlite3` exits, but all of the data is ingested.
 
 Finally, start the django server itself
 ```
