@@ -95,3 +95,22 @@ $ OPENSHIFT_MYSQL_DB_USERNAME=xxxxxxxx OPENSHIFT_MYSQL_DB_PASSWORD=xxxxxxxx wsgi
 The username/password need to be injected via environment variables
 otherwise the webapp will use the local (on disk) database. Don't
 worry about warnings considering the database migration.
+
+Working with docker
+-------------------
+
+After [installing docker](https://docs.docker.com/engine/installation/), verify the "hello world" image. [On fedora](https://docs.docker.com/engine/installation/linux/docker-ce/fedora/), the instructions are simply
+
+```
+$ sudo systemctl start docker
+$ sudo docker run hello-world
+```
+
+To do build things with docker you will need to add yourself to the `docker` group
+```
+sudo usermod -aG docker $USER
+```
+You can try one of the variety of [quickstart
+guides]https://docs.docker.com/get-started/part2/) to make sure that
+your setup is otherwise working. Much of the following is heavily
+adapted from the [docker django instructions](https://docs.docker.com/compose/django/).
