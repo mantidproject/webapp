@@ -4,7 +4,6 @@ import os
 
 # Put here required packages
 packages = ['Django==1.11.5',
-            'static3',  # serve static files in the server
             'djangorestframework',  # was 3.6.4
             'django-filter',  # was 1.0.4
             'Markdown',
