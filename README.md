@@ -36,7 +36,6 @@ The virtual environment can be turned off using a simple `deactivate`.
 Setup the database and copy static. This should follow closely to [`.openshift/action_hooks/deploy`](https://github.com/mantidproject/webapp/blob/master/.openshift/action_hooks/deploy)
 ```
 $ wsgi/openshift/manage.py collectstatic --noinput
-$ wsgi/openshift/manage.py syncdb --noinput
 ```
 
 Setup built-in db migrations to do the right thing(tm)
@@ -114,3 +113,7 @@ You can try one of the variety of [quickstart
 guides]https://docs.docker.com/get-started/part2/) to make sure that
 your setup is otherwise working. Much of the following is heavily
 adapted from the [docker django instructions](https://docs.docker.com/compose/django/).
+
+
+https://realpython.com/blog/python/django-development-with-docker-compose-and-machine/
+https://github.com/realpython/dockerizing-django
