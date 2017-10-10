@@ -117,3 +117,12 @@ adapted from the [docker django instructions](https://docs.docker.com/compose/dj
 
 https://realpython.com/blog/python/django-development-with-docker-compose-and-machine/
 https://github.com/realpython/dockerizing-django
+
+
+```
+$ docker-compose  exec web bash
+```
+
+```
+$ docker volume inspect pgdata
+```
