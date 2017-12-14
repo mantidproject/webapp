@@ -118,6 +118,11 @@ adapted from the [docker django instructions](https://docs.docker.com/compose/dj
 https://realpython.com/blog/python/django-development-with-docker-compose-and-machine/
 https://github.com/realpython/dockerizing-django
 
+```
+$ docker-compose build && docker-compose up
+```
+
+[docker-compose exec](https://docs.docker.com/compose/reference/exec/)
 
 ```
 $ docker-compose  exec web bash
@@ -126,3 +131,54 @@ $ docker-compose  exec web bash
 ```
 $ docker volume inspect pgdata
 ```
+
+View the site at `localhost:80`
+
+```
+$ docker-compose exec postgres bash
+$ psql
+```
+
+Look at the database directly
+```
+$ docker-compose exec -u postgres postgres psql
+```
+Then change to the correct database (defined in the `.env` file as `reports`) and see the public tables
+```
+\c reports
+\dt
+```
+
+Run commands directly with django's `manage.py`
+```
+$ docker-compose exec web bash
+```
+
+Delete things
+=============
+remove containers
+```
+$ docker rm -f $(docker ps -a -q)
+```
+remove volumes
+```
+$ docker rm -v $(docker ps -a -q)
+```
+remove images
+```
+docker rmi $(docker images -q)
+```
+[This article](https://discuss.devopscube.com/t/how-to-delete-all-none-untagged-and-dangling-docker-containers-and-images/23) suggests just doing which will delete volumes as well.
+```
+$ docker system prune --volumes
+```
+
+
+Random things found in my browser and other places
+--------------------------------------------------
+
+* [sqlectron](https://sqlectron.github.io/) is a desktop client for attaching to sql databases
+* [docker-compose rm](https://docs.docker.com/compose/reference/rm/) removes stopped service containers. To list all volumes `docker volume ls`
+* official [phpmyadmin docker](https://github.com/phpmyadmin/docker) image
+* [adminer](https://hub.docker.com/_/adminer/) at [github repo](https://github.com/vrana/adminer)
+* https://hub.docker.com/_/postgres/ says that you can add `.sql` scripts to `/docker-entrypoint-initdb.d/` of the docker image and they will be run on startup
