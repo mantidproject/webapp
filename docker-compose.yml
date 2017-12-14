@@ -2,11 +2,24 @@ version: '3'
 services:
   postgres:
     restart: always
-    image: postgres:latest
+    build: ./postgres
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data/
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
 
   web:
     restart: always
@@ -18,12 +31,14 @@ services:
     volumes:
       - /usr/src/app
       - /usr/src/app/static
+    depends_on:
+      - postgres
     env_file: .env
     environment:
       DEBUG: 'true'
-    command: bash -c "python manage.py collectstatic --noinput && chmod 775 -R /usr/src/app/static && gunicorn wsgi:application -w 2 -b :8000"
+    command: bash -c "/tmp/init_db.sh && gunicorn wsgi:application -w 2 -b :8000"
 
-  nginx:
+  web-static:
     restart: always
     build: ./nginx/
     ports:
