@@ -1,8 +1,8 @@
-version: '3'
+version: '3.2'
 services:
   postgres:
+    image: postgres:latest
     restart: always
-    build: ./postgres
     ports:
       - "5432:5432"
     volumes:
@@ -26,8 +26,6 @@ services:
     build: ./web
     expose:
       - "8000"
-    links:
-      - postgres:postgres
     volumes:
       - /usr/src/app
       - /usr/src/app/static
@@ -45,8 +43,6 @@ services:
       - "80:80"
     volumes:
       - /www/static
-    links:
-      - web:web
 
 volumes:
   web:
