@@ -111,45 +111,50 @@ sudo usermod -aG docker $USER
 ```
 You can try one of the variety of [quickstart
 guides]https://docs.docker.com/get-started/part2/) to make sure that
-your setup is otherwise working. Much of the following is heavily
-adapted from the [docker django instructions](https://docs.docker.com/compose/django/).
+your setup is otherwise working. 
 
+This configuration uses [`docker-compose`](https://github.com/docker/compose) and requires at least version `1.13`. If the version in your OS repo is too old then the latest binaries can be found at https://github.com/docker/compose/releases.
 
-https://realpython.com/blog/python/django-development-with-docker-compose-and-machine/
-https://github.com/realpython/dockerizing-django
+Much of the following is heavily adapted from the [docker django instructions](https://docs.docker.com/compose/django/) and
+https://realpython.com/blog/python/django-development-with-docker-compose-and-machine/, which uses an example repo at
+https://github.com/realpython/dockerizing-django.
+
+To start the services locally simply switch to the directory containing the `docker-compose` file and run
 
 ```
-$ docker-compose build && docker-compose up
+$ docker-compose build && docker-compose up -d
 ```
+the site will be viewable at `localhost:80`.
 
-[docker-compose exec](https://docs.docker.com/compose/reference/exec/)
+The [`docker-compose exec`](https://docs.docker.com/compose/reference/exec/) command can be used to run commands within
+the various containers:
 
+* start a shell:
 ```
 $ docker-compose  exec web bash
 ```
 
+* show details of the database volume 
 ```
 $ docker volume inspect pgdata
 ```
-
-View the site at `localhost:80`
-
+* start a shell and then attach the `psql` commandline tool:
 ```
 $ docker-compose exec postgres bash
 $ psql
 ```
 
-Look at the database directly
+* or look at the database directly
 ```
 $ docker-compose exec -u postgres postgres psql
 ```
-Then change to the correct database (defined in the `.env` file as `reports`) and see the public tables
+Then change to the correct database (defined in the `.env` file as `django`) and see the public tables
 ```
 \c reports
 \dt
 ```
 
-Run commands directly with django's `manage.py`
+* run commands directly with django's `manage.py`
 ```
 $ docker-compose exec web bash
 ```
