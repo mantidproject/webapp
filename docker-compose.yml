@@ -26,11 +26,12 @@ services:
     restart: always
     build: ./web
     volumes:
-      - /usr/src/app
-      - /usr/src/app/static
+      - webdata:/usr/src/app
+    expose:
+      - "8000"
     depends_on:
       - postgres
-    command: bash -c "/tmp/init_db.sh && gunicorn wsgi:application -w 2 -b :8000"
+    command: bash -c "/tmp/init_db.sh && gunicorn wsgi:application -k 'eventlet' -w 2 -t 60 -b :8000"
     env_file: .env
     environment:
       - DB_SERVICE
@@ -39,15 +40,16 @@ services:
       # Define this in .env for development mode. DO NOT USED IN PRODUCTION
       - DEBUG
 
-  web-static:
+  nginx:
     restart: always
     build: ./nginx/
     env_file: .env
     ports:
       - "${HOST_PORT}:80"
     volumes:
-      - /www/static
+      - webdata:/usr/src/app
 
 volumes:
-  web:
+  webdata:
+  # If this is changed remember to update the bin/boot.sh script
   pgdata:
