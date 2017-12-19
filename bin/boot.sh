@@ -1,16 +1,14 @@
 #! /bin/bash
 # Starts the stack
-set -e
 
 function mk_django_secret() {
-  python -c "import random,string;print 'SECRET_KEY=\"%s\"'%''.join([random.SystemRandom().choice(\"{}{}{}\".format(string.ascii_letters, string.digits, string.punctuation)) for i in range(63)])";
+  python -c "import random,string;print '%s'%''.join([random.SystemRandom().choice(\"{}{}{}\".format(string.ascii_letters, string.digits, string.punctuation)) for i in range(63)])";
 }
 
 SCRIPTPATH=$(cd "$(dirname "$0")"; pwd -P)
 SOURCE_DIR=$(cd "$SCRIPTPATH" && cd .. && pwd -P)
-
-COMPOSE_FILES="--file ${SOURCE_DIR}/docker-compose.yml --file ${SOURCE_DIR}/docker-compose-db-import.yml"
 PROJECT_NAME=reports
+DB_VOLUME_NAME=pgdata
 
 # Required by django settings
 DB_SERVICE=postgres
@@ -19,7 +17,13 @@ DB_PORT=5432
 SECRET_KEY=$(mk_django_secret)
 export DB_SERVICE DB_PORT SECRET_KEY
 
+# Does the database volume already exist
+_volume=$(docker volume ls | grep $DB_VOLUME_NAME)
 if [ $# -eq 1 ]; then
+  if [ -n "${_volume}" ]; then
+    echo "Initial database dump supplied but database volume already exists. Please remove the volume to continue."
+    exit 1
+  fi
   if [ ! -f "$1" ]; then
     echo "SQL dump \"$1\" does not exist"
     exit 1
@@ -29,9 +33,13 @@ if [ $# -eq 1 ]; then
       DB_DUMP=$PWD/$DB_DUMP
   fi
   export DB_DUMP
+  COMPOSE_FILES="--file ${SOURCE_DIR}/docker-compose.yml --file ${SOURCE_DIR}/docker-compose-db-import.yml"
 else
-  echo "Usage: $0 path-to-postgres-sql-dump.sql"
-  exit 1
+  if [ -z "${_volume}" ]; then
+    echo "First startup requires a Postgres-compatible SQL dump to be supplied."
+    exit 1
+  fi
+  COMPOSE_FILES="--file ${SOURCE_DIR}/docker-compose.yml"
 fi
 
 if [ ! -f ${SOURCE_DIR}/.env ]; then
