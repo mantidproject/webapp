@@ -31,7 +31,7 @@ services:
       - "8000"
     depends_on:
       - postgres
-    command: bash -c "/tmp/init_db.sh && gunicorn wsgi:application -k 'eventlet' -w 2 -t 60 -b :8000"
+    command: bash -c "/tmp/init_db.sh && gunicorn wsgi:application -w 4 -k "gevent" --timeout 30 --graceful-timeout 30 -b :8000"
     env_file: .env
     environment:
       - DB_SERVICE

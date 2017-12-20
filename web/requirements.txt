@@ -5,7 +5,6 @@ Markdown
 requests
 plotly  # was 2.0.15
 gunicorn
-eventlet
+gevent
 pandas
 psycopg2
-redis
