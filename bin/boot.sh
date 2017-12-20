@@ -34,12 +34,17 @@ if [ $# -eq 1 ]; then
   fi
   export DB_DUMP
   COMPOSE_FILES="--file ${SOURCE_DIR}/docker-compose.yml --file ${SOURCE_DIR}/docker-compose-db-import.yml"
-else
-  if [ -z "${_volume}" ]; then
-    echo "First startup requires a Postgres-compatible SQL dump to be supplied."
-    exit 1
+  echo "Using provided database dump to populate database."
+elif [ $# -eq 0 ]; then
+  if [ -n "${_volume}" ]; then
+    echo "Using existing database volume."
+  else
+    echo "Starting with clean database."
   fi
   COMPOSE_FILES="--file ${SOURCE_DIR}/docker-compose.yml"
+else
+  echo "Usage: $0 [path-postrges-sql-dump]"
+  exit 1
 fi
 
 if [ ! -f ${SOURCE_DIR}/.env ]; then
