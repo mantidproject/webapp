@@ -18,22 +18,25 @@ import services.plots as plotsfile
 
 OS_NAMES = ['Linux', 'Windows NT', 'Darwin']
 UTC = datetime.tzinfo('UTC')
+LOCALHOST_IP = "127.0.0.1"
 
 
-def createLocation(ipAddress):
-    if not settings.ON_OPENSHIFT and ipAddress == "127.0.0.1":
-        ipAddress = "128.219.49.13"  # "130.246.132.176"
-        """ ipinfo's API has a bad JSON format for 127.0.0.1 requests.
-        This changes the loopback IP to a random address for testing.
-        Location should have IP as a unique field. Change the IP
-        or you won't be able to add the test value more than once. """
-    ipHash = hashlib.md5(ipAddress).hexdigest()
-    if len(Location.objects.all().filter(ip=ipHash)) == 0:
-        ''' check for the HASHED ip in the database. If it isn't present,
-            create a new entry with the NON-HASHED ip as an argument. '''
+def createLocation(request):
+    # Assume this is a proxied request
+    ip_addr = request.META.get('HTTP_X_FORWARDED_FOR', None)
+    # ipinfo's API has a bad JSON format for 127.0.0.1 requests.
+    # This changes the loopback IP to a random address for testing.
+    # Location should have IP as a unique field. Change the IP
+    # or you won't be able to add the test value more than once.
+    if ip_addr is None or ip_addr == LOCALHOST_IP:
+        return None
+    ip_hash = hashlib.md5(ip_addr).hexdigest()
+    if len(Location.objects.all().filter(ip=ip_hash)) == 0:
+        # check for the HASHED ip in the database. If it isn't present,
+        # create a new entry with the NON-HASHED ip as an argument.
         entity = Location()
-        entity.create(ip=ipAddress)
-    return ipHash
+        entity.create(ip=ip_addr)
+    return ip_hash
 
 
 class LocationViewSet(viewsets.ModelViewSet):
@@ -98,25 +101,20 @@ class UsageViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         if request.method == 'POST':
-            # print("Request", request.body)
             post_data = json.loads(request.body)
-            # on openshift REMOTE_ADDR points at the django server
-            HttpIP = request.META.get('HTTP_X_FORWARDED_FOR',
-                                      request.META['REMOTE_ADDR'])
-            ipHash = createLocation(HttpIP)
+            ip_hash = createLocation(request)
 
             if "usages" in post_data.keys():
                 for usage in post_data["usages"]:
-                    self.saveUsage(usage, ipHash)
+                    self.saveUsage(usage, ip_hash)
             else:
-                self.saveUsage(post_data, ipHash)
+                self.saveUsage(post_data, ip_hash)
             return HttpResponse(status=201)
         else:
             return HttpResponse("Please supply feature usage data as POST.")
 
-    def saveUsage(self, usage, ipHash):
-        ip = ipHash
-        # count = usage["count"]
+    def saveUsage(self, usage, ip_hash):
+        ip = ip_hash if ip_hash is not None else ""
         osReadable = usage["osReadable"]
         application = usage["application"]
         component = usage.get("component", '')
