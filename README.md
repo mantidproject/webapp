@@ -13,7 +13,7 @@ To do build things with docker you will need to add yourself to the `docker` gro
 sudo usermod -aG docker $USER
 ```
 You can try one of the variety of [quickstart
-guides]https://docs.docker.com/get-started/part2/) to make sure that
+guides](https://docs.docker.com/get-started/part2/) to make sure that
 your setup is otherwise working.
 
 This configuration uses [`docker-compose`](https://github.com/docker/compose) and requires at least version `1.13`. If the version in your OS repo is too old then the latest binaries can be found at https://github.com/docker/compose/releases.
