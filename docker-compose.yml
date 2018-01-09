@@ -19,6 +19,9 @@ services:
   adminer:
     image: adminer
     restart: always
+    expose:
+      # Change the value in the nginx configuration if this is changed
+      - "8080"
     depends_on:
       - postgres
 
@@ -28,6 +31,7 @@ services:
     volumes:
       - webdata:/usr/src/app
     expose:
+      # Change the value in the nginx configuration if this is changed
       - "8000"
     depends_on:
       - postgres
