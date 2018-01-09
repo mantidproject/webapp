@@ -76,7 +76,7 @@ to
 
 <p>You can also go to
 <a href='/api'>api</a>, <a href="/admin">admin</a>,
-or <a href="/phpmyadmin">sql admin</a></p>
+or <a href="/adminer?pgsql=postgres%3A5432&db=django&ns=public">sql admin</a></p>
 {% endblock %}
 
 {% block post_main_script %}
@@ -276,7 +276,7 @@ $(document).ready(function() {
             .style("fill", function() { // dynamic colours
                 return d.color = color(d.name); })
             .on("click", function(){
-                // Determine if current line is visible 
+                // Determine if current line is visible
                 var active   = d.active ? false : true,
                 newOpacity = active ? 0 : 1;
                 // Hide or show the elements based on the ID
@@ -286,7 +286,7 @@ $(document).ready(function() {
                 // Update whether or not the elements are active
                 d.active = active;
                 })
-            .text(d.name); 
+            .text(d.name);
 
     });
 

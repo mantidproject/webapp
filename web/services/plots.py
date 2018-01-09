@@ -208,7 +208,7 @@ def utilLinks():
             <p>Utilities:
                     <a href='/api'>api</a>
                     <a href="/admin">admin</a>
-                    <a href="/phpmyadmin">sql admin</a>
+                    <a href="/adminer?pgsql=postgres%3A5432&db=django&ns=public">sql admin</a>
             </p>
             """
     return links
