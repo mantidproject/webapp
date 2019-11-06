@@ -82,7 +82,7 @@ remove images
 ```
 docker rmi $(docker images -q)
 ```
-[This article](https://discuss.devopscube.com/t/how-to-delete-all-none-untaggedHOST_PORT-and-dangling-docker-containers-and-images/23) suggests just doing which will delete volumes as well.
+[This article](https://discuss.devopscube.com/t/how-to-delete-all-none-untagged-and-dangling-docker-containers-and-images/23) suggests just doing which will delete volumes as well.
 ```
 $ docker system prune --volumes
 ```
