@@ -26,6 +26,7 @@ To start the services locally you will first need to create a `.env` file next t
 * `DB_NAME`
 * `DB_USER`
 * `DB_PASS`
+* `HOST_PORT`
 
 Now start the services with:
 
@@ -81,7 +82,7 @@ remove images
 ```
 docker rmi $(docker images -q)
 ```
-[This article](https://discuss.devopscube.com/t/how-to-delete-all-none-untagged-and-dangling-docker-containers-and-images/23) suggests just doing which will delete volumes as well.
+[This article](https://discuss.devopscube.com/t/how-to-delete-all-none-untaggedHOST_PORT-and-dangling-docker-containers-and-images/23) suggests just doing which will delete volumes as well.
 ```
 $ docker system prune --volumes
 ```
