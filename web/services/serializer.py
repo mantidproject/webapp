@@ -36,7 +36,7 @@ class FeatureSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = FeatureUsage
-        fields = ['url', 'type', 'name', 'internal', 'count', 'mantidVersion']
+        fields = ['url', 'type', 'name', 'internal', 'count', 'mantidVersion', 'application']
 
     def checkLength(self, value, length, label):
         if (len(value) != length):

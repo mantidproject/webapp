@@ -87,6 +87,7 @@ class FeatureUsage(models.Model):
     internal = models.BooleanField(default=False)    # ex: "False"
     count = models.IntegerField()        # ex: "3"
     mantidVersion = models.CharField(max_length=32)  # ex: "3.2.20141208.1820"
+    application = models.CharField(max_length=32)
 
     class Meta:
-        unique_together = ('mantidVersion', 'type', 'name', 'internal')
+        unique_together = ('mantidVersion', 'type', 'name', 'internal', 'application')
