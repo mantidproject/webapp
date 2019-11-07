@@ -4,7 +4,7 @@
 
 SCRIPTPATH=$(cd "$(dirname "$0")"; pwd -P)
 SOURCE_DIR=$(cd "$SCRIPTPATH" && cd .. && pwd -P)
-PROJECT_NAME=errorreports
+PROJECT_NAME=reports
 
 cd ${SOURCE_DIR}
 docker-compose down
