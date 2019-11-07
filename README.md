@@ -26,6 +26,7 @@ To start the services locally you will first need to create a `.env` file next t
 * `DB_NAME`
 * `DB_USER`
 * `DB_PASS`
+* `HOST_PORT`
 
 Now start the services with:
 
