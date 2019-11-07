@@ -18,7 +18,7 @@ SECRET_KEY=$(mk_django_secret)
 export DB_SERVICE DB_PORT SECRET_KEY
 
 # Does the database volume already exist
-_volume=$(docker volume ls | grep $DB_VOLUME_NAME)
+_volume=$(docker volume ls | grep -E "\s+$DB_VOLUME_NAME")
 if [ $# -eq 1 ]; then
   if [ -n "${_volume}" ]; then
     echo "Initial database dump supplied but database volume already exists. Please remove the volume to continue."
