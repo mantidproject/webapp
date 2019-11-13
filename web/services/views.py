@@ -350,10 +350,12 @@ class FeatureViewSet(viewsets.ModelViewSet):
         internal = feature["internal"]
         type = feature["type"]
         name = feature["name"]
+        application = feature["application"] if 'application' in feature else 'mantidplot'
         obj, created = FeatureUsage.objects.get_or_create(name=name, type=type,
                                                           internal=internal,
                                                           mantidVersion=version,
-                                                          defaults={'count': 0})
+                                                          defaults={'count': 0},
+                                                          application=application)
         obj.count += count
         obj.save()
 
