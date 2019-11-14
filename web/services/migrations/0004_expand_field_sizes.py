@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('services', '0004_add_application_to_feature_usage'),
+        ('services', '0003_python2to3_conversion'),
     ]
 
     operations = [
