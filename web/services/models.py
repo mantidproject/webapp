@@ -66,7 +66,7 @@ class Usage(models.Model):
     osName = models.CharField(max_length=32)        # ex: "Linux"
     osArch = models.CharField(max_length=16)        # ex: "x86_64"
     # ex: "3.17.4-200.fc20.x86_64"
-    osVersion = models.CharField(max_length=32)
+    osVersion = models.CharField(max_length=64)
     ParaView = models.CharField(max_length=16)      # ex: "3.98.1"
     mantidVersion = models.CharField(max_length=32)  # ex: "3.2.20141208.1820"
     # sha1 ex: "e9423bdb34b07213a69caa90913e40307c17c6cc"
@@ -85,7 +85,7 @@ class FeatureUsage(models.Model):
         max_length=32, help_text="Algorithm,Interface, Feature")
     name = models.CharField(max_length=80)        # ex: "Rebin.v2"
     internal = models.BooleanField(default=False)    # ex: "False"
-    count = models.IntegerField()        # ex: "3"
+    count = models.BigIntegerField()        # ex: "3"
     mantidVersion = models.CharField(max_length=32)  # ex: "3.2.20141208.1820"
     application = models.CharField(max_length=32)
 
