@@ -40,7 +40,7 @@ class Location(models.Model):
                 country = country_IDs[country_code]
         else:
             country = ''
-        ipHash = hashlib.md5(ip).hexdigest()
+        ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
         entry = Location(ip=ipHash, city=city, region=region,
                          country=country,
                          longitude=longitude, latitude=latitude)
