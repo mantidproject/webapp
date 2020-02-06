@@ -30,7 +30,7 @@ def createLocation(request):
     # or you won't be able to add the test value more than once.
     if ip_addr is None or ip_addr == LOCALHOST_IP:
         return None
-    ip_hash = hashlib.md5(ip_addr).hexdigest()
+    ip_hash = hashlib.md5(ip_addr.encode('utf-8')).hexdigest()
     if len(Location.objects.all().filter(ip=ip_hash)) == 0:
         # check for the HASHED ip in the database. If it isn't present,
         # create a new entry with the NON-HASHED ip as an argument.
