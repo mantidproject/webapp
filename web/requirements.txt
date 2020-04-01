@@ -1,8 +1,8 @@
-Django==1.11.26
+Django==2.2.11
 djangorestframework==3.10.3
-django-filter
+django-filter==2.2.0
 Markdown
-requests
+requests==2.23.0
 plotly
 gunicorn
 gevent

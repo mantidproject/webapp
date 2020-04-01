@@ -1,4 +1,5 @@
 from django.conf.urls import include, url
+from django.urls import path
 
 from django.contrib import admin
 admin.autodiscover()
@@ -9,19 +10,17 @@ import report
 import services
 
 urlpatterns = [
-    # Examples:
-    # url(r'^blog/', include('blog.urls')),
-    # url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/favicon.ico'}),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/', include('services.urls')),
-    # should be in services/urls.py
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    # url(r'^$', report.views.index, name='index'),
-    url(r'^$', RedirectView.as_view(url='/usage/', permanent=True)),
-    url(r'^host/(?P<md5>\w+)?$', report.views.host, name='host'),
-    url(r'^user/(?P<md5>\w+)?$', report.views.user, name='user'),
-    url(r'^usage/(?P<md5>\w+)?$', services.views.usage_plots, name='plots'),
-    url(r'^usage/year/(?P<year>\d{4})(?P<md5>\w+)?$', services.views.usage_year, name='year'),
-    url(r'^uid/(?P<md5>\w+)?$', services.views.uid_plots, name='plots'),
-    url(r'^uid/year/(?P<year>\d{4})(?P<md5>\w+)?$', services.views.uid_year, name='year'),
+    path('admin/', admin.site.urls),
+    path('api/', include('services.urls')),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # path('', report.views.index, name='index'),
+    path('', RedirectView.as_view(url='/usage/', permanent=True)),
+    path('host/<hostid>/', report.views.host, name='host'),
+    path('host/', report.views.host_list, name='host_list'),
+    path('user/', report.views.user_list, name='user_list'),
+    path('user/<userid>/', report.views.user, name='user'),
+    path('usage/', services.views.usage_plots, name='plots'),
+    path('usage/year/<int:year>', services.views.usage_year, name='year'),
+    path('uid/', services.views.uid_plots, name='plots'),
+    path('uid/year/<int:year>', services.views.uid_year, name='year'),
 ]

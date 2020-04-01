@@ -341,7 +341,7 @@ def pieChart(data):
         ),
     )
     trace = go.Pie(labels=labels, values=values, marker=dict(
-        colors=colors), direction="counter-clockwise")
+        colors=colors), direction="counterclockwise")
     fig = go.Figure(data=[trace], layout=layout)
     return py.plot(fig, output_type='div', show_link=False)
 
@@ -360,7 +360,7 @@ def mapGraph(data):
             coastlinecolor="rgb(255, 255, 255)",
             subunitcolor="rgb(255, 255, 255)",
             projection=dict(
-                type='Mercator'
+                type='mercator'
             ),
             lonaxis=dict(range=[-150.0, 150.0]),
             lataxis=dict(range=[-100.0, 100.0]),

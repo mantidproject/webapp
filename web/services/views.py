@@ -249,12 +249,11 @@ def query_count(queryset, field):
 
 def usage_by_field(request, format=None, field=None):
     (queryset, datemin, datemax) = filterByDate(Usage.objects.all(), request)
-    dates = getDateRange(queryset, datemin, datemax)
+    dates = [d for d in queryset.datetimes('dateTime', 'day')]
     result = prepResult(dates)
 
-    dateFilter = WithinDateFilter('dateTime')
-    for date in dates:
-        queryset_date = dateFilter.filter(queryset, date)
+    for day in dates:
+        queryset_date = queryset.filter(dateTime__date=day)
         total = query_count(queryset_date, field)
         cumulative = 0
         for label in OS_NAMES:
@@ -361,7 +360,7 @@ class FeatureViewSet(viewsets.ModelViewSet):
 
 
 @cache_page(60*30)  # half-hour cache
-def usage_plots(request, md5):
+def usage_plots(request):
     barGraph = plotsfile.usages_barGraph()
     years = plotsfile.yearLinks()
     util = plotsfile.utilLinks()
@@ -374,7 +373,7 @@ def usage_plots(request, md5):
 
 
 @cache_page(60*30)  # half-hour cache
-def usage_year(request, md5, year):
+def usage_year(request, year):
     pie = plotsfile.usages_pieChart(year)
     map = plotsfile.usages_mapGraph(year)
     context = {"title": "Startups By Year",
@@ -385,7 +384,7 @@ def usage_year(request, md5, year):
 
 
 @cache_page(60*30)  # half-hour cache
-def uid_plots(request, md5):
+def uid_plots(request):
     barGraph = plotsfile.uids_barGraph()
     years = plotsfile.yearLinks()
     util = plotsfile.utilLinks()
@@ -398,7 +397,7 @@ def uid_plots(request, md5):
 
 
 @cache_page(60*30)  # half-hour cache
-def uid_year(request, md5, year):
+def uid_year(request, year):
     pie = plotsfile.uids_pieChart(year)
     map = plotsfile.uids_mapGraph(year)
     context = {"title": "Startups By User",
